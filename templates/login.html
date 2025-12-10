@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - AI Learning Platform{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+        <div class="glass-effect rounded-2xl p-8 neon-border">
+            <h2 class="text-4xl font-bold mb-2 gradient-text text-center">Welcome Back</h2>
+            <p class="text-gray-400 text-center mb-8">Continue your AI learning journey</p>
+            
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-300">Username</label>
+                    <input type="text" name="username" required 
+                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-cyan-500 text-white"
+                           placeholder="Your username">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-300">Password</label>
+                    <input type="password" name="password" required 
+                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-cyan-500 text-white"
+                           placeholder="Your password">
+                </div>
+                
+                <button type="submit" 
+                        class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift neon-border">
+                    Sign In
+                </button>
+            </form>
+            
+            <p class="text-center mt-6 text-gray-400">
+                Don't have an account? 
+                <a href="{% url 'register' %}" class="text-cyan-400 hover:text-cyan-300">Register now</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

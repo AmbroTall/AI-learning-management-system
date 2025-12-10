@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}{{ challenge.title }} - AI Learning Platform{% endblock %}
+
+{% block extra_css %}
+<!-- Marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Highlight.js for code syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- CodeMirror for code editor (Module 3) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+
+<style>
+.markdown-content {
+    line-height: 1.8;
+    color: #e5e7eb;
+}
+.markdown-content code {
+    background: rgba(34, 211, 238, 0.1);
+    color: #22D3EE;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+}
+.markdown-content pre {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+    border: 1px solid rgba(34, 211, 238, 0.2);
+}
+.markdown-content pre code {
+    background: none;
+    padding: 0;
+    color: #e5e7eb;
+}
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    color: #22D3EE;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+.markdown-content ul, .markdown-content ol {
+    margin: 12px 0;
+    padding-left: 28px;
+}
+.markdown-content li {
+    margin: 8px 0;
+}
+.markdown-content p {
+    margin: 12px 0;
+}
+.markdown-content strong {
+    color: #818CF8;
+    font-weight: 600;
+}
+.markdown-content em {
+    color: #EC4899;
+}
+.markdown-content blockquote {
+    border-left: 4px solid #22D3EE;
+    padding-left: 16px;
+    margin: 16px 0;
+    color: #9ca3af;
+}
+
+.CodeMirror {
+    height: 400px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.code-output {
+    background: #1e293b;
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    min-height: 100px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.success-celebration {
+    animation: celebrate 0.6s ease-out;
+}
+
+@keyframes celebrate {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Challenge Header with Navigation -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <a href="{% url 'module_detail' challenge.module.id %}" class="text-cyan-400 hover:text-cyan-300">
+                ← Back to {{ challenge.module.title }}
+            </a>
+            
+            <!-- Navigation Buttons -->
+            <div class="flex items-center space-x-4">
+                {% if prev_challenge %}
+                <a href="{% url 'challenge' prev_challenge.id %}" 
+                   class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition flex items-center">
+                    ← Previous
+                </a>
+                {% endif %}
+                
+                {% if next_challenge %}
+                <a href="{% url 'challenge' next_challenge.id %}" 
+                   class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift flex items-center">
+                    Next Lesson →
+                </a>
+                {% else %}
+                <a href="{% url 'module_detail' challenge.module.id %}" 
+                   class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-semibold hover-lift flex items-center">
+                    ✓ Complete Module
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="flex items-start justify-between">
+            <div>
+                <div class="text-sm text-gray-400 mb-2">
+                    Lesson {{ challenge.order }} of {{ total_challenges }}
+                </div>
+                <h1 class="text-4xl font-bold mb-2">{{ challenge.title }}</h1>
+                <p class="text-xl text-gray-400">{{ challenge.description }}</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm text-gray-400 mb-1">Difficulty</div>
+                <span class="px-4 py-2 rounded-lg font-semibold
+                    {% if challenge.difficulty == 'beginner' %}bg-green-500/20 text-green-400
+                    {% elif challenge.difficulty == 'intermediate' %}bg-yellow-500/20 text-yellow-400
+                    {% else %}bg-red-500/20 text-red-400{% endif %}">
+                    {{ challenge.get_difficulty_display }}
+                </span>
+                <div class="mt-2 text-2xl font-bold gradient-text">{{ challenge.points }} pts</div>
+            </div>
+        </div>
+    </div>
+    
+    {% if has_passed %}
+    <div class="mb-8 p-6 glass-effect rounded-lg border-2 border-green-500/50 bg-green-500/10 success-celebration">
+        <div class="flex items-center space-x-3">
+            <span class="text-4xl">✅</span>
+            <div>
+                <div class="text-xl font-bold text-green-400">Challenge Completed!</div>
+                <div class="text-gray-300">Great job! You can practice more or move to the next lesson.</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Detect Challenge Type -->
+    {% if challenge.module.module_type == 'coding' %}
+        <!-- CODING MODULE: Show Code Editor -->
+        {% include 'partials/coding_challenge.html' %}
+    {% else %}
+        <!-- OTHER MODULES: Show Prompt Interface -->
+        {% include 'partials/prompt_challenge.html' %}
+    {% endif %}
+</div>
+
+<!-- Initialize markdown rendering -->
+<script>
+// Configure marked for better rendering
+marked.setOptions({
+    highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+    },
+    breaks: true,
+    gfm: true
+});
+</script>
+{% endblock %}

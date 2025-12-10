@@ -1,0 +1,310 @@
+<!-- Coding Challenge Interface (Module 3) -->
+<div class="space-y-6">
+    <!-- Instructions Banner -->
+    <div class="glass-effect rounded-xl p-6">
+        <div class="flex items-start space-x-4">
+            <div class="text-5xl">💻</div>
+            <div class="flex-1">
+                <h2 class="text-2xl font-bold mb-2">Let's Code Together!</h2>
+                <p class="text-gray-300">{{ challenge.instructions|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Left: Code Editor -->
+        <div class="space-y-4">
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold flex items-center">
+                        <span class="mr-2">📝</span> Your Code
+                    </h3>
+                    <div class="flex space-x-2">
+                        <button onclick="runCode()" class="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg font-semibold transition flex items-center">
+                            <span class="mr-2">▶</span> Run Code
+                        </button>
+                        <button onclick="getAIHelp()" class="px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg font-semibold transition">
+                            🤖 Get AI Help
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- CodeMirror Editor -->
+                <textarea id="codeEditor"># Write your Python code here
+print("Hello, World!")
+</textarea>
+            </div>
+            
+            <!-- Code Output -->
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">📤</span> Output
+                </h3>
+                <div id="codeOutput" class="code-output">
+                    <span class="text-gray-500">Run your code to see the output...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right: AI Assistant & Instructions -->
+        <div class="space-y-4">
+            <!-- Example Section -->
+            {% if challenge.example_prompt %}
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">💡</span> Hint
+                </h3>
+                <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
+                    <p class="text-sm text-gray-300">{{ challenge.example_prompt }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- AI Help Section -->
+            <div id="aiHelpSection" class="glass-effect rounded-xl p-6 hidden">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">🤖</span> AI Assistant
+                </h3>
+                
+                <textarea id="aiQuestion" 
+                          class="w-full h-32 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white resize-none mb-4"
+                          placeholder="Ask AI for help... e.g., 'How do I use a for loop?' or 'Can you explain this error?'"></textarea>
+                
+                <button onclick="askAI()" id="askBtn" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift">
+                    <span id="askBtnText">Ask AI</span>
+                    <span id="askBtnLoading" class="hidden">⏳ Thinking...</span>
+                </button>
+                
+                <div id="aiHelpResponse" class="hidden mt-4 p-4 bg-black/30 rounded-lg border border-purple-500/30">
+                    <div class="text-sm text-gray-400 mb-2">AI's Help:</div>
+                    <div id="aiHelpText" class="markdown-content text-gray-300"></div>
+                </div>
+            </div>
+            
+            <!-- Submit for Evaluation -->
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">✅</span> Submit Your Code
+                </h3>
+                <p class="text-gray-400 text-sm mb-4">Once your code works, submit it for evaluation!</p>
+                
+                <button onclick="submitCode()" id="submitCodeBtn" class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-bold text-lg hover-lift neon-border">
+                    <span id="submitCodeText">Submit Challenge</span>
+                    <span id="submitCodeLoading" class="hidden">⏳ Evaluating...</span>
+                </button>
+            </div>
+            
+            <!-- Evaluation Results -->
+            <div id="codeEvaluationSection" class="glass-effect rounded-xl p-6 hidden">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">⭐</span> Evaluation
+                </h3>
+                
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400">Your Score</span>
+                        <span id="codeScoreValue" class="text-4xl font-bold gradient-text">0</span>
+                    </div>
+                    <div class="w-full bg-white/10 rounded-full h-4">
+                        <div id="codeScoreBar" class="bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div id="codePassStatus" class="hidden p-4 rounded-lg mb-4"></div>
+                
+                <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
+                    <div class="text-sm text-gray-400 mb-2">Feedback:</div>
+                    <div id="codeFeedbackText" class="text-gray-300 markdown-content"></div>
+                </div>
+                
+                {% if next_challenge %}
+                <a href="{% url 'challenge' next_challenge.id %}" class="block mt-4 w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-semibold text-center hover-lift">
+                    Next Lesson →
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize CodeMirror
+let editor;
+document.addEventListener('DOMContentLoaded', function() {
+    editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+        mode: 'python',
+        theme: 'dracula',
+        lineNumbers: true,
+        indentUnit: 4,
+        indentWithTabs: false,
+        lineWrapping: true,
+        autoCloseBrackets: true,
+        matchBrackets: true
+    });
+    editor.setSize(null, 400);
+});
+
+// Run Code (simulated - sends to AI for execution explanation)
+async function runCode() {
+    const code = editor.getValue();
+    const output = document.getElementById('codeOutput');
+    
+    if (!code.trim()) {
+        output.innerHTML = '<span class="text-red-400">❌ Please write some code first!</span>';
+        return;
+    }
+    
+    output.innerHTML = '<span class="text-cyan-400">⏳ Running your code...</span>';
+    
+    try {
+        // Send code to AI to simulate execution
+        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                prompt: `I wrote this Python code:\n\n\`\`\`python\n${code}\n\`\`\`\n\nCan you:\n1. Tell me if there are any errors\n2. Show me what the output would be\n3. Explain what the code does\n\nBe concise and clear. Format output like a terminal.`,
+                action: 'run_code'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            output.innerHTML = `<div class="markdown-content">${marked.parse(data.ai_response)}</div>`;
+        } else {
+            output.innerHTML = `<span class="text-red-400">❌ Error: ${data.error}</span>`;
+        }
+    } catch (error) {
+        output.innerHTML = '<span class="text-red-400">❌ Failed to run code. Please try again.</span>';
+        console.error(error);
+    }
+}
+
+// Get AI Help
+function getAIHelp() {
+    const aiHelpSection = document.getElementById('aiHelpSection');
+    aiHelpSection.classList.toggle('hidden');
+    if (!aiHelpSection.classList.contains('hidden')) {
+        document.getElementById('aiQuestion').focus();
+    }
+}
+
+// Ask AI
+async function askAI() {
+    const question = document.getElementById('aiQuestion').value.trim();
+    const code = editor.getValue();
+    const askBtn = document.getElementById('askBtn');
+    const askBtnText = document.getElementById('askBtnText');
+    const askBtnLoading = document.getElementById('askBtnLoading');
+    const aiHelpResponse = document.getElementById('aiHelpResponse');
+    const aiHelpText = document.getElementById('aiHelpText');
+    
+    if (!question) {
+        alert('Please ask a question!');
+        return;
+    }
+    
+    askBtn.disabled = true;
+    askBtnText.classList.add('hidden');
+    askBtnLoading.classList.remove('hidden');
+    
+    try {
+        const fullPrompt = code ? 
+            `My code:\n\`\`\`python\n${code}\n\`\`\`\n\nQuestion: ${question}\n\nPlease help me understand. Be clear and beginner-friendly.` :
+            `Question: ${question}\n\nPlease help me understand. Be clear and beginner-friendly.`;
+        
+        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                prompt: fullPrompt,
+                action: 'get_help'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            aiHelpText.innerHTML = marked.parse(data.ai_response);
+            aiHelpText.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+            aiHelpResponse.classList.remove('hidden');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Failed to get help. Please try again.');
+        console.error(error);
+    } finally {
+        askBtn.disabled = false;
+        askBtnText.classList.remove('hidden');
+        askBtnLoading.classList.add('hidden');
+    }
+}
+
+// Submit Code for Evaluation
+async function submitCode() {
+    const code = editor.getValue();
+    const submitCodeBtn = document.getElementById('submitCodeBtn');
+    const submitCodeText = document.getElementById('submitCodeText');
+    const submitCodeLoading = document.getElementById('submitCodeLoading');
+    const codeEvaluationSection = document.getElementById('codeEvaluationSection');
+    
+    if (!code.trim()) {
+        alert('Please write some code first!');
+        return;
+    }
+    
+    submitCodeBtn.disabled = true;
+    submitCodeText.classList.add('hidden');
+    submitCodeLoading.classList.remove('hidden');
+    
+    try {
+        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                prompt: `Challenge: {{ challenge.title }}\n\nInstructions: {{ challenge.instructions|escapejs }}\n\nStudent's Python code:\n\`\`\`python\n${code}\n\`\`\`\n\nEvaluate this code based on:\n1. Does it solve the challenge?\n2. Code quality and best practices\n3. Does it work correctly?\n\nProvide a score 0-100 and detailed feedback.`,
+                action: 'submit'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('codeScoreValue').textContent = data.score;
+            document.getElementById('codeScoreBar').style.width = data.score + '%';
+            document.getElementById('codeFeedbackText').innerHTML = marked.parse(data.feedback);
+            
+            const codePassStatus = document.getElementById('codePassStatus');
+            if (data.passed) {
+                codePassStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 text-center font-bold success-celebration';
+                codePassStatus.textContent = '🎉 Excellent! Challenge Passed! +{{ challenge.points }} points';
+            } else {
+                codePassStatus.className = 'p-4 rounded-lg mb-4 bg-orange-500/20 border-2 border-orange-500 text-orange-400 text-center font-bold';
+                codePassStatus.textContent = '💪 Almost there! Fix the issues and try again';
+            }
+            codePassStatus.classList.remove('hidden');
+            
+            codeEvaluationSection.classList.remove('hidden');
+            codeEvaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Failed to submit. Please try again.');
+        console.error(error);
+    } finally {
+        submitCodeBtn.disabled = false;
+        submitCodeText.classList.remove('hidden');
+        submitCodeLoading.classList.add('hidden');
+    }
+}
+</script>

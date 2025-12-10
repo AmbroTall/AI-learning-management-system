@@ -1,0 +1,210 @@
+<!-- Prompt-based Challenge Interface (Modules 1 & 2) -->
+<div class="grid lg:grid-cols-2 gap-8">
+    <!-- Left Column: Instructions -->
+    <div class="space-y-6">
+        <!-- Instructions Card -->
+        <div class="glass-effect rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">📋</span> Instructions
+            </h2>
+            <div class="prose prose-invert max-w-none">
+                <p class="text-gray-300 whitespace-pre-line">{{ challenge.instructions }}</p>
+            </div>
+        </div>
+        
+        {% if challenge.example_prompt %}
+        <!-- Example Card -->
+        <div class="glass-effect rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">💡</span> Example
+            </h2>
+            <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
+                <div class="text-xs text-gray-400 mb-2">Example Prompt:</div>
+                <div class="font-mono text-sm text-cyan-300">{{ challenge.example_prompt }}</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Previous Attempts -->
+        {% if previous_attempts %}
+        <div class="glass-effect rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">📊</span> Your Attempts
+            </h2>
+            <div class="space-y-3">
+                {% for attempt in previous_attempts %}
+                <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Attempt #{{ attempt.attempt_number }}</span>
+                        <span class="text-2xl font-bold {% if attempt.passed %}text-green-400{% else %}text-orange-400{% endif %}">
+                            {{ attempt.score }}/100
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-400">{{ attempt.created_at|date:"M d, Y H:i" }}</div>
+                    {% if attempt.passed %}
+                    <div class="mt-2 text-green-400 text-sm">✓ Passed</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Right Column: Playground -->
+    <div class="space-y-6">
+        <!-- Prompt Input -->
+        <div class="glass-effect rounded-2xl p-8 neon-border">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">🎯</span> Your Prompt
+            </h2>
+            <textarea id="userPrompt" 
+                      class="w-full h-48 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white font-mono resize-none"
+                      placeholder="Type your prompt here..."></textarea>
+            
+            <button id="submitBtn" 
+                    class="w-full mt-4 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-bold text-lg hover-lift neon-border pulse-glow">
+                <span id="btnText">Submit Challenge</span>
+                <span id="btnLoading" class="hidden">⏳ Processing...</span>
+            </button>
+        </div>
+        
+        <!-- AI Response -->
+        <div id="responseSection" class="glass-effect rounded-2xl p-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">🤖</span> AI Response
+            </h2>
+            <div id="aiResponse" class="markdown-content bg-black/30 rounded-lg p-4 border border-purple-500/30 text-gray-300 max-h-96 overflow-y-auto"></div>
+        </div>
+        
+        <!-- Evaluation -->
+        <div id="evaluationSection" class="glass-effect rounded-2xl p-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-3">⭐</span> Evaluation
+            </h2>
+            
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400">Your Score</span>
+                    <span id="scoreValue" class="text-4xl font-bold gradient-text">0</span>
+                </div>
+                <div class="w-full bg-white/10 rounded-full h-4">
+                    <div id="scoreBar" class="bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div id="passStatus" class="hidden p-4 rounded-lg mb-4"></div>
+            
+            <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30 mb-4">
+                <div class="text-sm text-gray-400 mb-2">Feedback:</div>
+                <div id="feedbackText" class="text-gray-300 markdown-content"></div>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button onclick="tryAgain()" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-semibold transition">
+                    Try Again
+                </button>
+                {% if next_challenge %}
+                <a href="{% url 'challenge' next_challenge.id %}" class="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-semibold text-center hover-lift">
+                    Next Lesson →
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const submitBtn = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const btnLoading = document.getElementById('btnLoading');
+const userPrompt = document.getElementById('userPrompt');
+const responseSection = document.getElementById('responseSection');
+const evaluationSection = document.getElementById('evaluationSection');
+const aiResponse = document.getElementById('aiResponse');
+const scoreValue = document.getElementById('scoreValue');
+const scoreBar = document.getElementById('scoreBar');
+const feedbackText = document.getElementById('feedbackText');
+const passStatus = document.getElementById('passStatus');
+
+submitBtn.addEventListener('click', async function() {
+    const prompt = userPrompt.value.trim();
+    
+    if (!prompt) {
+        alert('Please enter a prompt');
+        return;
+    }
+    
+    // Show loading
+    submitBtn.disabled = true;
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    responseSection.classList.add('hidden');
+    evaluationSection.classList.add('hidden');
+    
+    try {
+        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Render AI response with markdown
+            aiResponse.innerHTML = marked.parse(data.ai_response);
+            // Highlight code blocks
+            aiResponse.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+            responseSection.classList.remove('hidden');
+            
+            // Show evaluation
+            scoreValue.textContent = data.score;
+            scoreBar.style.width = data.score + '%';
+            feedbackText.innerHTML = marked.parse(data.feedback);
+            evaluationSection.classList.remove('hidden');
+            
+            // Show pass/fail status
+            if (data.passed) {
+                passStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 text-center font-bold success-celebration';
+                passStatus.textContent = '🎉 Challenge Passed! +{{ challenge.points }} points';
+            } else {
+                passStatus.className = 'p-4 rounded-lg mb-4 bg-orange-500/20 border-2 border-orange-500 text-orange-400 text-center font-bold';
+                passStatus.textContent = '💪 Keep trying! Score 70+ to pass';
+            }
+            passStatus.classList.remove('hidden');
+            
+            // Scroll to results
+            evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Failed to submit challenge. Please try again.');
+        console.error(error);
+    } finally {
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+    }
+});
+
+function tryAgain() {
+    userPrompt.value = '';
+    userPrompt.focus();
+    responseSection.classList.add('hidden');
+    evaluationSection.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Allow Ctrl+Enter to submit
+userPrompt.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        submitBtn.click();
+    }
+});
+</script>

@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ challenge.title }} - AI Learning Platform{% endblock %}
+
+{% block extra_css %}
+<!-- Marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Highlight.js for code syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+.markdown-content {
+    line-height: 1.6;
+}
+.markdown-content code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Fira Code', monospace;
+}
+.markdown-content pre {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+.markdown-content pre code {
+    background: none;
+    padding: 0;
+}
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    color: #22D3EE;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+.markdown-content ul, .markdown-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+.markdown-content li {
+    margin: 8px 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Challenge Header -->
+    <div class="mb-8">
+        <a href="{% url 'module_detail' challenge.module.id %}" class="text-cyan-400 hover:text-cyan-300 mb-4 inline-block">
+            ← Back to {{ challenge.module.title }}
+        </a>
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">{{ challenge.title }}</h1>
+                <p class="text-xl text-gray-400">{{ challenge.description }}</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm text-gray-400 mb-1">Difficulty</div>
+                <span class="px-4 py-2 rounded-lg font-semibold
+                    {% if challenge.difficulty == 'beginner' %}bg-green-500/20 text-green-400
+                    {% elif challenge.difficulty == 'intermediate' %}bg-yellow-500/20 text-yellow-400
+                    {% else %}bg-red-500/20 text-red-400{% endif %}">
+                    {{ challenge.get_difficulty_display }}
+                </span>
+                <div class="mt-2 text-2xl font-bold gradient-text">{{ challenge.points }} pts</div>
+            </div>
+        </div>
+    </div>
+    
+    {% if has_passed %}
+    <div class="mb-8 p-6 glass-effect rounded-lg border-2 border-green-500/50 bg-green-500/10">
+        <div class="flex items-center space-x-3">
+            <span class="text-4xl">✅</span>
+            <div>
+                <div class="text-xl font-bold text-green-400">Challenge Completed!</div>
+                <div class="text-gray-300">You can still practice and improve your score</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Two Column Layout -->
+    <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Left Column: Instructions -->
+        <div class="space-y-6">
+            <!-- Instructions Card -->
+            <div class="glass-effect rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">📋</span> Instructions
+                </h2>
+                <div class="prose prose-invert max-w-none">
+                    <p class="text-gray-300 whitespace-pre-line">{{ challenge.instructions }}</p>
+                </div>
+            </div>
+            
+            {% if challenge.example_prompt %}
+            <!-- Example Card -->
+            <div class="glass-effect rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">💡</span> Example
+                </h2>
+                <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
+                    <div class="text-xs text-gray-400 mb-2">Example Prompt:</div>
+                    <div class="font-mono text-sm text-cyan-300">{{ challenge.example_prompt }}</div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Previous Attempts -->
+            {% if previous_attempts %}
+            <div class="glass-effect rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">📊</span> Your Attempts
+                </h2>
+                <div class="space-y-3">
+                    {% for attempt in previous_attempts %}
+                    <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-400">Attempt #{{ attempt.attempt_number }}</span>
+                            <span class="text-2xl font-bold {% if attempt.passed %}text-green-400{% else %}text-orange-400{% endif %}">
+                                {{ attempt.score }}/100
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-400">{{ attempt.created_at|date:"M d, Y H:i" }}</div>
+                        {% if attempt.passed %}
+                        <div class="mt-2 text-green-400 text-sm">✓ Passed</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Right Column: Playground -->
+        <div class="space-y-6">
+            <!-- Prompt Input -->
+            <div class="glass-effect rounded-2xl p-8 neon-border">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">🎯</span> Your Prompt
+                </h2>
+                <textarea id="userPrompt" 
+                          class="w-full h-48 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white font-mono resize-none"
+                          placeholder="Type your prompt here..."></textarea>
+                
+                <button id="submitBtn" 
+                        class="w-full mt-4 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-bold text-lg hover-lift neon-border pulse-glow">
+                    <span id="btnText">Submit Challenge</span>
+                    <span id="btnLoading" class="hidden">Processing...</span>
+                </button>
+            </div>
+            
+            <!-- AI Response -->
+            <div id="responseSection" class="glass-effect rounded-2xl p-8 hidden">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">🤖</span> AI Response
+                </h2>
+                <div id="aiResponse" class="bg-black/30 rounded-lg p-4 border border-purple-500/30 text-gray-300 text-sm max-h-96 overflow-y-auto prose prose-invert max-w-none"></div>
+            </div>
+            
+            <!-- Evaluation -->
+            <div id="evaluationSection" class="glass-effect rounded-2xl p-8 hidden">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="mr-3">⭐</span> Evaluation
+                </h2>
+                
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400">Your Score</span>
+                        <span id="scoreValue" class="text-4xl font-bold gradient-text">0</span>
+                    </div>
+                    <div class="w-full bg-white/10 rounded-full h-4">
+                        <div id="scoreBar" class="bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div id="passStatus" class="hidden p-4 rounded-lg mb-4"></div>
+                
+                <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
+                    <div class="text-sm text-gray-400 mb-2">Feedback:</div>
+                    <div id="feedbackText" class="text-gray-300"></div>
+                </div>
+                
+                <button onclick="tryAgain()" class="w-full mt-4 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-semibold transition">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const submitBtn = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const btnLoading = document.getElementById('btnLoading');
+const userPrompt = document.getElementById('userPrompt');
+const responseSection = document.getElementById('responseSection');
+const evaluationSection = document.getElementById('evaluationSection');
+const aiResponse = document.getElementById('aiResponse');
+const scoreValue = document.getElementById('scoreValue');
+const scoreBar = document.getElementById('scoreBar');
+const feedbackText = document.getElementById('feedbackText');
+const passStatus = document.getElementById('passStatus');
+
+submitBtn.addEventListener('click', async function() {
+    const prompt = userPrompt.value.trim();
+    
+    if (!prompt) {
+        alert('Please enter a prompt');
+        return;
+    }
+    
+    // Show loading
+    submitBtn.disabled = true;
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    responseSection.classList.add('hidden');
+    evaluationSection.classList.add('hidden');
+    
+    try {
+        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show AI response with markdown rendering
+            if (typeof marked !== 'undefined') {
+                aiResponse.innerHTML = marked.parse(data.ai_response);
+            } else {
+                aiResponse.textContent = data.ai_response;
+            }
+            responseSection.classList.remove('hidden');
+            
+            // Show evaluation
+            scoreValue.textContent = data.score;
+            scoreBar.style.width = data.score + '%';
+            feedbackText.textContent = data.feedback;
+            evaluationSection.classList.remove('hidden');
+            
+            // Show pass/fail status with next lesson button
+            if (data.passed) {
+                passStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 font-bold';
+                passStatus.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-2xl mb-2">🎉 Challenge Passed! +{{ challenge.points }} points</div>
+                        <div class="flex justify-center space-x-4 mt-4">
+                            <button onclick="tryAgain()" class="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition">
+                                Practice Again
+                            </button>
+                            <a href="{% url 'module_detail' challenge.module.id %}" class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover-lift inline-block">
+                                Next Lesson →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                passStatus.className = 'p-4 rounded-lg mb-4 bg-orange-500/20 border-2 border-orange-500 text-orange-400 text-center font-bold';
+                passStatus.textContent = '💪 Keep trying! Score 70+ to pass';
+            }
+            passStatus.classList.remove('hidden');
+            
+            // Scroll to results
+            evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Failed to submit challenge. Please try again.');
+        console.error(error);
+    } finally {
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+    }
+});
+
+function tryAgain() {
+    userPrompt.value = '';
+    userPrompt.focus();
+    responseSection.classList.add('hidden');
+    evaluationSection.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Allow Ctrl+Enter to submit
+userPrompt.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        submitBtn.click();
+    }
+});
+</script>
+
+<!-- Marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Configure marked for better code rendering
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        highlight: function(code, lang) {
+            return code;
+        }
+    });
+}
+</script>
+{% endblock %}
