@@ -18,7 +18,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8006:8000"
+      - "8005:8000"
     environment:
       - DATABASE_URL=postgresql://ai_user:ai_password123@db:5432/ai_learning_db
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
