@@ -52,7 +52,7 @@ def register(request):
     
     return render(request, 'register.html')
 
-
+# Login function
 def login_view(request):
     """User login"""
     if request.method == 'POST':
