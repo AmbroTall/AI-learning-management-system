@@ -56,7 +56,7 @@ class Command(BaseCommand):
 **Skills:** Prompt engineering, AI communication, professional writing''',
                 'order': 1,
                 'icon': '🎯',
-                'estimated_hours': 18,
+                'duration_hours': 18,
                 'module_type': 'prompting'
             }
         )
@@ -101,56 +101,56 @@ class Command(BaseCommand):
         # Create Achievements
         achievements_data = [
             {
-                'title': 'First Steps',
+                'name': 'First Steps',
                 'description': 'Complete your first challenge',
-                'badge_icon': '🌟',
+                'icon': '🌟',
                 'points_required': 0,
                 'challenges_required': 1,
             },
             {
                 'title': 'Quick Learner',
                 'description': 'Complete 5 challenges',
-                'badge_icon': '⚡',
+                'icon': '⚡',
                 'points_required': 0,
                 'challenges_required': 5,
             },
             {
                 'title': 'Dedicated Student',
                 'description': 'Complete 10 challenges',
-                'badge_icon': '📚',
+                'icon': '📚',
                 'points_required': 0,
                 'challenges_required': 10,
             },
             {
                 'title': 'Prompt Master',
                 'description': 'Complete Module 1: AI Prompt Engineering Mastery',
-                'badge_icon': '🎯',
+                'icon': '🎯',
                 'points_required': 0,
                 'challenges_required': 30,
             },
             {
                 'title': 'High Achiever',
                 'description': 'Earn 500 points',
-                'badge_icon': '🏆',
+                'icon': '🏆',
                 'points_required': 500,
                 'challenges_required': 0,
             },
             {
                 'title': 'Perfectionist',
                 'description': 'Score 100/100 on any challenge',
-                'badge_icon': '💯',
+                'icon': '💯',
                 'points_required': 0,
                 'challenges_required': 0,
             },
         ]
         
-        for achievement_data in achievements_data:
-            achievement, created = Achievement.objects.get_or_create(
-                title=achievement_data['title'],
-                defaults=achievement_data
-            )
-            if created:
-                self.stdout.write(f'Created achievement: {achievement.title}')
+        # for achievement_data in achievements_data:
+        #     achievement, created = Achievement.objects.get_or_create(
+        #         title=achievement_data['name'],
+        #         defaults=achievement_data
+        #     )
+        #     if created:
+        #         self.stdout.write(f'Created achievement: {achievement.title}')
         
         self.stdout.write(self.style.SUCCESS('\n' + '='*60))
         self.stdout.write(self.style.SUCCESS('DATABASE POPULATED SUCCESSFULLY! 🎉'))
