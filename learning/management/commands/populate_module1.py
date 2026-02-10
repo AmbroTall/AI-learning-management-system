@@ -57,7 +57,7 @@ class Command(BaseCommand):
                 'order': 1,
                 'icon': '🎯',
                 'duration_hours': 18,
-                'module_type': 'prompting'
+                'module_type': 'chat'
             }
         )
         if created:

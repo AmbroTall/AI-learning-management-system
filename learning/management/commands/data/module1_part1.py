@@ -1,293 +1,506 @@
 """
-Module 1 Part 1: Prompt Engineering Fundamentals
-Challenges 1-8: Basics and Core Concepts (3-4 hours)
+Module 1 Part 1: Foundations — "Your AI Superpowers"
+Challenges 1-8: Core prompt engineering skills through fun, real-world scenarios (3-4 hours)
 """
 
 MODULE1_PART1_CHALLENGES = [
     {
         'title': 'Your First AI Conversation',
-        'description': 'Learn the basics of communicating with AI',
+        'description': 'Learn the basics of talking to AI and getting useful responses',
         'difficulty': 'beginner',
         'order': 1,
         'points': 10,
-        'instructions': '''Welcome to AI! Let's start with the basics.
+        'instructions': '''Welcome to AI Prompt Engineering! Let's start with your very first conversation.
 
-**Your Goal:** Have a simple conversation with AI about your career goals.
+**What You'll Learn:**
+- How to talk to AI naturally
+- Why clear communication matters
+- How to get useful, actionable responses
 
-**What to do:**
-1. Introduce yourself
-2. Ask AI to help you explore tech careers
-3. Be specific about your interests and background
+**Your Challenge:**
+You're planning a weekend trip and need AI's help. Ask AI to help you plan a 2-day weekend getaway.
 
-**Tips:**
-- Be clear and direct
-- Provide context about yourself
-- Ask open-ended questions
+**What to include in your prompt:**
+1. Where you want to go (pick a real city or region!)
+2. Your budget
+3. What kind of activities you enjoy
+4. Any constraints (travelling solo? with family? dietary needs?)
 
-**Example Context:**
-"I'm a construction worker interested in switching to tech. I'm good with my hands and problem-solving. What tech careers might suit me?"''',
-        'example_prompt': 'Hi! I\'m John, currently working in construction for 10 years. I\'m really interested in switching to tech because I love problem-solving and learning new tools. I\'m good at understanding how systems work together. Based on this, what tech careers would you recommend for someone like me? Please explain why each might be a good fit.',
+**Why This Matters:**
+This is exactly how people use AI in real life — to plan, brainstorm, and get personalised advice. The better you communicate what you want, the more useful the response.
+
+**Tips for Success:**
+- Write naturally, like you're asking a knowledgeable friend
+- Include enough detail so AI understands YOUR situation
+- Don't be afraid to be specific — "I like hiking" is good, "I like easy coastal hikes with ocean views" is better!''',
+        'example_prompt': '''I'm planning a weekend trip to Brighton for 2 days next month. My budget is around £200 for activities and food (accommodation is sorted).
+
+I enjoy:
+- Walking along the coast and easy hikes
+- Trying local food spots (I'm vegetarian)
+- Quirky independent shops and markets
+- Live music or comedy if anything's on
+
+I'll be going with a friend who's never been to Brighton before.
+
+Can you plan out a fun 2-day itinerary? Include specific places to eat and things to do, with rough timing so we make the most of it.''',
     },
     {
         'title': 'Be Specific, Get Better Results',
-        'description': 'Learn why specificity matters in prompts',
+        'description': 'Discover why vague prompts get vague answers — and how to fix that',
         'difficulty': 'beginner',
         'order': 2,
         'points': 15,
-        'instructions': '''Vague prompts = vague answers. Specific prompts = useful answers!
+        'instructions': '''The #1 rule of prompt engineering: **Specificity is your superpower.**
 
-**Your Goal:** Get AI to create a specific study plan for learning Python.
+**What You'll Learn:**
+- The difference between a vague and a specific prompt
+- How to add the right details without overloading
+- Why specific prompts save you time (fewer back-and-forths!)
 
-**Be specific about:**
-1. Your current skill level (complete beginner? some coding?)
-2. Time available (hours per week)
-3. Your learning goal (what do you want to build?)
-4. Deadline or timeframe
+**The Problem:**
+Compare these two prompts:
+- Vague: "Help me write a cover letter"
+- Specific: Includes the job title, company, your experience, what to highlight, and the tone
 
-**Bad Example:** "Help me learn Python"
-**Good Example:** Include all 4 details above!
+The vague version gives a generic template. The specific version gives something you can actually use.
 
-**Challenge:** 
-Create a prompt that gets AI to make a personalized 8-week Python learning plan for a complete beginner with 10 hours/week available.''',
-        'example_prompt': 'I need a detailed 8-week Python learning plan. Context: I\'m a complete beginner with zero coding experience. I can dedicate 10 hours per week. My goal is to build a simple web scraper for job listings by the end. Please structure it week-by-week with specific topics, resources, and a small project each week to practice.',
+**Your Challenge:**
+Get AI to write a personalised cover letter for a job you'd love to have (real or imagined).
+
+**Your prompt MUST include:**
+1. The job title and company name
+2. Your relevant background (even if you're a student or career changer — that's fine!)
+3. 2-3 specific things about the company that attracted you
+4. The tone you want (formal? enthusiastic? confident?)
+5. Any specific achievements or skills to highlight
+6. Length preference
+
+**Pro Tip:**
+Think of it like ordering food. "Give me something good" vs "I'd like a medium veggie pizza with extra mushrooms, light on the cheese" — which one gets you what you actually want?''',
+        'example_prompt': '''Write a cover letter for me applying to the "Junior Marketing Coordinator" role at Spotify.
+
+**About me:**
+- Recent graduate with a degree in Communications
+- 6-month internship at a local radio station where I managed their Instagram (grew followers by 40%)
+- Created a student podcast that got 2,000 downloads in its first month
+- Passionate about music and digital culture
+- No formal marketing experience beyond the internship
+
+**Why Spotify:**
+- I use Spotify daily and love their "Wrapped" campaign — it's genius user engagement
+- Their brand voice is fun and relatable, which matches my communication style
+- I want to work where creativity and data intersect
+
+**Tone:** Enthusiastic but professional. Show personality without being too casual.
+
+**Length:** Under 300 words — keep it punchy.
+
+**Must include:** Reference to my podcast experience and the Instagram growth metric.''',
     },
     {
-        'title': 'Providing Context is Key',
-        'description': 'Learn how context improves AI responses',
+        'title': 'The Magic of Context',
+        'description': 'Learn how giving AI the right background transforms its responses',
         'difficulty': 'beginner',
         'order': 3,
         'points': 15,
-        'instructions': '''AI doesn't know your background unless you tell it!
+        'instructions': '''Context is the secret ingredient that turns generic AI responses into genuinely useful ones.
 
-**Your Goal:** Get AI to explain a technical concept at YOUR level.
+**What You'll Learn:**
+- Why AI gives better answers when it knows your situation
+- How to provide context efficiently (not a life story!)
+- The difference context makes in response quality
 
-**The Scenario:**
-You need to understand what "API" means, but most explanations are too technical.
+**The Concept:**
+AI doesn't know anything about you unless you tell it. When you say "explain machine learning," AI doesn't know if you're a professor or a 10-year-old. Context fills that gap.
 
-**What to include:**
-1. What you need explained
-2. Your background/experience level
-3. Why you need to know (context helps!)
-4. How you learn best (examples? analogies?)
+**Your Challenge:**
+Pick ONE concept from this list (or choose your own):
+- How the stock market works
+- What AI actually is
+- How a business makes money
+- What blockchain is
+- How social media algorithms work
 
-**Challenge:**
-Get AI to explain "API" in a way that someone with NO tech background can understand. Use an analogy they'd relate to!''',
-        'example_prompt': 'Can you explain what an API is? Context: I have zero tech background - I work in retail management. I keep hearing about APIs in job descriptions for tech roles. Can you explain it using an analogy related to restaurants or retail that I would understand? Make it simple and practical.',
+Now get AI to explain it to **three different people:**
+1. A curious 10-year-old
+2. Your grandparent who's never used a computer
+3. A job interviewer who asked "tell me what you know about this"
+
+**What makes this powerful:**
+Same topic, completely different explanations — all because you changed the context. This is a skill you'll use constantly: adjusting AI's output by telling it WHO the audience is.
+
+**Tips:**
+- For each version, tell AI exactly who they're talking to
+- Mention what language/analogies would work for each person
+- Give a word limit to keep each version focused''',
+        'example_prompt': '''Explain "how social media algorithms work" in 3 completely different ways:
+
+**Version 1 — For a curious 10-year-old:**
+- Use a fun analogy they'd understand (like a school cafeteria, a librarian, or a DJ)
+- Keep it under 60 words
+- Make it sound exciting, not scary
+- No technical words at all
+
+**Version 2 — For my 75-year-old grandma who uses Facebook but doesn't understand why she sees certain posts:**
+- Use her experience as the starting point ("You know how you see some friends' posts more than others?")
+- Explain it practically — what does it mean for HER
+- Reassuring tone, under 80 words
+- Avoid words like "algorithm" — use plain English
+
+**Version 3 — For a job interviewer who asked "What do you know about social media algorithms?"**
+- Professional and knowledgeable tone
+- Show understanding of key concepts (engagement, ranking signals, personalisation)
+- Mention a real example (Instagram, TikTok, or LinkedIn)
+- About 100 words
+- End with an insight that shows I think critically about it
+
+Label each version clearly.''',
     },
     {
-        'title': 'Breaking Down Complex Tasks',
-        'description': 'Learn to structure multi-step requests',
+        'title': 'Structuring Your Requests',
+        'description': 'Learn to break big, messy requests into clear, organised prompts',
         'difficulty': 'beginner',
         'order': 4,
         'points': 20,
-        'instructions': '''Big tasks need clear structure!
+        'instructions': '''Big tasks need structure. A wall of text confuses both humans AND AI.
 
-**Your Goal:** Get AI to help you write a professional email with multiple requirements.
+**What You'll Learn:**
+- How to break complex requests into clear sections
+- Using bullet points, numbering, and headers to organise prompts
+- Why structured prompts get dramatically better results
 
-**The Task:**
-You need to email a hiring manager about a job application. The email should:
-1. Thank them for the interview
-2. Mention 2 specific things discussed
-3. Address a concern they raised (your lack of degree)
-4. Express enthusiasm
-5. Include a call-to-action
-6. Be under 200 words
+**The Problem:**
+Imagine asking a chef: "Make me food for the week, I'm busy, I like healthy stuff but also pasta, oh and I can't eat dairy, and Tuesdays I get home late so something quick, and I meal prep on Sundays."
 
-**Challenge:**
-Structure your prompt to cover ALL requirements clearly. Number them or use bullet points!''',
-        'example_prompt': '''Help me write a follow-up email after a job interview. Requirements:
+vs. giving them a clear brief with sections. Same information, completely different result.
 
-**Context:**
-- Interviewed for Junior Developer role with Sarah Chen yesterday
-- She was concerned about my lack of CS degree
-- We discussed the company's Python migration project and their remote work culture
+**Your Challenge:**
+Ask AI to create a **weekly meal plan** for you. But here's the twist — you need to structure your request clearly with specific sections.
 
-**Email must include:**
-1. Thank her for her time
-2. Reference the Python migration project we discussed
-3. Address her degree concern (I have online certificates + portfolio)
-4. Show enthusiasm for the remote culture they described
-5. Ask about next steps
-6. Keep it under 200 words, professional but warm tone
+**Your prompt must include these sections:**
+1. **About me** — dietary preferences, allergies, cooking skill level
+2. **Constraints** — budget per week, time available to cook, kitchen equipment
+3. **Preferences** — cuisines you love, foods you hate, comfort foods
+4. **Schedule** — which days you're busy (need quick meals) vs free (can cook longer)
+5. **Output format** — how you want the plan organised (by day? with shopping list? with prep times?)
 
-Please draft this email.''',
+**Real-World Application:**
+This structure works for ANY complex request — project plans, travel itineraries, study schedules, event planning. Master it once, use it everywhere.''',
+        'example_prompt': '''Create a weekly meal plan for me. Here's everything you need:
+
+**About Me:**
+- Cooking skill: Intermediate (comfortable with most things, but nothing that takes 15 steps)
+- Diet: No specific diet, but trying to eat more vegetables and less processed food
+- Allergies: None, but I really dislike olives and aubergine
+
+**Constraints:**
+- Budget: About £50 for the week (for one person)
+- Time: Weekday dinners need to be under 30 minutes
+- I have a basic kitchen — oven, hob, one good pan, a baking tray, blender
+- I meal prep on Sunday afternoon (2 hours max)
+
+**Preferences:**
+- Love: Mexican, Thai, Italian, and anything with rice
+- Comfort foods: Pasta, stir-fry, soup
+- I like variety — don't repeat the same meal twice in a week
+- Breakfast can be simple (I'm not a morning cook)
+
+**Weekly Schedule:**
+- Monday–Wednesday: Home by 6pm, can cook 30 min
+- Thursday: Late day, need something I prepped earlier or 15-min max
+- Friday: Takeaway night (skip this)
+- Saturday: Free to cook something fun (up to 1 hour)
+- Sunday: Meal prep day + a nice brunch
+
+**Format I Want:**
+- Day-by-day breakdown (breakfast, lunch, dinner)
+- Sunday prep list (what to make ahead)
+- Full shopping list organised by supermarket section (produce, dairy, etc.)
+- Estimated cost per meal
+
+Keep it practical and realistic — I actually want to follow this!''',
     },
     {
-        'title': 'Using Examples to Guide AI',
-        'description': 'Learn how examples shape AI output',
+        'title': 'Show, Don\'t Just Tell',
+        'description': 'Use examples to show AI exactly what style and quality you want',
         'difficulty': 'beginner',
         'order': 5,
         'points': 20,
-        'instructions': '''Show AI what you want with examples!
+        'instructions': '''One of the most powerful prompt engineering techniques: **give AI examples of what you want.**
 
-**Your Goal:** Get AI to write social media posts in a specific style.
+**What You'll Learn:**
+- How "few-shot prompting" works (giving examples before your request)
+- Why examples are worth a thousand words of explanation
+- How to use examples to control tone, style, and format
 
-**The Scenario:**
-You're helping a local business with their social media. They want posts that are:
-- Friendly and casual (not corporate)
-- Include a question to engage followers
-- 2-3 sentences max
-- Use emojis (but not too many!)
+**The Concept:**
+Instead of trying to describe the exact style you want (which is hard!), just SHOW it. Give AI 1-2 examples and say "more like this."
 
-**Challenge:**
-Provide 2 example posts you like, then ask AI to create 3 more in the same style about different topics.
+Think of it like showing a hairdresser a photo vs trying to describe the haircut in words. The photo wins every time.
 
-**Topics for new posts:**
-1. New product launch
-2. Customer appreciation
-3. Behind-the-scenes content''',
-        'example_prompt': '''I need social media posts for a small coffee shop. Here's the style we want:
+**Your Challenge:**
+You're helping a small business with their social media. They have a specific voice and style.
 
-**Example 1:**
-"Just brewed our new seasonal blend! ☕ Rich, smooth, with hints of caramel. What's your go-to coffee order on a rainy day? 🌧️"
+**What to do:**
+1. Write (or copy) 2 example social media posts that have the tone/style you want
+2. Explain what makes these examples good (this helps AI understand the pattern)
+3. Ask AI to create 3 NEW posts in the same style about different topics
 
-**Example 2:**
-"Morning sunshine! ☀️ Our pastry chef just pulled fresh croissants from the oven. Can you smell them from there? 😊 Stop by before they're gone!"
+**Topics for the new posts:**
+- Announcing a new product or service
+- A behind-the-scenes or "day in the life" post
+- A customer appreciation or thank-you post
 
-**Task:**
-Write 3 more posts in this exact style for:
-1. Announcing a new WiFi upgrade
-2. Thanking customers for 5 years in business  
-3. Introducing a new barista named Mike
+**Why This Works:**
+When you show AI a pattern, it picks up on things you might not even be able to articulate — sentence length, emoji usage, vocabulary level, humour style. It's like giving AI a style guide in seconds.''',
+        'example_prompt': '''I run a small plant shop called "Leaf It To Us" and I need more social media posts. Here's our style:
 
-Keep the same tone, length, and emoji usage!''',
+**Example Post 1:**
+"Monday morning rescue mission: grabbed this sad little fern from the clearance shelf. Two weeks of love and good light, and look at her now! Never give up on a plant (or a Monday). Who else is a plant rescuer? Show us your glow-ups!"
+
+**Example Post 2:**
+"Real talk: we killed our first three succulents before figuring it out. Overwatering is NOT love, people. Now we've got 200+ happy plants in the shop and we're here to save you from our mistakes. Drop your plant questions below — no judgement, only soil and sunshine."
+
+**What I love about these:**
+- Conversational and warm, like talking to a friend
+- A bit cheeky/humorous
+- Personal stories make it relatable
+- Always ends with a question or call-to-action
+- Uses emojis sparingly (1-2 max)
+- Short sentences, easy to read on a phone
+
+**Now create 3 new posts in this exact style for:**
+
+1. **New arrival post:** We just got a shipment of rare Monstera Thai Constellation plants (they're gorgeous and sell out fast)
+
+2. **Behind-the-scenes:** What our Sunday plant care routine looks like at the shop (watering 200+ plants, checking for pests, playing music for them)
+
+3. **Customer appreciation:** A regular customer named Dave brings us homemade biscuits every Friday and we want to celebrate him
+
+Match our voice exactly!''',
     },
     {
-        'title': 'Specifying Format and Structure',
-        'description': 'Control how AI formats its responses',
+        'title': 'Choosing the Right Format',
+        'description': 'Control HOW AI presents information — tables, lists, comparisons, and more',
         'difficulty': 'intermediate',
         'order': 6,
         'points': 20,
-        'instructions': '''You can tell AI exactly HOW to format answers!
+        'instructions': '''The same information can be useless or incredibly useful depending on how it's formatted.
 
-**Your Goal:** Get a formatted comparison table from AI.
+**What You'll Learn:**
+- How to request specific output formats (tables, bullet points, pros/cons, etc.)
+- When to use which format
+- How format requests dramatically improve usability
 
-**The Scenario:**
-You're comparing 3 online learning platforms to decide where to study. You want:
-- A table format
-- Specific comparison criteria
-- Clear pros/cons
-- A recommendation at the end
+**Why Format Matters:**
+Imagine getting a restaurant recommendation as:
+- A 500-word essay (hard to scan)
+- A comparison table with ratings (easy to compare!)
 
-**Platforms to compare:**
-1. Coursera
-2. Udemy  
-3. Codecademy
+Same info, but the table is actually useful when you're making a decision.
 
-**Compare on:**
-- Price
-- Certificate value
-- Course variety
-- Learning style
-- Best for beginners?
+**Your Challenge:**
+You're making a real decision and need AI to help you compare options in a **structured format.**
 
-**Challenge:**
-Request the information in a specific format (table + summary).''',
-        'example_prompt': '''Compare these 3 learning platforms for me: Coursera, Udemy, and Codecademy.
+**Pick ONE decision scenario:**
+- Comparing 3 online course platforms for learning a new skill
+- Comparing 3 cities you might move to
+- Comparing 3 laptop/phone options
+- Comparing 3 career paths you're considering
 
-**Format Required:**
-Create a comparison table with these columns:
+**Your prompt must request:**
+1. A comparison table with at least 5 criteria
+2. A "quick verdict" section (2-3 sentences per option)
+3. A final recommendation based on a specific need you state
+4. A clear format that's easy to scan quickly
+
+**Pro Tip:**
+Tell AI exactly what columns you want in the table. Don't just say "compare them" — say "compare on: price, learning style, certificate value, job relevance, and beginner-friendliness."''',
+        'example_prompt': '''I'm choosing an online platform to learn data analysis. Compare these 3 options for me:
+
+1. **Google Data Analytics Certificate** (Coursera)
+2. **DataCamp** subscription
+3. **freeCodeCamp** (free)
+
+**Create a comparison table with these columns:**
 - Platform name
-- Monthly cost
-- Certificate value (industry-recognized?)
-- Course variety (1-10 scale)
-- Learning style (video, interactive, etc.)
-- Beginner-friendly? (Yes/No + brief note)
+- Cost (total for 6 months of learning)
+- Certificate included? (Is it recognised by employers?)
+- Learning style (video lectures, interactive coding, projects?)
+- Time to complete (assuming 10 hours/week)
+- Beginner-friendly? (Rate 1-5, with a brief note)
+- Job-readiness (will I have a portfolio at the end?)
 
-After the table, provide:
-1. A 2-sentence summary of each platform
-2. Your recommendation for someone who is: complete beginner, wants hands-on practice, budget-conscious, aiming for a career change to web development
+**After the table, add:**
 
-Keep it concise and scannable!''',
+**Quick Verdict (2-3 sentences each):**
+- Best thing about each platform
+- Biggest drawback of each platform
+- Who it's perfect for
+
+**My Recommendation:**
+Based on my situation:
+- Complete beginner (no coding or data experience)
+- Can spend max £30/month
+- Want something I can show employers (portfolio or certificate)
+- Available 10 hours/week
+- Goal: Get an entry-level data analyst role in 6 months
+
+Which one should I pick and why? Be direct — I need a clear answer, not "it depends."''',
     },
     {
-        'title': 'Setting the Right Tone',
-        'description': 'Learn to specify tone and style',
+        'title': 'Tone and Audience',
+        'description': 'Master how to control the voice, tone, and style of AI responses',
         'difficulty': 'intermediate',
         'order': 7,
         'points': 20,
-        'instructions': '''Tone matters! Professional? Casual? Technical? Simple?
+        'instructions': '''The same message, delivered in the wrong tone, can fall completely flat. Tone control is a superpower.
 
-**Your Goal:** Get AI to explain the same concept in 3 different tones.
+**What You'll Learn:**
+- How to specify tone precisely (not just "professional" or "casual")
+- How to adapt the same content for different audiences
+- Real-world applications: emails, posts, announcements
 
-**The Concept:** How GitHub works
+**The Concept:**
+"We're changing the office layout" can be:
+- An exciting announcement: "Big news! We're upgrading our workspace..."
+- A formal memo: "Please be advised that office restructuring will commence..."
+- A casual Slack: "Heads up team — we're shuffling desks next week!"
 
-**Three audiences:**
-1. Your 12-year-old cousin (super simple, fun)
-2. Your boss (professional, business-focused)
-3. A fellow learner (casual, encouraging)
+Same information. Completely different impact.
 
-**Challenge:**
-Ask AI to write one explanation for each audience. Specify the tone clearly!''',
-        'example_prompt': '''Explain "what is GitHub and why developers use it" in 3 different ways:
+**Your Challenge:**
+You have a piece of news to share: **Your company is switching to a 4-day work week starting next month.**
 
-**Version 1 - For my 12-year-old cousin:**
-- Use simple everyday language
-- Include a fun analogy (maybe video games or school projects?)
-- 3-4 sentences max
-- Enthusiastic tone
+Get AI to write this announcement in 3 completely different formats and tones:
 
-**Version 2 - For my boss (non-technical manager):**
-- Professional tone
-- Focus on business value
-- No jargon
-- 4-5 sentences
-- Emphasize collaboration and project management
+1. **Formal company email** — from the CEO to all employees. Professional, clear, addresses potential concerns.
+2. **Casual Slack message** — from a team lead to their team. Excited, brief, conversational.
+3. **Social media post (LinkedIn)** — from the company's brand account. Inspiring, attracts talent, shareable.
 
-**Version 3 - For a fellow coding beginner:**
-- Casual, friendly tone
-- Mention what we'll actually use it for
-- 4-5 sentences
-- Encouraging and practical
+**For each version, specify:**
+- Who's writing it
+- Who's reading it
+- The exact tone (give AI 2-3 adjectives)
+- Word count or length
+- What to include or emphasise
+- What to avoid
 
-Please write all three versions.''',
+**Why This Matters:**
+In any job, you'll communicate the same information to different audiences constantly. This skill translates directly to workplace communication, marketing, and leadership.''',
+        'example_prompt': '''Our company "BrightPath" (a 50-person tech startup) is switching to a 4-day work week starting March 1st. Write 3 versions of this announcement:
+
+---
+
+**VERSION 1: Formal Company Email**
+- From: CEO (Sarah Mitchell)
+- To: All employees
+- Tone: Warm but professional, confident, reassuring
+- Length: 200-250 words
+- Must address:
+  - Why we're doing this (employee wellbeing + productivity research)
+  - How it works (Fridays off, same salary, trial period of 3 months)
+  - What's expected (maintain quality of work, some teams may need to coordinate)
+  - Who to ask questions (HR)
+- Avoid: Making it sound like a test they could fail, or being too stiff/corporate
+
+---
+
+**VERSION 2: Casual Slack Message**
+- From: Team lead (you) to your team of 8
+- Tone: Excited, genuine, light-hearted
+- Length: 60-80 words max
+- Must include: The key facts (when it starts, how it works)
+- Can include: An emoji or two, a bit of humour
+- Avoid: Being so casual that important details get lost
+
+---
+
+**VERSION 3: LinkedIn Post**
+- From: BrightPath's company page
+- Tone: Inspiring, forward-thinking, authentic (not braggy)
+- Length: 150-200 words
+- Must include: Why this matters for the industry, a human touch
+- Should: Make talented people want to work here
+- End with: A question or call-to-action to drive engagement
+- Avoid: Sounding like every other corporate "we care about our people" post
+
+Label each version clearly and make them feel genuinely different — not just the same text with different word choices.''',
     },
     {
-        'title': 'Iterating and Refining',
-        'description': 'Learn to improve responses through follow-up',
+        'title': 'The Art of Iteration',
+        'description': 'Learn the most practical skill: making AI responses better through refinement',
         'difficulty': 'intermediate',
         'order': 8,
         'points': 25,
-        'instructions': '''First answer not perfect? Refine it!
+        'instructions': '''Here's a secret: professionals almost never use the first AI response. They iterate.
 
-**Your Goal:** Get AI to create and then refine a resume bullet point.
+**What You'll Learn:**
+- The draft → feedback → refine workflow
+- How to give AI specific improvement instructions
+- Why iteration beats trying to write the "perfect" first prompt
 
-**The Scenario:**
-You're updating your resume. You have a bullet point but it's weak:
-"Worked on team projects and helped with various tasks"
+**The Concept:**
+Think of AI like a talented but mind-reading-impaired assistant. The first draft gets you 70% there. Your feedback gets you to 95%. This is normal and efficient!
 
-**Challenge:**
-1. First, ask AI to improve it (give context about your actual role)
-2. Then, refine it further with specific requirements:
-   - Start with action verb
-   - Include a metric/number
-   - Show impact/result
-   - Keep under 20 words
+**The Workflow:**
+1. **First request:** Get the initial draft
+2. **Review:** What's good? What's not right?
+3. **Refine:** Give specific feedback and ask for improvements
+4. **Polish:** Fine-tune the final version
 
-**Your actual role:**
-- Led a 5-person team
-- Reduced project completion time
-- Improved process efficiency
+**Your Challenge:**
+Get AI to help you create a LinkedIn "About" summary — but do it in **stages within a single prompt.**
 
-Show the iterative improvement process!''',
-        'example_prompt': '''Help me improve this weak resume bullet point:
-"Worked on team projects and helped with various tasks"
+**Stage 1:** Ask AI to write a first draft based on your background
+**Stage 2:** Tell AI what to improve (e.g., "make the opening more attention-grabbing," "add a personal story," "cut the jargon")
+**Stage 3:** Ask AI to polish the final version with specific constraints
 
-**Context:**
-- Role: Team Lead at construction company
-- Actually led a 5-person crew
-- Reduced project completion time by 30%
-- Implemented new safety protocols
+**You must show all 3 stages in your prompt** — this teaches AI (and you!) the iteration mindset.
 
-**First request:** Rewrite it to be more impressive and specific.
+**Real-World Value:**
+This is how professionals use AI for writing, coding, design briefs, presentations — everything. The skill isn't writing one perfect prompt. It's knowing how to guide AI from "okay" to "excellent."''',
+        'example_prompt': '''Help me create a LinkedIn "About" section. We'll do this in 3 stages — draft, improve, and polish.
 
-**Then, refine it to meet these criteria:**
-- Start with strong action verb (Led, Spearheaded, Directed, etc.)
-- Include the 30% improvement metric
-- Show business impact
-- Maximum 20 words
-- Focus on leadership and results
+---
 
-Give me both versions (improved, then refined).''',
+**STAGE 1 — First Draft**
+
+Write a LinkedIn About section based on this:
+- Name: Alex Rivera
+- Current: Career changer — just completed a data analytics bootcamp
+- Previous: 5 years as a restaurant manager
+- Key skills: People management, problem-solving, Excel, Python (learning), SQL (learning)
+- Goal: Land a junior data analyst role
+- Personality: Friendly, hardworking, curious
+
+Write a first draft (150-200 words, first person).
+
+---
+
+**STAGE 2 — Improve It**
+
+Now take your draft and make these specific improvements:
+1. The opening line is probably generic ("Passionate data analyst...") — make it a hook that stands out. Maybe start with a story or unexpected statement.
+2. The career change should feel like a STRENGTH, not something I need to apologise for. My restaurant experience taught me to read patterns in data (sales, staffing, customer flow) before I even knew it was "data analysis."
+3. Remove any buzzwords like "passionate," "driven," or "results-oriented" — show these qualities through specific examples instead.
+4. Add a line about what makes me different from other bootcamp graduates.
+5. End with something memorable, not just "open to opportunities."
+
+Show me the improved version.
+
+---
+
+**STAGE 3 — Final Polish**
+
+Now apply these final constraints:
+- Exactly 150-175 words (tighten it up)
+- Every sentence must earn its place — cut anything fluffy
+- Tone: Confident but genuine (not arrogant, not desperate)
+- Must include at least one specific number or achievement
+- The first line should make someone stop scrolling
+
+Show me the final polished version, and briefly explain what changed at each stage so I learn from the process.''',
     },
 ]

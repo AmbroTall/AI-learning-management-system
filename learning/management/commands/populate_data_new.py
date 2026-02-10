@@ -7,9 +7,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'module_data'))
 
 # Import challenge data from separate files
-from module1_fundamentals import FUNDAMENTALS_CHALLENGES
-from module1_memory_chat import MEMORY_CHAT_CHALLENGES
-from module1_files_security import FILE_AND_SECURITY_CHALLENGES
+from .module_data.module1_fundamentals import FUNDAMENTALS_CHALLENGES
+from .module_data.module1_memory_chat import MEMORY_CHAT_CHALLENGES
+from .module_data.module1_files_security import FILE_AND_SECURITY_CHALLENGES
 
 
 class Command(BaseCommand):

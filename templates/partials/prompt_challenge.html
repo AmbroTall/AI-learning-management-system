@@ -7,8 +7,8 @@
             <h2 class="text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">📋</span> Instructions
             </h2>
-            <div class="prose prose-invert max-w-none">
-                <p class="text-gray-300 whitespace-pre-line">{{ challenge.instructions }}</p>
+            <div class="prose prose-invert max-w-none markdown-content" id="instructionsContent">
+                {{ challenge.instructions }}
             </div>
         </div>
         
@@ -20,7 +20,7 @@
             </h2>
             <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
                 <div class="text-xs text-gray-400 mb-2">Example Prompt:</div>
-                <div class="font-mono text-sm text-cyan-300">{{ challenge.example_prompt }}</div>
+                <div class="font-mono text-sm text-cyan-300 markdown-content" id="examplePromptContent">{{ challenge.example_prompt }}</div>
             </div>
         </div>
         {% endif %}
@@ -205,6 +205,18 @@ function tryAgain() {
 userPrompt.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         submitBtn.click();
+    }
+});
+
+// Render markdown in instructions and example prompt
+document.addEventListener('DOMContentLoaded', function() {
+    const instructionsEl = document.getElementById('instructionsContent');
+    if (instructionsEl) {
+        instructionsEl.innerHTML = marked.parse(instructionsEl.textContent);
+    }
+    const exampleEl = document.getElementById('examplePromptContent');
+    if (exampleEl) {
+        exampleEl.innerHTML = marked.parse(exampleEl.textContent);
     }
 });
 </script>

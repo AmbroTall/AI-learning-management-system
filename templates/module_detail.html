@@ -3,6 +3,30 @@
 
 {% block title %}{{ module.title }} - AI Learning Platform{% endblock %}
 
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+.markdown-content {
+    line-height: 1.8;
+    color: #d1d5db;
+}
+.markdown-content strong {
+    color: #818CF8;
+    font-weight: 600;
+}
+.markdown-content ul, .markdown-content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+.markdown-content li {
+    margin: 4px 0;
+}
+.markdown-content p {
+    margin: 8px 0;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Module Header -->
@@ -16,7 +40,7 @@
                 <div>
                     <div class="text-6xl mb-4">{{ module.icon }}</div>
                     <h1 class="text-5xl font-bold mb-4 gradient-text">{{ module.title }}</h1>
-                    <p class="text-xl text-gray-300 mb-6 max-w-2xl">{{ module.description }}</p>
+                    <div class="text-xl text-gray-300 mb-6 max-w-2xl markdown-content" id="moduleDescription">{{ module.description }}</div>
                     
                     <div class="flex items-center space-x-6 text-sm text-gray-400">
                         <div>⏱️ {{ module.duration_hours }} hours</div>
@@ -126,4 +150,13 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const descEl = document.getElementById('moduleDescription');
+    if (descEl) {
+        marked.setOptions({ breaks: true, gfm: true });
+        descEl.innerHTML = marked.parse(descEl.textContent);
+    }
+});
+</script>
 {% endblock %}
