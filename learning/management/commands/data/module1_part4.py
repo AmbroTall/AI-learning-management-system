@@ -5,7 +5,7 @@ Challenges 25-30: Capstone-level challenges combining multiple techniques (3-4 h
 
 MODULE1_PART4_CHALLENGES = [
     {
-        'title': 'Build a Business Plan',
+        'title': 'Question 25: Build a Business Plan',
         'description': 'Use AI to create a comprehensive mini business plan for a side hustle',
         'difficulty': 'advanced',
         'order': 25,
@@ -79,7 +79,7 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 **4. Service Details**
 - What exactly am I offering? (1:1 sessions? group? homework help?)
 - How will sessions work? (platform, duration, materials)
-- What makes my service different from TutorDot, MyTutor, etc.?
+- What makes my service different from other online tutoring platforms?
 
 **5. Pricing Strategy**
 - What should I charge per hour? (research the market)
@@ -122,7 +122,7 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 - At the end, give me a GO/NO-GO assessment: is this idea worth pursuing given my situation?''',
     },
     {
-        'title': 'Your Personal Brand',
+        'title': 'Question 26: Your Personal Brand',
         'description': 'Create a consistent personal brand package across multiple formats',
         'difficulty': 'advanced',
         'order': 26,
@@ -207,7 +207,7 @@ Create a complete **personal brand package** — the same core story told in dif
 After writing all 5, briefly explain the strategy: what's the consistent thread and how each piece serves a different purpose.''',
     },
     {
-        'title': 'Event Planning Pro',
+        'title': 'Question 27: Event Planning Pro',
         'description': 'Plan a complete event or workshop with AI handling all the complex coordination',
         'difficulty': 'intermediate',
         'order': 27,
@@ -300,7 +300,7 @@ Plan a complete event from start to finish. This could be:
 **TONE:** Make this feel achievable. I'm nervous about organising this and I need a plan I can follow step by step.''',
     },
     {
-        'title': 'Explain Anything to Anyone',
+        'title': 'Question 28: Explain Anything to Anyone',
         'description': 'Master the art of adapting complex information for any audience level',
         'difficulty': 'intermediate',
         'order': 28,
@@ -383,7 +383,7 @@ Pick ONE complex topic and create **3 completely different explanations** for 3 
 After all 3, write a brief note (3-4 sentences) explaining what you changed for each audience and WHY. Help me understand the principles behind audience adaptation.''',
     },
     {
-        'title': 'The Multi-Agent Thinker',
+        'title': 'Question 29: The Multi-Agent Thinker',
         'description': 'Simulate multiple expert perspectives to get well-rounded advice',
         'difficulty': 'advanced',
         'order': 29,
@@ -492,7 +492,7 @@ After all 3 have spoken, write a brief "discussion" where:
 Make the experts feel like real people with real opinions — not just generic positive/negative takes.''',
     },
     {
-        'title': 'Prompt Engineering Mastery Challenge',
+        'title': 'Question 30: Prompt Engineering Foundation Challenge',
         'description': 'The final challenge: apply every technique to your own real-world scenario',
         'difficulty': 'advanced',
         'order': 30,

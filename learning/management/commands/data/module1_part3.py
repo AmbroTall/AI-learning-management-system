@@ -5,7 +5,7 @@ Challenges 17-24: Professional and personal applications of prompt engineering (
 
 MODULE1_PART3_CHALLENGES = [
     {
-        'title': 'The Email Wizard',
+        'title': 'Question 17: The Email Wizard',
         'description': 'Master professional email writing for any situation',
         'difficulty': 'intermediate',
         'order': 17,
@@ -69,7 +69,7 @@ The difference between a good and bad email in these situations can affect your 
 Draft the email with a subject line.''',
     },
     {
-        'title': 'Meeting Notes to Action Plans',
+        'title': 'Question 18: Meeting Notes to Action Plans',
         'description': 'Transform chaotic meeting notes into clear, actionable summaries',
         'difficulty': 'intermediate',
         'order': 18,
@@ -143,7 +143,7 @@ Next meeting: same time next Tuesday."
 Make it professional enough to share in Slack but concise enough that people actually read it.''',
     },
     {
-        'title': 'Research Like a Pro',
+        'title': 'Question 19: Research Like a Pro',
         'description': 'Use AI to research topics thoroughly and get structured, actionable insights',
         'difficulty': 'advanced',
         'order': 19,
@@ -159,14 +159,7 @@ Make it professional enough to share in Slack but concise enough that people act
 Most people ask AI "tell me about X." That's like going to a library and saying "give me books." Instead, tell AI exactly what you need to know, why, and how to structure the findings.
 
 **Your Challenge:**
-You're considering a major life or career change and need thorough research to make an informed decision.
-
-**Pick a research topic:**
-- Transitioning to a new career field (e.g., marketing → data science, teaching → UX design)
-- Moving to a new city or country
-- Starting a business vs staying employed
-- Going back to university vs self-teaching vs bootcamp
-- Switching from office work to remote/freelance
+You're considering a major life decision: **starting a business vs staying employed.** You need thorough research to make an informed decision.
 
 **Your prompt must include:**
 1. Your specific situation (don't make AI guess)
@@ -176,62 +169,60 @@ You're considering a major life or career change and need thorough research to m
 5. How you want the output formatted
 
 **Ask AI to be realistic.** The value of good research is honesty, not hype.''',
-        'example_prompt': '''I'm seriously considering switching careers from teaching to UX design. I need thorough research to make a smart decision — not just encouragement.
+        'example_prompt': '''I'm seriously considering leaving my job to start my own business. I need thorough research to make a smart decision — not just encouragement.
 
 **MY SITUATION:**
-- Current: Secondary school English teacher, 4 years experience
-- Age: 28, single, no dependents
-- Location: Manchester, UK
-- Savings: About £8,000
-- What I like about teaching: Helping people understand things, creating materials, problem-solving
-- What I don't like: Workload, pay ceiling, lack of creativity, stress
-- Tech skills: Comfortable with computers, used Canva for lesson materials, no coding experience
-- Interest in UX: Read 2 books about it, did a free online intro course, found it fascinating
+- Current: Office administrator at a medium-sized accounting firm, 5 years experience
+- Age: 31, living with partner (they have a stable income), no kids
+- Location: Leeds, UK
+- Savings: About £15,000
+- Business idea: Starting a virtual assistant / admin support service for small businesses
+- What I like about my job: Stability, decent colleagues, predictable income
+- What I don't like: Boredom, no growth, feeling like I'm building someone else's dream
+- Skills: Organisation, spreadsheets, email management, diary management, basic bookkeeping, customer service
+- I've been doing freelance VA work on weekends for 3 months and have 2 regular clients already
 
 **RESEARCH I NEED:**
 
-**1. Reality Check (Is this realistic?)**
-- How common is the teaching → UX transition? Are there success stories?
-- What transferable skills do I actually have?
-- What am I missing compared to traditional UX candidates?
-- How long does this transition typically take?
+**1. Reality Check (Is this viable?)**
+- How realistic is it to replace my salary with a VA business?
+- What does the UK market look like for virtual assistants?
+- What's the typical timeline from launch to full-time income?
+- What do successful VA businesses actually look like after 1-2 years?
 
-**2. Learning Paths (Compare my options honestly)**
-Compare these 3 routes for MY situation:
-- Self-taught (free/cheap online resources)
-- UX bootcamp (e.g., General Assembly, CareerFoundry — UK options)
-- Part-time master's degree
+**2. Financial Analysis (Can I afford to do this?)**
+- What are the startup costs for a VA business? (Be specific)
+- How long should I expect before I'm earning consistently?
+- Should I save more before leaving, or is £15,000 enough of a runway?
+- What's the realistic income progression (month 1, 3, 6, 12)?
 
-For each, cover: cost, time commitment, quality of portfolio at the end, employer perception, realistic job placement rate
+**3. Risk Assessment (What could go wrong?)**
+- Top 5 risks of leaving employment to start this business
+- For each risk: how likely is it, and what's the mitigation plan?
+- What would "failing" look like, and could I recover?
+- At what point should I go back to employment if it's not working?
 
-**3. Job Market Reality**
-- Junior UX designer salaries in Manchester and remote UK roles
-- How competitive is it? (I've heard it's saturated — is that true?)
-- What do employers actually want to see from career changers?
-- How long does it typically take to land a first UX role?
-
-**4. Financial Planning**
-- Can I afford to do this? (Remember: £8,000 savings, currently earning £30,000)
-- Should I study while teaching or quit to study full-time?
-- What's the realistic income gap during transition?
+**4. Starting While Employed vs Quitting First**
+- Pros and cons of each approach for MY situation
+- Could I realistically grow this while still working full-time?
+- What's the tipping point where I should make the jump?
 
 **5. Honest Recommendation**
 Based on ALL of the above:
-- What path do you recommend for me specifically?
-- What should I do in the next 30 days to test this idea before committing?
-- What are the biggest risks and how can I mitigate them?
-- At what point should I reconsider if it's not working?
+- Given my specific situation, should I start this business?
+- What should I do in the next 60 days before making a final decision?
+- What's the one thing that would make or break this plan?
 
 **FORMAT:**
 - Use clear headers for each section
-- Include specific numbers where possible (salary ranges, course costs, timelines)
+- Include specific numbers where possible (costs, timelines, income ranges)
 - Be direct — I want the honest truth, not a motivational speech
-- End with a clear "Next 30 Days" action plan
+- End with a clear "Next 60 Days" action plan
 
 This is a big decision. Help me make it with open eyes.''',
     },
     {
-        'title': 'Content Creator\'s Toolkit',
+        'title': 'Question 20: Content Creator\'s Toolkit',
         'description': 'Generate a complete content plan with posts, ideas, and scheduling',
         'difficulty': 'intermediate',
         'order': 20,
@@ -247,7 +238,7 @@ This is a big decision. Help me make it with open eyes.''',
 Small businesses, freelancers, and side hustlers spend hours every week creating content. With the right prompts, you can plan a full week of content in minutes.
 
 **Your Challenge:**
-Create a **complete 1-week social media content plan** for a real or fictional brand.
+Create a **complete 1-week social media content plan** (Monday to Sunday) for a real or fictional brand.
 
 **Your prompt must include:**
 1. Brand details (what it is, who it's for, the brand voice)
@@ -256,13 +247,15 @@ Create a **complete 1-week social media content plan** for a real or fictional b
 4. Content pillars or themes to rotate through
 5. Specific post requirements (copy, hashtags, posting times, content type)
 
+**IMPORTANT:** Make sure your plan covers every day from **Monday through to Sunday** — a full 7-day week.
+
 **Make it actionable** — someone should be able to take your output and schedule all the posts immediately, without any additional thinking.
 
 **Bonus points for:**
 - Including different content types (educational, entertaining, promotional, behind-the-scenes)
 - Requesting specific hashtag strategies
 - Asking for content that builds on itself through the week''',
-        'example_prompt': '''Create a complete 1-week social media content plan for my business.
+        'example_prompt': '''Create a complete 1-week social media content plan for my business. I need posts for EVERY day from Monday to Sunday.
 
 **THE BRAND:**
 - Business: "FitKit" — a small UK business selling at-home workout equipment (resistance bands, yoga mats, dumbbells)
@@ -284,7 +277,7 @@ Create a **complete 1-week social media content plan** for a real or fictional b
 4. Product showcases (promotional — but soft sell)
 5. Motivation/mindset (but REAL, not cheesy)
 
-**CREATE FOR EACH DAY (Monday to Sunday):**
+**CREATE FOR EACH DAY (Monday through Sunday — all 7 days):**
 
 For each day, provide:
 - **Platform:** Instagram, TikTok, or both
@@ -302,11 +295,12 @@ For each day, provide:
 - Include at least 2 posts that encourage saves or shares (algorithm boost)
 - One post should be designed to go viral (controversial take, relatable truth, or trend)
 - No generic motivational quotes — everything should be specific to at-home fitness
+- Cover ALL 7 days — Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, AND Sunday
 
 Make it ready to execute. I want to schedule everything in one sitting.''',
     },
     {
-        'title': 'Data Storytelling',
+        'title': 'Question 21: Data Storytelling',
         'description': 'Turn raw numbers into compelling narratives that drive decisions',
         'difficulty': 'advanced',
         'order': 21,
@@ -322,14 +316,7 @@ Make it ready to execute. I want to schedule everything in one sitting.''',
 "Sales were £45,000 this quarter" means nothing without context. Is that good? Bad? Getting better? Worse than competitors? Data storytelling adds that context.
 
 **Your Challenge:**
-You have raw data (numbers, survey results, or metrics) and need to transform it into a compelling narrative for a specific audience.
-
-**Pick a scenario:**
-- Monthly business performance report for your boss
-- Survey results to share with your team
-- Website analytics to present to a client
-- Sales figures for an investor pitch
-- Customer feedback data for a product improvement proposal
+You have raw data (numbers, survey results, or metrics) and need to transform it into a compelling **monthly business performance report for your boss.**
 
 **Your prompt must include:**
 1. The raw data (actual numbers — make them up if needed, but make them realistic)
@@ -339,7 +326,7 @@ You have raw data (numbers, survey results, or metrics) and need to transform it
 5. What decisions should result from this data
 
 **The key: data without context is just noise. Data with a story drives action.**''',
-        'example_prompt': '''I need to turn this raw data into a compelling report for my manager. She's not technical — she cares about "what does this mean and what should we do?"
+        'example_prompt': '''I need to turn this raw data into a compelling monthly business performance report for my boss. She's not technical — she cares about "what does this mean and what should we do?"
 
 **THE RAW DATA — Our Online Shop Performance (October vs September):**
 
@@ -355,7 +342,7 @@ You have raw data (numbers, survey results, or metrics) and need to transform it
 - Best seller: Product A still #1, but Product C jumped from #8 to #2
 - Cart abandonment: 65% (Sept) → 78% (Oct)
 
-**AUDIENCE:** My manager (Marketing Director). She has a meeting with the CEO tomorrow and needs to explain our numbers.
+**AUDIENCE:** My boss (Marketing Director). She has a meeting with the CEO tomorrow and needs to explain our numbers.
 
 **WHAT SHE NEEDS TO KNOW:**
 1. Are we doing well or not? (The numbers tell a mixed story)
@@ -391,7 +378,7 @@ You have raw data (numbers, survey results, or metrics) and need to transform it
 **LENGTH:** Fits on one page. Use bullet points, bold key numbers, make it scannable.''',
     },
     {
-        'title': 'Problem-Solving Partner',
+        'title': 'Question 22: Problem-Solving Partner',
         'description': 'Use AI to systematically diagnose and solve complex problems',
         'difficulty': 'advanced',
         'order': 22,
@@ -472,7 +459,7 @@ Sales dropped 40% over the last 2 months (from about £6,000/month to £3,500/mo
 Be analytical and thorough. I need to understand WHY this is happening before I can fix it.''',
     },
     {
-        'title': 'Learning Accelerator',
+        'title': 'Question 23: Learning Accelerator',
         'description': 'Get AI to design a complete, personalised learning plan for any skill',
         'difficulty': 'intermediate',
         'order': 23,
@@ -554,7 +541,7 @@ I don't need to be a TED Talk speaker. I just need to be calm, clear, and compet
 Remember: I'm not trying to become a professional speaker. I just need to stop being terrified and start being competent.''',
     },
     {
-        'title': 'The Negotiation Coach',
+        'title': 'Question 24: The Negotiation Coach',
         'description': 'Prepare for any negotiation with scripts, strategies, and practice scenarios',
         'difficulty': 'advanced',
         'order': 24,

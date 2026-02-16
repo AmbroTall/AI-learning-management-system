@@ -15,6 +15,7 @@ from .data.module1_part1 import MODULE1_PART1_CHALLENGES
 from .data.module1_part2 import MODULE1_PART2_CHALLENGES
 from .data.module1_part3 import MODULE1_PART3_CHALLENGES
 from .data.module1_part4 import MODULE1_PART4_CHALLENGES
+# from .data.module1_extra import MODULE1_EXTRA_CHALLENGES
 
 
 class Command(BaseCommand):
@@ -38,9 +39,9 @@ class Command(BaseCommand):
             Leaderboard.objects.create(user=demo_user)
             self.stdout.write(self.style.SUCCESS(f'Created leaderboard entry for demo user'))
         
-        # Create Module 1: AI Prompt Engineering Mastery (15-20 hours)
+        # Create Module 1: AI Prompt Engineering Foundation (15-20 hours)
         module1, created = Module.objects.get_or_create(
-            title='AI Prompt Engineering Mastery',
+            title='AI Prompt Engineering Foundation',
             defaults={
                 'description': '''Master the art of communicating with AI! This comprehensive module teaches you everything from basic prompting to advanced techniques used by security professionals.
 
@@ -67,7 +68,7 @@ class Command(BaseCommand):
         all_module1_challenges = (
             MODULE1_PART1_CHALLENGES +  # Fundamentals (1-8)
             MODULE1_PART2_CHALLENGES +  # Memory & Context (9-16)
-            MODULE1_PART3_CHALLENGES +  # Cybersecurity Scenarios (17-24)
+            MODULE1_PART3_CHALLENGES +  # Real-World Power (17-24)
             MODULE1_PART4_CHALLENGES    # Advanced & Files (25-30)
         )
         
@@ -123,7 +124,7 @@ class Command(BaseCommand):
             },
             {
                 'title': 'Prompt Master',
-                'description': 'Complete Module 1: AI Prompt Engineering Mastery',
+                'description': 'Complete Module 1: AI Prompt Engineering Foundation',
                 'icon': '🎯',
                 'points_required': 0,
                 'challenges_required': 30,
@@ -156,12 +157,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('DATABASE POPULATED SUCCESSFULLY! 🎉'))
         self.stdout.write(self.style.SUCCESS('='*60))
         self.stdout.write(self.style.SUCCESS(f'''
-Module 1: AI Prompt Engineering Mastery
+Module 1: AI Prompt Engineering Foundation
 ├─ 30 comprehensive challenges (15-20 hours)
-├─ Part 1: Fundamentals (Challenges 1-8)
-├─ Part 2: Memory & Context (Challenges 9-16)
-├─ Part 3: Cybersecurity Scenarios (Challenges 17-24)
-└─ Part 4: Advanced & Files (Challenges 25-30)
+├─ Part 1: Foundations (Challenges 1-8)
+├─ Part 2: Levelling Up (Challenges 9-16)
+├─ Part 3: Real-World Power (Challenges 17-24)
+└─ Part 4: Mastery (Challenges 25-30)
 
 Next Steps:
 1. Run: python manage.py runserver

@@ -12,4 +12,5 @@ urlpatterns = [
     path('challenge/<int:challenge_id>/submit/', views.submit_challenge, name='submit_challenge'),
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
     path('profile/', views.profile, name='profile'),
+    path('profile/change-password/', views.change_password, name='change_password'),
 ]

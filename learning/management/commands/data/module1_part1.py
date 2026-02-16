@@ -5,7 +5,7 @@ Challenges 1-8: Core prompt engineering skills through fun, real-world scenarios
 
 MODULE1_PART1_CHALLENGES = [
     {
-        'title': 'Your First AI Conversation',
+        'title': 'Question 1: Your First AI Conversation',
         'description': 'Learn the basics of talking to AI and getting useful responses',
         'difficulty': 'beginner',
         'order': 1,
@@ -46,7 +46,7 @@ I'll be going with a friend who's never been to Brighton before.
 Can you plan out a fun 2-day itinerary? Include specific places to eat and things to do, with rough timing so we make the most of it.''',
     },
     {
-        'title': 'Be Specific, Get Better Results',
+        'title': 'Question 2: Be Specific, Get Better Results',
         'description': 'Discover why vague prompts get vague answers — and how to fix that',
         'difficulty': 'beginner',
         'order': 2,
@@ -60,46 +60,47 @@ Can you plan out a fun 2-day itinerary? Include specific places to eat and thing
 
 **The Problem:**
 Compare these two prompts:
-- Vague: "Help me write a cover letter"
-- Specific: Includes the job title, company, your experience, what to highlight, and the tone
+- Vague: "Help me write a birthday speech"
+- Specific: Includes who the speech is for, your relationship, key memories, the tone, and the length
 
-The vague version gives a generic template. The specific version gives something you can actually use.
+The vague version gives a generic template. The specific version gives something heartfelt and personal.
 
 **Your Challenge:**
-Get AI to write a personalised cover letter for a job you'd love to have (real or imagined).
+Get AI to write a personalised birthday speech or toast for someone you care about (real or imagined).
 
 **Your prompt MUST include:**
-1. The job title and company name
-2. Your relevant background (even if you're a student or career changer — that's fine!)
-3. 2-3 specific things about the company that attracted you
-4. The tone you want (formal? enthusiastic? confident?)
-5. Any specific achievements or skills to highlight
+1. Who the speech is for and your relationship with them
+2. The occasion (milestone birthday? surprise party? intimate dinner?)
+3. 2-3 specific memories or inside jokes to reference
+4. The tone you want (funny? heartfelt? a mix?)
+5. Any specific things to mention or avoid
 6. Length preference
 
 **Pro Tip:**
 Think of it like ordering food. "Give me something good" vs "I'd like a medium veggie pizza with extra mushrooms, light on the cheese" — which one gets you what you actually want?''',
-        'example_prompt': '''Write a cover letter for me applying to the "Junior Marketing Coordinator" role at Spotify.
+        'example_prompt': '''Write a birthday speech for me to give at my best friend Sam's 30th birthday party.
 
-**About me:**
-- Recent graduate with a degree in Communications
-- 6-month internship at a local radio station where I managed their Instagram (grew followers by 40%)
-- Created a student podcast that got 2,000 downloads in its first month
-- Passionate about music and digital culture
-- No formal marketing experience beyond the internship
+**About Sam and our friendship:**
+- We've been best friends since university (met in freshers' week when we both got lost looking for the same lecture hall)
+- Sam is the person who convinced me to start running — we did a half marathon together last year (both nearly died but finished!)
+- Known for being hilariously bad at cooking but insists on hosting dinner parties anyway
+- Recently got promoted to team lead at work and I'm incredibly proud
 
-**Why Spotify:**
-- I use Spotify daily and love their "Wrapped" campaign — it's genius user engagement
-- Their brand voice is fun and relatable, which matches my communication style
-- I want to work where creativity and data intersect
+**The occasion:**
+- Surprise party at a pub, about 40 guests (mix of friends, family, and work colleagues)
+- Sam's parents will be there, so nothing too embarrassing!
+- I'm giving the speech right after the cake
 
-**Tone:** Enthusiastic but professional. Show personality without being too casual.
+**Tone:** Warm and funny — make people laugh AND get a little emotional. The perfect balance of roasting Sam gently and showing how much they mean to me.
 
-**Length:** Under 300 words — keep it punchy.
+**Length:** 2-3 minutes when spoken (roughly 300-400 words)
 
-**Must include:** Reference to my podcast experience and the Instagram growth metric.''',
+**Must include:** The half marathon story and the cooking joke. End on something genuinely heartfelt.
+
+**Must avoid:** Anything about Sam's ex, or the holiday in Ibiza (Sam's mum doesn't know about that one).''',
     },
     {
-        'title': 'The Magic of Context',
+        'title': 'Question 3: The Magic of Context',
         'description': 'Learn how giving AI the right background transforms its responses',
         'difficulty': 'beginner',
         'order': 3,
@@ -158,7 +159,7 @@ Same topic, completely different explanations — all because you changed the co
 Label each version clearly.''',
     },
     {
-        'title': 'Structuring Your Requests',
+        'title': 'Question 4: Structuring Your Requests',
         'description': 'Learn to break big, messy requests into clear, organised prompts',
         'difficulty': 'beginner',
         'order': 4,
@@ -222,7 +223,7 @@ This structure works for ANY complex request — project plans, travel itinerari
 Keep it practical and realistic — I actually want to follow this!''',
     },
     {
-        'title': 'Show, Don\'t Just Tell',
+        'title': 'Question 5: Show, Don\'t Just Tell',
         'description': 'Use examples to show AI exactly what style and quality you want',
         'difficulty': 'beginner',
         'order': 5,
@@ -281,7 +282,7 @@ When you show AI a pattern, it picks up on things you might not even be able to 
 Match our voice exactly!''',
     },
     {
-        'title': 'Choosing the Right Format',
+        'title': 'Question 6: Choosing the Right Format',
         'description': 'Control HOW AI presents information — tables, lists, comparisons, and more',
         'difficulty': 'intermediate',
         'order': 6,
@@ -301,13 +302,9 @@ Imagine getting a restaurant recommendation as:
 Same info, but the table is actually useful when you're making a decision.
 
 **Your Challenge:**
-You're making a real decision and need AI to help you compare options in a **structured format.**
+You're thinking about moving to a new city and need AI to help you compare your options in a **structured format.**
 
-**Pick ONE decision scenario:**
-- Comparing 3 online course platforms for learning a new skill
-- Comparing 3 cities you might move to
-- Comparing 3 laptop/phone options
-- Comparing 3 career paths you're considering
+Compare these 3 UK cities: **London, Manchester, and Glasgow.**
 
 **Your prompt must request:**
 1. A comparison table with at least 5 criteria
@@ -316,41 +313,42 @@ You're making a real decision and need AI to help you compare options in a **str
 4. A clear format that's easy to scan quickly
 
 **Pro Tip:**
-Tell AI exactly what columns you want in the table. Don't just say "compare them" — say "compare on: price, learning style, certificate value, job relevance, and beginner-friendliness."''',
-        'example_prompt': '''I'm choosing an online platform to learn data analysis. Compare these 3 options for me:
+Tell AI exactly what columns you want in the table. Don't just say "compare them" — say "compare on: cost of living, job opportunities, nightlife, transport, and friendliness."''',
+        'example_prompt': '''I'm considering moving to a new city for work and lifestyle. Compare these 3 UK cities for me:
 
-1. **Google Data Analytics Certificate** (Coursera)
-2. **DataCamp** subscription
-3. **freeCodeCamp** (free)
+1. **London**
+2. **Manchester**
+3. **Glasgow**
 
 **Create a comparison table with these columns:**
-- Platform name
-- Cost (total for 6 months of learning)
-- Certificate included? (Is it recognised by employers?)
-- Learning style (video lectures, interactive coding, projects?)
-- Time to complete (assuming 10 hours/week)
-- Beginner-friendly? (Rate 1-5, with a brief note)
-- Job-readiness (will I have a portfolio at the end?)
+- City name
+- Average rent for a 1-bed flat (city centre)
+- Job market strength (particularly for marketing/creative roles)
+- Cost of living (rate 1-5, where 1 is cheapest)
+- Nightlife and social scene (rate 1-5 with a brief note)
+- Public transport quality (rate 1-5 with a brief note)
+- Friendliness / ease of making friends (rate 1-5 with a brief note)
+- Green spaces and outdoor activities nearby
 
 **After the table, add:**
 
 **Quick Verdict (2-3 sentences each):**
-- Best thing about each platform
-- Biggest drawback of each platform
+- Best thing about each city
+- Biggest drawback of each city
 - Who it's perfect for
 
 **My Recommendation:**
 Based on my situation:
-- Complete beginner (no coding or data experience)
-- Can spend max £30/month
-- Want something I can show employers (portfolio or certificate)
-- Available 10 hours/week
-- Goal: Get an entry-level data analyst role in 6 months
+- I'm 26 and single, looking for a social city with lots to do
+- Working in digital marketing, need decent job opportunities
+- Budget: Can spend max £900/month on rent
+- I love live music, food scenes, and being able to walk/cycle places
+- Coming from a small town, so I want somewhere exciting but not overwhelming
 
-Which one should I pick and why? Be direct — I need a clear answer, not "it depends."''',
+Which city should I pick and why? Be direct — I need a clear answer, not "it depends."''',
     },
     {
-        'title': 'Tone and Audience',
+        'title': 'Question 7: Tone and Audience',
         'description': 'Master how to control the voice, tone, and style of AI responses',
         'difficulty': 'intermediate',
         'order': 7,
@@ -429,7 +427,7 @@ In any job, you'll communicate the same information to different audiences const
 Label each version clearly and make them feel genuinely different — not just the same text with different word choices.''',
     },
     {
-        'title': 'The Art of Iteration',
+        'title': 'Question 8: The Art of Iteration',
         'description': 'Learn the most practical skill: making AI responses better through refinement',
         'difficulty': 'intermediate',
         'order': 8,
@@ -451,9 +449,9 @@ Think of AI like a talented but mind-reading-impaired assistant. The first draft
 4. **Polish:** Fine-tune the final version
 
 **Your Challenge:**
-Get AI to help you create a LinkedIn "About" summary — but do it in **stages within a single prompt.**
+Get AI to help you write an engaging "About Us" section for a small business website — but do it in **stages within a single prompt.**
 
-**Stage 1:** Ask AI to write a first draft based on your background
+**Stage 1:** Ask AI to write a first draft based on the business details
 **Stage 2:** Tell AI what to improve (e.g., "make the opening more attention-grabbing," "add a personal story," "cut the jargon")
 **Stage 3:** Ask AI to polish the final version with specific constraints
 
@@ -461,32 +459,32 @@ Get AI to help you create a LinkedIn "About" summary — but do it in **stages w
 
 **Real-World Value:**
 This is how professionals use AI for writing, coding, design briefs, presentations — everything. The skill isn't writing one perfect prompt. It's knowing how to guide AI from "okay" to "excellent."''',
-        'example_prompt': '''Help me create a LinkedIn "About" section. We'll do this in 3 stages — draft, improve, and polish.
+        'example_prompt': '''Help me create an "About Us" section for a small business website. We'll do this in 3 stages — draft, improve, and polish.
 
 ---
 
 **STAGE 1 — First Draft**
 
-Write a LinkedIn About section based on this:
-- Name: Alex Rivera
-- Current: Career changer — just completed a data analytics bootcamp
-- Previous: 5 years as a restaurant manager
-- Key skills: People management, problem-solving, Excel, Python (learning), SQL (learning)
-- Goal: Land a junior data analyst role
-- Personality: Friendly, hardworking, curious
+Write an About Us section based on this:
+- Business: "The Bake House" — a small family-run bakery in Bristol
+- Founded: 2019 by married couple Tom and Hana
+- Story: They started baking sourdough during lockdown, friends kept asking to buy loaves, and it grew from there
+- What they sell: Artisan bread, pastries, and celebration cakes
+- What makes them different: Everything is made fresh daily, they use local suppliers, and they're known for their community spirit (they donate unsold bread to a local shelter every evening)
+- Vibe: Warm, welcoming, the smell of fresh bread, regulars who come every morning
 
-Write a first draft (150-200 words, first person).
+Write a first draft (150-200 words, friendly and warm).
 
 ---
 
 **STAGE 2 — Improve It**
 
 Now take your draft and make these specific improvements:
-1. The opening line is probably generic ("Passionate data analyst...") — make it a hook that stands out. Maybe start with a story or unexpected statement.
-2. The career change should feel like a STRENGTH, not something I need to apologise for. My restaurant experience taught me to read patterns in data (sales, staffing, customer flow) before I even knew it was "data analysis."
-3. Remove any buzzwords like "passionate," "driven," or "results-oriented" — show these qualities through specific examples instead.
-4. Add a line about what makes me different from other bootcamp graduates.
-5. End with something memorable, not just "open to opportunities."
+1. The opening line is probably generic ("Welcome to The Bake House...") — make it a hook that captures the feeling of walking into the shop.
+2. The lockdown origin story is our best asset — make it more vivid and personal. Include a small detail that makes it feel real (the first loaf was terrible? Hana's mum gave them the recipe?)
+3. Remove any words like "passionate," "artisan," or "crafted with love" — these are overused. Show the quality through specifics instead.
+4. Add something about the community donations — but naturally, not as a brag.
+5. End with something inviting, not just "visit us today."
 
 Show me the improved version.
 
@@ -497,9 +495,9 @@ Show me the improved version.
 Now apply these final constraints:
 - Exactly 150-175 words (tighten it up)
 - Every sentence must earn its place — cut anything fluffy
-- Tone: Confident but genuine (not arrogant, not desperate)
-- Must include at least one specific number or achievement
-- The first line should make someone stop scrolling
+- Tone: Warm and genuine, like the bakery itself
+- Must include at least one specific detail that makes us memorable
+- The first line should make someone hungry or nostalgic
 
 Show me the final polished version, and briefly explain what changed at each stage so I learn from the process.''',
     },

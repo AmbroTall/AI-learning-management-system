@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
@@ -253,7 +253,10 @@ def submit_challenge(request, challenge_id):
     challenge = get_object_or_404(Challenge, id=challenge_id)
     data = json.loads(request.body)
     user_prompt = data.get('prompt', '')
-    request_type = data.get('type', 'submit')  # 'help' or 'submit'
+    request_type = data.get('type') or data.get('action', 'submit')  # 'help' or 'submit'
+    # Normalize coding challenge action values to match expected types
+    if request_type in ('run_code', 'get_help'):
+        request_type = 'help'
     
     if not user_prompt:
         return JsonResponse({'error': 'Prompt is required'}, status=400)
@@ -310,7 +313,7 @@ def submit_challenge(request, challenge_id):
         # Parse evaluation
         eval_text = eval_message.content[0].text
         # Extract JSON from response
-        json_match = re.search(r'\{[\s\S]*\}', eval_text)
+        json_match = re.search(r'\{[\s\S]*?\}', eval_text)
         if json_match:
             evaluation = json.loads(json_match.group())
         else:
@@ -425,6 +428,30 @@ def profile(request):
     }
     
     return render(request, 'profile.html', context)
+
+
+@login_required
+def change_password(request):
+    """Change password from profile page"""
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not request.user.check_password(current_password):
+            messages.error(request, 'Current password is incorrect.')
+        elif new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+        elif len(new_password) < 8:
+            messages.error(request, 'New password must be at least 8 characters.')
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'Password changed successfully!')
+            return redirect('profile')
+
+    return redirect('profile')
 
 
 def check_achievements(user, challenge):

@@ -5,7 +5,7 @@ Challenges 9-16: Advanced techniques and conversation management (4-5 hours)
 
 MODULE1_PART2_CHALLENGES = [
     {
-        'title': 'Building on the Conversation',
+        'title': 'Question 9: Building on the Conversation',
         'description': 'Learn how to have multi-step conversations that build toward a goal',
         'difficulty': 'intermediate',
         'order': 9,
@@ -24,63 +24,64 @@ Think of it like a brainstorming session with a colleague:
 - "Here's my situation..." → "Interesting. Based on your ideas, I like option 2..." → "Great, now let's build a detailed plan for that..."
 
 **Your Challenge:**
-You want to start a side business but don't know what. Have a **3-message conversation** with AI:
+You want to plan a community event in your neighbourhood but don't know where to start. Have a **3-message conversation** with AI:
 
-**Message 1:** Share your skills, interests, available time, and budget. Ask for 3-5 side business ideas.
-**Message 2:** Pick the most interesting idea. Ask for a detailed breakdown: what it involves, first steps, potential earnings, and biggest challenges.
-**Message 3:** Ask for a concrete 2-week action plan to get started.
+**Message 1:** Share details about your neighbourhood, available spaces, budget, and what kind of event you're thinking about. Ask for 3-5 event ideas.
+**Message 2:** Pick the most interesting idea. Ask for a detailed breakdown: what it involves, how to organise it, potential costs, and biggest challenges.
+**Message 3:** Ask for a concrete 2-week action plan to make it happen.
 
 **Write all 3 messages in your prompt.** Use phrases like "Based on your suggestions..." or "Let's go deeper on idea #2..." to show you're building on context.
 
 **Why This Matters:**
-Complex problems need structured conversations. This technique works for business planning, research, creative projects, debugging code — anything that requires going deeper step by step.''',
-        'example_prompt': '''I want to brainstorm a side business. Let's work through this step by step.
+Complex problems need structured conversations. This technique works for event planning, research, creative projects, debugging code — anything that requires going deeper step by step.''',
+        'example_prompt': '''I want to organise a community event in my neighbourhood. Let's work through this step by step.
 
 ---
 
 **MESSAGE 1:**
 Here's my situation:
-- Skills: I'm good at writing, social media, and basic graphic design (Canva)
-- Interests: Fitness, cooking, helping small businesses
-- Available time: 10-15 hours per week (evenings and weekends)
-- Budget to start: £300 maximum
-- I have a laptop, phone, and decent internet
+- I live in a friendly neighbourhood in south Manchester with about 200 houses
+- There's a community centre with a hall (seats 80), a local park, and a church with a car park
+- Budget: I can probably raise £500 from the local residents' association
+- Time of year: Early summer (June)
+- The neighbourhood has a mix of young families, students, and retired people
+- We don't currently have many community events — people want to connect more
 
-Based on this, suggest 5 side business ideas I could realistically start within 2 weeks. For each, give me a one-line description and why it fits my skills.
+Based on this, suggest 5 community event ideas that would bring people together. For each, give me a one-line description and why it would work for our neighbourhood.
 
 ---
 
 **MESSAGE 2:**
-I really like the idea of [pick whichever one resonates — let's say it's social media management for local businesses]. Let's go deeper on this one.
+I really like the idea of [pick whichever one resonates — let's say it's a summer street food festival in the park]. Let's go deeper on this one.
 
 Tell me:
-1. What would I actually do day-to-day?
-2. How do I find my first 3 clients?
-3. What should I charge as a beginner?
-4. What tools do I need (free or cheap)?
-5. What's the biggest challenge I'll face in the first month?
-6. Realistic income after 3 months?
+1. What would the event actually look like? (Layout, timing, activities)
+2. How do I find local food vendors or get neighbours to contribute?
+3. What permissions or insurance might I need?
+4. What equipment and supplies do I need?
+5. What's the biggest challenge I'll face in organising this?
+6. How do I make sure ALL age groups enjoy it?
 
-Be honest — I want the real picture, not just the optimistic version.
+Be practical — I've never organised an event before.
 
 ---
 
 **MESSAGE 3:**
-I'm convinced. Let's make this happen.
+I'm going for it. Let's make this happen.
 
-Create a detailed 2-week action plan:
-- **Week 1:** What to set up, learn, and prepare (day by day)
-- **Week 2:** How to get my first client (specific outreach steps)
+Create a 2-week action plan:
+- **Week 1:** Planning, permissions, and reaching out to people
+- **Week 2:** Final preparations and promotion
 
 For each day, give me:
 - One main task (should take 1-2 hours)
 - Why it matters
 - What "done" looks like
 
-Make it specific enough that I can just follow the plan without thinking too hard. I want to take action, not just plan forever.''',
+Keep it realistic — I'm doing this in my spare time alongside a full-time job.''',
     },
     {
-        'title': 'The Perfect Briefing',
+        'title': 'Question 10: The Perfect Briefing',
         'description': 'Master front-loading context so AI gives brilliant first responses',
         'difficulty': 'intermediate',
         'order': 10,
@@ -99,57 +100,58 @@ Structure every complex prompt in three parts:
 3. **FORMAT:** How you want the answer structured
 
 **Your Challenge:**
-You have a job interview coming up. Give AI your COMPLETE context upfront to get the most personalised interview prep possible.
+You're planning a big surprise birthday party for someone important to you. Give AI your COMPLETE context upfront to get the most personalised party planning help possible.
 
 **Your prompt must include:**
 
 **Context section:**
-- Your background (current role, experience, education)
-- The job you're interviewing for (title, company, industry)
-- Your strengths (what you're confident about)
-- Your weaknesses (what worries you about this interview)
-- Interview details (format, who you'll meet, when)
+- Who the party is for (their personality, interests, age)
+- Your relationship with them
+- Budget and guest count
+- Venue options you're considering
+- Any constraints (dietary needs, accessibility, surprise element)
 
 **Task section:**
-- What specific help you need (practice questions? answers? confidence tips?)
+- What specific help you need (theme ideas? timeline? food planning? entertainment?)
 
 **Format section:**
 - How to organise the response (sections, bullet points, priority order)
 
 **Why This Works:**
-When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "prepare for behavioural questions" and "given your transition from teaching to UX design, here's how to frame your classroom experience as user research."''',
-        'example_prompt': '''I need help preparing for a job interview. Here's my complete situation:
+When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "plan a birthday party" and "plan a surprise 60th for someone who loves gardening, hates fuss, and has 30 guests coming to a village hall on a £400 budget."''',
+        'example_prompt': '''I need help planning a surprise birthday party. Here's my complete situation:
 
-**CONTEXT — About Me:**
-- Currently: Teaching assistant at a primary school (3 years)
-- Before that: Worked in retail for 2 years after university
-- Education: English Literature degree
-- Recently completed: Google UX Design Certificate (online, took 6 months)
-- Portfolio: 3 UX case studies (school app redesign, local bakery website, fitness tracker)
-- Strongest skills: Communication, understanding user needs (from working with kids and customers), writing, research
-- Weakest areas: Never used Figma professionally, no experience with dev handoff, never done a design sprint
+**CONTEXT — About the Birthday Person:**
+- Who: My mum, turning 60
+- Personality: Warm, social, loves being around family but hates being the centre of attention (ironic for a surprise party!)
+- Interests: Gardening, baking, quiz nights, 80s music, her book club
+- Important: She keeps saying "don't make a fuss" — but she'd secretly love it if we did something thoughtful
+- She thinks we're just having "a quiet family dinner"
 
-**CONTEXT — The Interview:**
-- Role: Junior UX Designer at a digital agency (they build websites and apps for clients)
-- Company size: 30 people, creative culture, work with clients like restaurants and charities
-- Interview format: 30-min call with the Head of Design + a portfolio review
-- Interview is in 5 days
-- Job posting mentioned: "We value empathy, curiosity, and someone who asks great questions"
+**CONTEXT — The Logistics:**
+- Date: Saturday, April 12th (her actual birthday)
+- Venue: We've booked the village hall near her house (capacity 60, basic kitchen, no decorations)
+- Guest count: About 35 people (family, neighbours, book club friends, old school friends)
+- Budget: £400 total (between me and my two siblings)
+- Dietary: Mum is vegetarian, one guest is gluten-free, most people eat everything
+- The surprise element: We need to get her there without suspicion. My brother will bring her "for a drink"
 
 **TASK — What I Need:**
-1. Top 5 questions they're likely to ask (with suggested answer structures using MY background)
-2. How to explain my career change as a strength, not a weakness
-3. How to present my case studies confidently (they're student projects, not real client work)
-4. 3 great questions I should ask them (that show I'm thoughtful)
-5. One-day interview prep schedule I can follow for the next 5 days
+1. A theme that feels personal to mum (not generic "60th" banners)
+2. Food plan for 35 people on a budget (mix of homemade and bought)
+3. A timeline for the day (setup, surprise moment, activities)
+4. 2-3 activity ideas that suit a mixed-age group (kids to 80-year-olds)
+5. How to keep the surprise secret (communication plan with guests)
+6. A decoration plan that's charming, not tacky
 
 **FORMAT:**
-- Use clear numbered sections matching my 5 requests
-- For interview questions, give me the question AND a bullet-point answer framework (not full scripts — I want to sound natural)
-- Keep the prep schedule actionable (specific tasks, not vague "review your portfolio")''',
+- Use clear numbered sections matching my 6 requests
+- Include a budget breakdown showing where the £400 goes
+- Give me a week-by-week prep timeline (we have 4 weeks)
+- Keep suggestions practical — I'm organising this while working full-time''',
     },
     {
-        'title': 'Role Play for Expert Advice',
+        'title': 'Question 11: Role Play for Expert Advice',
         'description': 'Unlock expert-level responses by giving AI a specific role to play',
         'difficulty': 'intermediate',
         'order': 11,
@@ -171,23 +173,18 @@ When you say "Act as a certified financial advisor with 15 years of experience,"
 4. **Your situation** — what you're coming to them for
 
 **Your Challenge:**
-Pick ONE expert role and get personalised advice:
-- A career coach helping you plan your next career move
-- A personal finance advisor helping you budget and save
-- A fitness coach designing a realistic workout plan
-- A life coach helping you set and achieve goals
-- A public speaking coach helping you prepare for a presentation
+Get personalised advice from a **personal finance advisor helping you budget and save.** Set up the role in detail, then present your financial situation and ask for a complete plan.
 
-**Make the role detailed!** Don't just say "act as a coach." Give them a background, a communication style, and expertise that matches what you need.
+**Make the role detailed!** Don't just say "act as a finance advisor." Give them a background, a communication style, and expertise that matches what you need.
 
 **Why This Matters:**
 In real life, expert advice costs hundreds per hour. With the right prompt, you can get thoughtful, personalised guidance. The better you define the role, the better the advice.''',
         'example_prompt': '''I need help getting my finances in order. Please take on this role:
 
 **YOUR ROLE:**
-You are a friendly, no-nonsense personal finance coach who:
-- Has helped hundreds of young professionals go from "where does my money go?" to having a clear financial plan
-- Specialises in helping people in their 20s-30s who earn a decent salary but never seem to save
+You are a friendly, no-nonsense personal finance advisor helping me budget and save. Specifically:
+- You've helped hundreds of young professionals go from "where does my money go?" to having a clear financial plan
+- You specialise in helping people in their 20s-30s who earn a decent salary but never seem to save
 - Your approach: practical steps over theory, no judgement, celebrate small wins
 - You DON'T recommend complex investments or risky strategies for beginners
 - Your motto: "Pay yourself first, automate everything, then enjoy the rest guilt-free"
@@ -205,7 +202,7 @@ You are a friendly, no-nonsense personal finance coach who:
 
 **WHAT I NEED FROM YOU:**
 
-As my finance coach, give me:
+As my finance advisor, give me:
 
 1. **Honest Assessment** — Based on my numbers, where am I and how bad/good is it? Be real with me.
 
@@ -224,7 +221,7 @@ As my finance coach, give me:
 Talk to me like a coach, not a textbook. Be direct, practical, and encouraging.''',
     },
     {
-        'title': 'Think Step-by-Step',
+        'title': 'Question 12: Think Step-by-Step',
         'description': 'Get smarter AI responses by asking it to show its reasoning',
         'difficulty': 'intermediate',
         'order': 12,
@@ -248,62 +245,45 @@ Research shows that when AI explains its reasoning step-by-step, it makes fewer 
 **Your Challenge:**
 You're facing a real decision. Ask AI to help — but specifically request that it **shows its thinking at each step.**
 
-**Pick a decision:**
-- Should I go back to university or do a bootcamp?
-- Should I accept this job offer or stay in my current role?
-- Should I move to a new city or stay where I am?
-- Should I start freelancing or stay employed?
+**Your Decision:**
+I am currently looking at a career change into the AI sector. What are the benefits of doing this over my current job working in the hospitality industry? Don't mention salaries. My main goal is to work remotely.
 
 **Your prompt must include:**
 1. The decision with full context (both options, your priorities)
 2. A request for step-by-step analysis (not just a recommendation)
-3. Specific steps you want AI to follow (e.g., "evaluate against each priority," "consider 1-year and 5-year impact")
+3. Specific steps you want AI to follow (e.g., "evaluate remote work potential," "consider transferable skills," "assess long-term growth")
 4. Ask AI to give a final recommendation WITH its reasoning
 
 **The result should feel like a thoughtful conversation, not a snap judgement.**''',
-        'example_prompt': '''I need help making a big career decision. Don't just tell me what to do — walk me through your thinking step by step.
+        'example_prompt': '''I need help thinking through a big career decision. Don't just tell me what to do — walk me through your thinking step by step.
 
 **THE DECISION:**
-I've been offered a new job but I'm unsure whether to take it or stay where I am.
+I am currently looking at a career change into the AI sector. What are the benefits of doing this over my current job working in the hospitality industry? Don't mention salaries. My main goal is to work remotely.
 
-**Option A — Stay at current job (Marketing Assistant, small agency):**
-- Salary: £28,000
-- Been here 2 years, comfortable and liked by the team
-- Learning has slowed down — doing the same tasks every week
-- 10-minute walk from home
-- Good work-life balance, leave by 5:30pm
-- No clear promotion path (it's a 6-person company)
-- Boss is lovely but the company isn't growing
+**MY SITUATION:**
+- Current: Working as a restaurant supervisor in a busy hotel (3 years in hospitality)
+- Age: 29, based in Birmingham
+- What I like about hospitality: Working with people, fast-paced problem-solving, teamwork
+- What I don't like: Can't work remotely, long unsociable hours, physically exhausting, limited progression without relocating
+- My main goal: I want to work remotely — flexibility to work from home or anywhere
+- Tech skills: Comfortable with computers, use social media daily, have played around with AI tools like ChatGPT
+- Interest in AI: Fascinated by how AI is changing every industry, completed this AI prompt engineering course
+- Constraints: I need to keep earning while I transition — can't afford to stop working
 
-**Option B — New job offer (Marketing Executive, mid-size tech company):**
-- Salary: £35,000 (25% raise)
-- Bigger team (20 in marketing), more structured career path
-- Would learn SEO, paid ads, and data analytics (skills I don't have yet)
-- 45-minute commute by train
-- Fast-paced environment, might mean longer hours
-- 3-month probation period
-- Company is growing quickly, potential to move up
+**ANALYSE THIS STEP BY STEP (don't mention salaries):**
 
-**MY PRIORITIES (ranked):**
-1. Career growth and learning new skills
-2. Financial stability
-3. Work-life balance
-4. Job security
-5. Enjoying my day-to-day work
-
-**ANALYSE THIS STEP BY STEP:**
-
-**Step 1:** Evaluate each option against each of my 5 priorities (which option wins on each?)
-**Step 2:** Identify what I'd be giving up with each choice (trade-offs)
-**Step 3:** Consider the 1-year impact (where would I be in 12 months with each option?)
-**Step 4:** Consider the 3-year impact (which option puts me in a better position long-term?)
-**Step 5:** Factor in risk (what's the worst that could happen with each choice?)
-**Step 6:** Give me your final recommendation with clear reasoning
+**Step 1:** What are the realistic remote work opportunities in the AI sector vs hospitality? (Be specific about AI roles that can be done remotely)
+**Step 2:** What transferable skills do I already have from hospitality that are valuable in AI/tech? (Connect the dots for me)
+**Step 3:** What would I need to learn to make this transition? (Specific skills, courses, timeframes)
+**Step 4:** How does the AI sector compare for work-life balance and flexibility vs hospitality?
+**Step 5:** What are the growth opportunities and job security like in AI compared to hospitality long-term?
+**Step 6:** What are the biggest risks of making this change, and how can I reduce them?
+**Step 7:** Give me your final recommendation with clear reasoning — should I make this move?
 
 Show your working at every step. I want to understand HOW you reached your conclusion, not just what it is.''',
     },
     {
-        'title': 'Constraints Unlock Creativity',
+        'title': 'Question 13: Constraints Unlock Creativity',
         'description': 'Discover how adding restrictions actually produces better, more focused results',
         'difficulty': 'intermediate',
         'order': 13,
@@ -371,7 +351,7 @@ Write an "About Me" page for a professional website (yours, or a fictional one).
 Make every word count. This is a copywriter's website — the About page IS the audition.''',
     },
     {
-        'title': 'Your AI Learning Coach',
+        'title': 'Question 14: Your AI Learning Coach',
         'description': 'Set up AI as your personal tutor by establishing your learning style and preferences',
         'difficulty': 'intermediate',
         'order': 14,
@@ -404,7 +384,7 @@ Pick any skill you genuinely want to learn (it doesn't have to be tech!) and ask
 **Ideas for topics:**
 - Public speaking
 - Basic coding (Python, HTML)
-- Photography
+- Graphic design
 - Personal finance
 - A new language
 - Cooking a specific cuisine
@@ -419,16 +399,16 @@ Pick any skill you genuinely want to learn (it doesn't have to be tech!) and ask
 
 **How I Learn Best:**
 - I'm a hands-on learner — I need to DO things, not just read about them
-- Short sessions work better for me (30-45 minutes max before I lose focus)
+- I like structured sessions with clear goals (not "explore and see what happens")
 - I need to understand the "why" before the "how" (don't just tell me steps — tell me why each step matters)
 - Real-world examples stick much better than abstract theory
 - I love analogies — connecting new concepts to things I already know
 
 **My Constraints:**
-- Available time: 1 hour per day (mornings, 7-8am before work)
-- Budget: Free or under £15/month for tools/resources
-- Currently working full-time so no courses that require daytime attendance
-- I learn on my laptop (no tablet or special equipment)
+- Available time: 2 hours per day (evenings, after work)
+- Budget: Up to £40/month for tools or resources
+- Currently working full-time so I need flexible learning
+- I have a laptop and a smartphone
 
 **My Communication Preferences:**
 - Be direct — if I'm wrong or heading in the wrong direction, tell me immediately
@@ -437,31 +417,31 @@ Pick any skill you genuinely want to learn (it doesn't have to be tech!) and ask
 - Celebrate progress but don't over-praise — I want honest feedback
 
 **My Learning Goal:**
-I want to learn basic photography so I can take good photos for social media (for a small business I'm starting). I don't want to become a professional photographer — I just want my product photos and behind-the-scenes content to look polished and not "amateur."
+I want to learn graphic design so I can create professional-looking social media posts, presentations, and basic branding materials for my side business. I don't need to become a professional designer — I just want my business materials to look polished and consistent.
 
 ---
 
 **PART 2 — Create My Learning Plan:**
 
-Based on my learning profile above (hands-on, 1 hour/day, budget-friendly, "why before how"), create a 3-week learning plan for smartphone photography.
+Based on my learning profile above (hands-on, 2 hours/day, structured, "why before how"), create a 4-week learning plan for graphic design fundamentals.
 
 **Week-by-week, I need:**
-- What to learn each day (specific topic, max 30 min of learning)
-- A daily practice task (specific photo to take with exact requirements)
-- One resource to check out (free YouTube video, article, or app)
+- What to learn each day (specific topic, max 45 min of learning)
+- A daily practice task (a specific design to create with exact requirements)
+- One resource to check out (free YouTube video, article, or tutorial)
 - A "mini milestone" at the end of each week (something I can share to see my progress)
 
 **Requirements:**
-- Use only a smartphone (no fancy camera)
-- Focus on: lighting, composition, and editing
-- Include product photography tips (I'll be photographing handmade candles)
-- Recommend 1-2 free editing apps
-- By week 3, I should be able to take a product photo that looks professional enough for Instagram
+- Start with fundamentals (colour theory, typography, layout basics)
+- Focus on social media graphics and simple brand materials
+- Recommend 1-2 design tools (with free tiers) and teach me how to use them
+- Include real design challenges (e.g., "design an Instagram post for a coffee shop sale")
+- By week 4, I should be able to create a consistent set of branded templates for my business
 
-Remember my profile: hands-on tasks over theory, explain WHY each technique works, keep it to 1-hour daily sessions.''',
+Remember my profile: hands-on tasks over theory, explain WHY each design principle works, keep it to 2-hour daily sessions with clear structure.''',
     },
     {
-        'title': 'When to Start Fresh vs Continue',
+        'title': 'Question 15: When to Start Fresh vs Continue',
         'description': 'A strategic skill: knowing when to build on context and when to reset',
         'difficulty': 'advanced',
         'order': 15,
@@ -491,7 +471,7 @@ You have two scenarios. For each one, decide: **continue or start fresh?** Then 
 
 **Scenario A:** Yesterday you spent 30 minutes with AI designing a logo concept for your side business. Today you want to write the homepage copy for the same business.
 
-**Scenario B:** You asked AI to review your CV and got great feedback. Now you want to implement those changes and get a second review of the updated version.
+**Scenario B:** You asked AI to help you plan a holiday itinerary and got great suggestions. Now you want to refine the plan and add specific restaurant recommendations.
 
 **For each scenario:**
 1. State your decision (continue or fresh) and explain WHY
@@ -529,35 +509,29 @@ Length: Each section should be scannable (short sentences, bullet points where a
 
 ---
 
-**SCENARIO B: CV feedback → Updated CV review**
+**SCENARIO B: Holiday itinerary → Refine with restaurants**
 
 **Decision: CONTINUE**
 
-**Why:** This is iterative work on the SAME document. AI needs to remember what feedback it gave me so it can check whether I implemented it correctly. Starting fresh would mean re-explaining all the context and losing the specific suggestions it made.
+**Why:** This is iterative work on the SAME topic. AI needs to remember which cities we chose, the travel dates, the accommodation, and the overall vibe of the trip. Starting fresh would mean re-explaining all the context and losing the specific suggestions it already tailored for us.
 
 **Follow-up Prompt (in same conversation):**
-I've implemented your feedback on my CV! Here's what I changed:
+Love the itinerary! Let's build on it. I want to add specific restaurant recommendations.
 
-- Rewrote all bullet points to start with strong action verbs ✅
-- Added specific metrics to 4 achievements (revenue, percentage improvements, team sizes) ✅
-- Removed the "Objective" section as you suggested ✅
-- Condensed from 2 pages to 1 page ✅
-- Reorganised skills section by category ✅
+For each day of the trip, suggest:
+- A lunch spot (casual, local favourite, under £15 per person)
+- A dinner spot (can be a bit nicer, up to £30 per person)
+- One "must-try" local food experience (street food, market, food tour, etc.)
 
-**Still working on:**
-- The "Professional Summary" at the top — I couldn't get it right
+For each restaurant:
+1. Why you're recommending it (what makes it special)
+2. What to order (their signature dish or best item)
+3. Whether I need to book ahead
 
-Here's my updated CV: [paste updated CV]
-
-Please review it again and:
-1. Rate my changes (did I implement your feedback well?)
-2. Help me write the Professional Summary (3 lines max, punchy, highlights my unique value)
-3. Any final tweaks before I start applying?
-
-Be as critical as last time — I want this to be strong before I send it out.''',
+Remember our preferences from earlier: we love trying local food, one of us is vegetarian, and we prefer independent places over chains. Keep it consistent with the relaxed vibe we planned.''',
     },
     {
-        'title': 'Prompt Templates That Save Time',
+        'title': 'Question 16: Prompt Templates That Save Time',
         'description': 'Create reusable prompt templates you can use again and again',
         'difficulty': 'advanced',
         'order': 16,
@@ -591,6 +565,9 @@ Create a **reusable prompt template** for one of these common tasks:
 4. Instructions at the top explaining how to use the template
 
 **Then demonstrate the template** by filling it in with a real example.
+
+**What to Submit:**
+First, create your template with clear [PLACEHOLDER] fields. Then show the template filled in with a real example so we can see it in action. Your submission should include both the blank template AND the completed version.
 
 **Real-World Value:**
 Professionals who use AI daily have personal libraries of prompt templates. This saves enormous time and ensures consistent quality. You're building a tool you'll actually use.''',
