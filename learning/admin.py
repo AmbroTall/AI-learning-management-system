@@ -31,9 +31,9 @@ class UserProgressAdmin(admin.ModelAdmin):
 
 @admin.register(ChallengeAttempt)
 class ChallengeAttemptAdmin(admin.ModelAdmin):
-    list_display = ['user', 'challenge', 'score', 'passed', 'attempt_number', 'created_at']
+    list_display = ['user', 'challenge', 'score', 'passed', 'attempt_number', 'created_at', 'user_prompt']
     list_filter = ['passed', 'challenge__module']
-    search_fields = ['user__username', 'challenge__title']
+    search_fields = ['user__username', 'challenge__title', 'user_prompt']
     date_hierarchy = 'created_at'
 
 
