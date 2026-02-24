@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Your Plan — Ambrose AI{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-16">
+
+    <div class="text-center mb-12">
+        <div class="text-5xl mb-4">🎯</div>
+        <h1 class="text-4xl font-bold gradient-text mb-3">
+            Unlock Your AI Potential
+        </h1>
+        <p class="text-gray-400 text-lg max-w-xl mx-auto">
+            Choose a plan and get instant access to all modules, 100+ challenges, and your personal AI learning tutor.
+        </p>
+
+        {% if user.is_authenticated %}
+        <p class="mt-4 text-sm text-gray-500">
+            Signed in as <span class="text-cyan-400">{{ user.username }}</span>
+        </p>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+    <div class="mb-8 space-y-3">
+        {% for message in messages %}
+        <div class="p-4 rounded-xl
+            {% if message.tags == 'error' %}bg-red-500/10 border border-red-500/30 text-red-400
+            {% else %}bg-cyan-500/10 border border-cyan-500/30 text-cyan-400{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if plans %}
+    <div class="grid md:grid-cols-{{ plans|length }} gap-8 mb-12">
+        {% for plan in plans %}
+        <div class="glass-effect rounded-2xl p-8 border {% if plan.is_popular %}border-cyan-500/60{% else %}border-white/10{% endif %} relative transition hover:-translate-y-1">
+            {% if plan.is_popular %}
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">
+                    ⭐ Most Popular
+                </span>
+            </div>
+            {% endif %}
+
+            <div class="text-center mb-6">
+                <div class="text-2xl font-bold mb-1">{{ plan.name }}</div>
+                <div class="text-sm text-gray-500 capitalize">{{ plan.duration }}</div>
+            </div>
+
+            <div class="text-center mb-8">
+                <span class="text-6xl font-bold gradient-text">{{ plan.price }}</span>
+                <span class="text-gray-400 ml-2">{{ plan.currency }}</span>
+                <div class="text-gray-500 text-sm mt-1">
+                    {% if plan.duration == 'yearly' %}billed once a year{% else %}billed monthly{% endif %}
+                </div>
+            </div>
+
+            {% if plan.features %}
+            <ul class="space-y-3 mb-8">
+                {% for feature in plan.features %}
+                <li class="flex items-start gap-3 text-gray-300 text-sm">
+                    <span class="text-green-400 mt-0.5 shrink-0">✓</span>
+                    {{ feature }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <ul class="space-y-3 mb-8">
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> All 4 learning modules</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> 100+ interactive challenges</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> AI-powered feedback on every answer</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> File upload &amp; voice input</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Leaderboard &amp; achievement badges</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Certificate of completion</li>
+            </ul>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'initiate_payment' plan.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="w-full py-4 {% if plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect{% endif %} rounded-xl font-bold text-lg hover-lift transition">
+                    Subscribe Now →
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'register' %}"
+               class="block w-full py-4 text-center {% if plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect{% endif %} rounded-xl font-bold text-lg hover-lift">
+                Create Account →
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- No plans configured yet -->
+    <div class="glass-effect rounded-2xl p-12 text-center mb-12">
+        <div class="text-5xl mb-4">⚙️</div>
+        <h2 class="text-2xl font-bold mb-3">Plans Coming Soon</h2>
+        <p class="text-gray-400 mb-6">
+            We're configuring subscription plans. In the meantime, contact us to get started.
+        </p>
+        <a href="mailto:hello@ambroseai.com"
+           class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift">
+            Contact Us →
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Organisation CTA -->
+    <div class="glass-effect rounded-2xl p-8 text-center border border-white/5">
+        <div class="text-3xl mb-3">🏢</div>
+        <h3 class="text-xl font-bold mb-2">Training a team or organisation?</h3>
+        <p class="text-gray-400 text-sm mb-4 max-w-lg mx-auto">
+            We offer custom deals for schools, companies, and training providers —
+            bulk seats, admin controls, and dedicated support.
+        </p>
+        <a href="mailto:hello@ambroseai.com"
+           class="inline-block px-6 py-2 glass-effect rounded-lg text-sm font-semibold hover-lift">
+            Get Organisation Pricing →
+        </a>
+    </div>
+
+    <div class="text-center mt-8 text-sm text-gray-500">
+        <a href="{% url 'home' %}" class="text-cyan-400 hover:underline">← Back to home</a>
+        &nbsp;·&nbsp;
+        <a href="{% url 'login' %}" class="text-cyan-400 hover:underline">Already have a subscription? Sign in</a>
+    </div>
+</div>
+{% endblock %}

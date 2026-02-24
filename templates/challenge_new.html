@@ -168,12 +168,16 @@
     </div>
     {% endif %}
     
-    <!-- Detect Challenge Type -->
-    {% if challenge.module.module_type == 'coding' %}
-        <!-- CODING MODULE: Show Code Editor -->
+    <!-- Route to the correct challenge interface based on module type -->
+    {% if challenge.module.module_type == 'intro' %}
+        <!-- Free intro lessons: reading/slide style, no AI evaluation -->
+        {% include 'partials/intro_lesson.html' %}
+    {% elif challenge.module.module_type == 'coding' %}
+        <!-- Module 4A (Coding with AI): CodeMirror editor + run/submit -->
         {% include 'partials/coding_challenge.html' %}
     {% else %}
-        <!-- OTHER MODULES: Show Prompt Interface -->
+        <!-- chat (Modules 1, 2, 4B), builder (Module 3), data:
+             Prompt textarea with file upload and voice input -->
         {% include 'partials/prompt_challenge.html' %}
     {% endif %}
 </div>

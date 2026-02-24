@@ -120,6 +120,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Anthropic API
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
 
+# Network Global Payment Gateway
+NETWORK_GLOBAL_ENDPOINT = os.getenv('NETWORK_GLOBAL_ENDPOINT', '')
+NETWORK_GLOBAL_COMPANY_TOKEN = os.getenv('NETWORK_GLOBAL_COMPANY_TOKEN', '')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:8000')
+
 # Session settings
 SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True

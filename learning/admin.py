@@ -1,9 +1,15 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
+from django.utils.html import format_html
+
 from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
-    Achievement, UserAchievement, Leaderboard
+    Achievement, UserAchievement, Leaderboard,
+    Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
 )
 
+
+# ── Existing model admins ──────────────────────────────────────────────────
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
@@ -57,3 +63,162 @@ class LeaderboardAdmin(admin.ModelAdmin):
     list_display = ['user', 'total_points', 'challenges_completed', 'modules_completed', 'current_streak']
     search_fields = ['user__username']
     ordering = ['-total_points']
+
+
+# ── SaaS admins ────────────────────────────────────────────────────────────
+
+class OrganisationMembershipInline(admin.TabularInline):
+    model = OrganisationMembership
+    extra = 0
+    fields = ['user', 'is_active', 'joined_at']
+    readonly_fields = ['joined_at']
+    autocomplete_fields = ['user']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        try:
+            return qs.filter(organisation=request.user.managed_organisation)
+        except Organisation.DoesNotExist:
+            return qs.none()
+
+
+@admin.register(Organisation)
+class OrganisationAdmin(admin.ModelAdmin):
+    list_display = [
+        'name', 'admin_user', 'max_members', 'member_count_display',
+        'slots_remaining', 'is_active', 'created_at',
+    ]
+    list_filter = ['is_active']
+    search_fields = ['name', 'admin_user__username']
+    readonly_fields = ['slug', 'member_count_display', 'slots_remaining', 'created_at']
+    inlines = [OrganisationMembershipInline]
+    autocomplete_fields = ['admin_user']
+
+    fieldsets = (
+        ('Organisation Details', {
+            'fields': ('name', 'slug', 'admin_user', 'is_active', 'notes'),
+        }),
+        ('Membership Quota', {
+            'fields': ('max_members', 'member_count_display', 'slots_remaining'),
+        }),
+        ('Meta', {
+            'fields': ('created_at',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    def member_count_display(self, obj):
+        count = obj.current_member_count
+        colour = 'green' if count < obj.max_members else 'red'
+        return format_html(
+            '<span style="color:{}">{} / {}</span>', colour, count, obj.max_members
+        )
+    member_count_display.short_description = 'Members'
+
+    def slots_remaining(self, obj):
+        remaining = obj.max_members - obj.current_member_count
+        return max(remaining, 0)
+    slots_remaining.short_description = 'Slots remaining'
+
+    # Superuser-only: create/delete organisations
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        # Org admins see only their own organisation
+        return qs.filter(admin_user=request.user)
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['slug', 'member_count_display', 'slots_remaining', 'created_at']
+        # Org admins cannot change core settings
+        return [
+            'name', 'slug', 'admin_user', 'max_members', 'is_active',
+            'member_count_display', 'slots_remaining', 'created_at',
+        ]
+
+    def save_formset(self, request, form, formset, change):
+        """Enforce member limit when org admins add students."""
+        if formset.model == OrganisationMembership and not request.user.is_superuser:
+            try:
+                org = request.user.managed_organisation
+            except Organisation.DoesNotExist:
+                org = None
+
+            instances = formset.save(commit=False)
+            for instance in instances:
+                if org and not instance.pk and not org.can_add_members:
+                    self.message_user(
+                        request,
+                        f'Member limit reached ({org.max_members}). '
+                        f'Contact your administrator to increase the quota.',
+                        level='error',
+                    )
+                    continue
+                if not instance.pk:
+                    instance.added_by = request.user
+                instance.save()
+            formset.save_m2m()
+        else:
+            formset.save()
+
+
+@admin.register(OrganisationMembership)
+class OrganisationMembershipAdmin(admin.ModelAdmin):
+    list_display = ['user', 'organisation', 'added_by', 'is_active', 'joined_at']
+    list_filter = ['organisation', 'is_active']
+    search_fields = ['user__username', 'organisation__name']
+    readonly_fields = ['joined_at', 'added_by']
+    date_hierarchy = 'joined_at'
+    autocomplete_fields = ['user', 'organisation']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        try:
+            return qs.filter(organisation=request.user.managed_organisation)
+        except Organisation.DoesNotExist:
+            return qs.none()
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+
+@admin.register(SubscriptionPlan)
+class SubscriptionPlanAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price', 'currency', 'duration', 'duration_days', 'is_popular', 'is_active']
+    list_filter = ['duration', 'is_active', 'is_popular']
+    search_fields = ['name']
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'plan', 'status', 'start_date', 'end_date', 'created_at',
+    ]
+    list_filter = ['status', 'plan']
+    search_fields = ['user__username', 'company_ref', 'transaction_token']
+    readonly_fields = ['company_ref', 'transaction_token', 'created_at']
+    date_hierarchy = 'created_at'
+
+
+# Make User searchable for autocomplete_fields
+admin.site.unregister(User) if User in admin.site._registry else None
+
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
+@admin.register(User)
+class UserAdmin(DjangoUserAdmin):
+    search_fields = ['username', 'email', 'first_name', 'last_name']

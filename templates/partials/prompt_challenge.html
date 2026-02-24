@@ -1,4 +1,24 @@
-<!-- Prompt-based Challenge Interface (Modules 1 & 2) -->
+<!-- Prompt-based Challenge Interface (Modules 1, 2, 3, 4B) -->
+<style>
+.mic-btn {
+    background: rgba(168, 85, 247, 0.15);
+    color: rgb(192, 132, 252);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+.mic-btn:hover {
+    background: rgba(168, 85, 247, 0.25);
+}
+.mic-btn.recording {
+    background: rgba(239, 68, 68, 0.2);
+    color: rgb(248, 113, 113);
+    border-color: rgba(239, 68, 68, 0.4);
+    animation: mic-pulse 1.2s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+</style>
 <div class="grid lg:grid-cols-2 gap-8">
     <!-- Left Column: Instructions -->
     <div class="space-y-6">
@@ -55,14 +75,53 @@
     <div class="space-y-6">
         <!-- Prompt Input -->
         <div class="glass-effect rounded-2xl p-8 neon-border">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
-                <span class="mr-3">🎯</span> Your Prompt
-            </h2>
-            <textarea id="userPrompt" 
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <span class="mr-3">🎯</span> Your Prompt
+                </h2>
+                <button id="micBtn" onclick="toggleRecording()" title="Start voice input"
+                        class="mic-btn px-3 py-2 rounded-lg font-medium text-sm flex items-center space-x-2 transition">
+                    <span id="micIcon">🎤</span>
+                    <span id="micLabel" class="hidden sm:inline">Voice Input</span>
+                </button>
+            </div>
+
+            <!-- File Upload Area -->
+            <div id="fileUploadArea"
+                 class="mb-4 border-2 border-dashed border-cyan-500/30 rounded-xl p-5 text-center cursor-pointer hover:border-cyan-500/60 hover:bg-cyan-500/5 transition"
+                 onclick="document.getElementById('fileInput').click()">
+                <div id="uploadPrompt">
+                    <div class="text-3xl mb-1">📎</div>
+                    <div class="text-gray-300 text-sm font-medium">Attach a file <span class="text-gray-500">(optional)</span></div>
+                    <div class="text-gray-500 text-xs mt-1">PDF or image (PNG, JPG, WebP) · max 5 MB</div>
+                </div>
+                <div id="filePreview" class="hidden items-center justify-between px-2">
+                    <div class="flex items-center space-x-3">
+                        <span id="fileIcon" class="text-3xl">📄</span>
+                        <div class="text-left">
+                            <div class="text-cyan-400 text-sm font-semibold" id="fileName"></div>
+                            <div class="text-gray-500 text-xs" id="fileSize"></div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="removeFile(event)"
+                            class="text-xs text-red-400 hover:text-red-300 px-3 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition">
+                        ✕ Remove
+                    </button>
+                </div>
+            </div>
+            <input type="file" id="fileInput" class="hidden"
+                   accept=".pdf,.png,.jpg,.jpeg,.gif,.webp"
+                   onchange="handleFileUpload(this)">
+
+            <textarea id="userPrompt"
                       class="w-full h-48 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white font-mono resize-none"
                       placeholder="Type your prompt here..."></textarea>
-            
-            <button id="submitBtn" 
+
+            <div id="interimText" class="hidden mb-2 px-1 text-sm italic text-gray-500">
+                <span class="text-purple-400">🎤 Listening:</span> <span id="interimContent"></span>
+            </div>
+
+            <button id="submitBtn"
                     class="w-full mt-4 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-bold text-lg hover-lift neon-border pulse-glow">
                 <span id="btnText">Submit Challenge</span>
                 <span id="btnLoading" class="hidden">⏳ Processing...</span>
@@ -127,48 +186,96 @@ const scoreBar = document.getElementById('scoreBar');
 const feedbackText = document.getElementById('feedbackText');
 const passStatus = document.getElementById('passStatus');
 
+// ── File upload handling ────────────────────────────────────────────────
+let uploadedFile = null;
+
+function handleFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const maxSize = 5 * 1024 * 1024; // 5 MB
+    if (file.size > maxSize) {
+        alert('File too large. Maximum size is 5 MB.');
+        input.value = '';
+        return;
+    }
+
+    const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+        alert('Unsupported file type. Please upload a PDF or image (PNG, JPG, WebP).');
+        input.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64 = e.target.result.split(',')[1];
+        uploadedFile = { data: base64, type: file.type, name: file.name };
+
+        document.getElementById('uploadPrompt').classList.add('hidden');
+        const preview = document.getElementById('filePreview');
+        preview.classList.remove('hidden');
+        preview.classList.add('flex');
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+        document.getElementById('fileIcon').textContent = file.type === 'application/pdf' ? '📄' : '🖼️';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeFile(event) {
+    event.stopPropagation();
+    uploadedFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('uploadPrompt').classList.remove('hidden');
+    const preview = document.getElementById('filePreview');
+    preview.classList.add('hidden');
+    preview.classList.remove('flex');
+}
+
+// ── Submit challenge ────────────────────────────────────────────────────
 submitBtn.addEventListener('click', async function() {
     const prompt = userPrompt.value.trim();
-    
+
     if (!prompt) {
         alert('Please enter a prompt');
         return;
     }
-    
-    // Show loading
+
     submitBtn.disabled = true;
     btnText.classList.add('hidden');
     btnLoading.classList.remove('hidden');
     responseSection.classList.add('hidden');
     evaluationSection.classList.add('hidden');
-    
+
     try {
+        const body = { prompt };
+        if (uploadedFile) {
+            body.file_data = uploadedFile.data;
+            body.file_type = uploadedFile.type;
+            body.file_name = uploadedFile.name;
+        }
+
         const response = await fetch('{% url "submit_challenge" challenge.id %}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: prompt })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
-            // Render AI response with markdown
             aiResponse.innerHTML = marked.parse(data.ai_response);
-            // Highlight code blocks
             aiResponse.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
             responseSection.classList.remove('hidden');
-            
-            // Show evaluation
+
             scoreValue.textContent = data.score;
             scoreBar.style.width = data.score + '%';
             feedbackText.innerHTML = marked.parse(data.feedback);
             evaluationSection.classList.remove('hidden');
-            
-            // Show pass/fail status
+
             if (data.passed) {
                 passStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 text-center font-bold success-celebration';
                 passStatus.textContent = '🎉 Challenge Passed! +{{ challenge.points }} points';
@@ -177,8 +284,7 @@ submitBtn.addEventListener('click', async function() {
                 passStatus.textContent = '💪 Keep trying! Score 70+ to pass';
             }
             passStatus.classList.remove('hidden');
-            
-            // Scroll to results
+
             evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
             alert('Error: ' + data.error);
@@ -201,14 +307,87 @@ function tryAgain() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Allow Ctrl+Enter to submit
 userPrompt.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         submitBtn.click();
     }
 });
 
-// Render markdown in instructions and example prompt
+// ── Speech Recognition (Web Speech API) ────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let isRecording = false;
+
+(function initSpeech() {
+    const btn = document.getElementById('micBtn');
+    if (!SpeechRecognition) {
+        if (btn) btn.style.display = 'none';
+        return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-GB';
+
+    recognition.onresult = function(e) {
+        let interim = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+            if (e.results[i].isFinal) {
+                const text = e.results[i][0].transcript.trim();
+                const ta = document.getElementById('userPrompt');
+                ta.value += (ta.value && !ta.value.endsWith('\n') ? ' ' : '') + text;
+            } else {
+                interim += e.results[i][0].transcript;
+            }
+        }
+        const interimContent = document.getElementById('interimContent');
+        const interimBox = document.getElementById('interimText');
+        if (interimContent) interimContent.textContent = interim;
+        if (interimBox) interimBox.classList.toggle('hidden', !interim);
+    };
+
+    recognition.onerror = function() { stopRecording(); };
+
+    // Auto-restart while user hasn't stopped (handles browser auto-stop)
+    recognition.onend = function() {
+        if (isRecording) {
+            try { recognition.start(); } catch (err) {}
+        }
+    };
+})();
+
+function toggleRecording() {
+    if (!recognition) return;
+    isRecording ? stopRecording() : startRecording();
+}
+
+function startRecording() {
+    try {
+        recognition.start();
+        isRecording = true;
+        const btn = document.getElementById('micBtn');
+        btn.classList.add('recording');
+        btn.title = 'Stop recording';
+        document.getElementById('micIcon').textContent = '⏹';
+        const label = document.getElementById('micLabel');
+        if (label) label.textContent = 'Listening…';
+    } catch (err) {}
+}
+
+function stopRecording() {
+    recognition.stop();
+    isRecording = false;
+    const btn = document.getElementById('micBtn');
+    btn.classList.remove('recording');
+    btn.title = 'Start voice input';
+    document.getElementById('micIcon').textContent = '🎤';
+    const label = document.getElementById('micLabel');
+    if (label) label.textContent = 'Voice Input';
+    const interimBox = document.getElementById('interimText');
+    if (interimBox) interimBox.classList.add('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const instructionsEl = document.getElementById('instructionsContent');
     if (instructionsEl) {

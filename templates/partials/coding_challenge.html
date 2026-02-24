@@ -65,16 +65,32 @@ print("Hello, World!")
                 <h3 class="text-xl font-bold mb-4 flex items-center">
                     <span class="mr-2">🤖</span> AI Assistant
                 </h3>
-                
-                <textarea id="aiQuestion" 
+
+                <!-- Image upload for error screenshots -->
+                <div id="codeFileUploadArea"
+                     class="mb-3 border border-dashed border-cyan-500/30 rounded-lg p-3 text-center cursor-pointer hover:border-cyan-500/60 hover:bg-cyan-500/5 transition text-sm"
+                     onclick="document.getElementById('codeFileInput').click()">
+                    <div id="codeUploadPrompt" class="text-gray-500">
+                        📎 Attach a screenshot or image (optional)
+                    </div>
+                    <div id="codeFilePreview" class="hidden flex items-center justify-between px-1">
+                        <span class="text-cyan-400 text-xs" id="codeFileName"></span>
+                        <button type="button" onclick="removeCodeFile(event)" class="text-xs text-red-400 hover:text-red-300">✕</button>
+                    </div>
+                </div>
+                <input type="file" id="codeFileInput" class="hidden"
+                       accept=".png,.jpg,.jpeg,.webp"
+                       onchange="handleCodeFileUpload(this)">
+
+                <textarea id="aiQuestion"
                           class="w-full h-32 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white resize-none mb-4"
                           placeholder="Ask AI for help... e.g., 'How do I use a for loop?' or 'Can you explain this error?'"></textarea>
-                
+
                 <button onclick="askAI()" id="askBtn" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift">
                     <span id="askBtnText">Ask AI</span>
                     <span id="askBtnLoading" class="hidden">⏳ Thinking...</span>
                 </button>
-                
+
                 <div id="aiHelpResponse" class="hidden mt-4 p-4 bg-black/30 rounded-lg border border-purple-500/30">
                     <div class="text-sm text-gray-400 mb-2">AI's Help:</div>
                     <div id="aiHelpText" class="markdown-content text-gray-300"></div>
@@ -203,6 +219,35 @@ function getAIHelp() {
     }
 }
 
+// ── Image upload for AI help ──────────────────────────────────────────
+let codeHelpFile = null;
+
+function handleCodeFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('Max 5 MB'); input.value = ''; return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        codeHelpFile = { data: e.target.result.split(',')[1], type: file.type, name: file.name };
+        document.getElementById('codeUploadPrompt').classList.add('hidden');
+        const preview = document.getElementById('codeFilePreview');
+        preview.classList.remove('hidden');
+        preview.classList.add('flex');
+        document.getElementById('codeFileName').textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeCodeFile(event) {
+    event.stopPropagation();
+    codeHelpFile = null;
+    document.getElementById('codeFileInput').value = '';
+    document.getElementById('codeUploadPrompt').classList.remove('hidden');
+    const preview = document.getElementById('codeFilePreview');
+    preview.classList.add('hidden');
+    preview.classList.remove('flex');
+}
+
 // Ask AI
 async function askAI() {
     const question = document.getElementById('aiQuestion').value.trim();
@@ -212,34 +257,36 @@ async function askAI() {
     const askBtnLoading = document.getElementById('askBtnLoading');
     const aiHelpResponse = document.getElementById('aiHelpResponse');
     const aiHelpText = document.getElementById('aiHelpText');
-    
+
     if (!question) {
         alert('Please ask a question!');
         return;
     }
-    
+
     askBtn.disabled = true;
     askBtnText.classList.add('hidden');
     askBtnLoading.classList.remove('hidden');
-    
+
     try {
-        const fullPrompt = code ? 
+        const fullPrompt = code ?
             `My code:\n\`\`\`python\n${code}\n\`\`\`\n\nQuestion: ${question}\n\nPlease help me understand. Be clear and beginner-friendly.` :
             `Question: ${question}\n\nPlease help me understand. Be clear and beginner-friendly.`;
-        
+
+        const body = { prompt: fullPrompt, action: 'get_help' };
+        if (codeHelpFile) {
+            body.file_data = codeHelpFile.data;
+            body.file_type = codeHelpFile.type;
+            body.file_name = codeHelpFile.name;
+        }
+
         const response = await fetch('{% url "submit_challenge" challenge.id %}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                prompt: fullPrompt,
-                action: 'get_help'
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             aiHelpText.innerHTML = marked.parse(data.ai_response);
             aiHelpText.querySelectorAll('pre code').forEach((block) => {

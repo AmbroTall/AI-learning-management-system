@@ -1,17 +1,36 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block title %}Dashboard - AI Learning Platform{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
     <!-- Welcome Section -->
-    <div class="mb-12">
-        <h1 class="text-5xl font-bold mb-4">
+    <div class="mb-10">
+        <h1 class="text-5xl font-bold mb-3">
             Welcome back, <span class="gradient-text">{{ user.username }}</span>!
         </h1>
         <p class="text-xl text-gray-400">Continue your journey to AI mastery</p>
+
+        <!-- Org / Subscription status pills -->
+        <div class="flex flex-wrap gap-3 mt-4">
+            {% if org_membership %}
+            <span class="px-4 py-1.5 bg-purple-500/15 text-purple-300 rounded-full text-sm font-semibold">
+                🏢 {{ org_membership.organisation.name }} — Organisation Member
+            </span>
+            {% elif active_subscription %}
+            <span class="px-4 py-1.5 bg-green-500/15 text-green-400 rounded-full text-sm font-semibold">
+                ✅ Active Subscription — expires {{ active_subscription.end_date|date:"d M Y" }}
+            </span>
+            {% else %}
+            <span class="px-4 py-1.5 bg-orange-500/15 text-orange-400 rounded-full text-sm font-semibold">
+                🔓 Free Account
+            </span>
+            {% endif %}
+        </div>
     </div>
-    
+
     <!-- Stats Cards -->
     <div class="grid md:grid-cols-4 gap-6 mb-12">
         <div class="glass-effect rounded-xl p-6 hover-lift">
@@ -21,7 +40,7 @@
             </div>
             <div class="text-4xl font-bold gradient-text">{{ leaderboard.total_points }}</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 hover-lift">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-gray-400">Challenges</span>
@@ -29,7 +48,7 @@
             </div>
             <div class="text-4xl font-bold text-cyan-400">{{ completed_challenges }}/{{ total_challenges }}</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 hover-lift">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-gray-400">Current Streak</span>
@@ -37,7 +56,7 @@
             </div>
             <div class="text-4xl font-bold text-orange-400">{{ leaderboard.current_streak }}</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 hover-lift">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-gray-400">Progress</span>
@@ -46,19 +65,119 @@
             <div class="text-4xl font-bold text-green-400">{{ progress_percentage }}%</div>
         </div>
     </div>
-    
-    <!-- Learning Modules -->
+
+    <!-- ── FREE INTRO SECTION ─────────────────────────────────────── -->
+    {% if intro_modules %}
     <div class="mb-12">
-        <h2 class="text-3xl font-bold mb-6">Learning Modules</h2>
+        <div class="flex items-center gap-3 mb-6">
+            <h2 class="text-3xl font-bold">Introduction to AI</h2>
+            <span class="px-3 py-1 bg-cyan-500/15 text-cyan-400 rounded-full text-xs font-semibold uppercase tracking-wider">Free</span>
+        </div>
+        <p class="text-gray-400 mb-6">Start here — free reading lessons to get you grounded in AI before the hands-on modules.</p>
+
+        <div class="grid md:grid-cols-{% if intro_modules|length == 1 %}1{% else %}2{% endif %} gap-6">
+            {% for module in intro_modules %}
+            {% with progress=user_progress %}
+            <div class="glass-effect rounded-2xl p-8 hover-lift border border-cyan-500/20 relative overflow-hidden">
+                <!-- Subtle glow accent -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-2xl"></div>
+
+                <div class="flex items-start gap-4 mb-4">
+                    <span class="text-5xl">{{ module.icon }}</span>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">{{ module.title }}</h3>
+                        <p class="text-gray-400 text-sm">{{ module.description|truncatewords:20 }}</p>
+                    </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="mb-5">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-400">Progress</span>
+                        <span class="text-cyan-400 font-semibold">
+                            {% for prog in user_progress %}
+                                {% if prog.module.id == module.id %}
+                                    {{ prog.challenges_completed }}/{{ module.challenges.count }}
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <div class="w-full bg-white/10 rounded-full h-2">
+                        {% for prog in user_progress %}
+                            {% if prog.module.id == module.id %}
+                                {% widthratio prog.challenges_completed module.challenges.count 100 as pct %}
+                                <div class="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-400">⏱️ {{ module.duration_hours }} hours &nbsp;·&nbsp; {{ module.challenges.count }} lessons</span>
+                    <a href="{% url 'module_detail' module.id %}"
+                       class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle">
+                        Start Reading →
+                    </a>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── SUBSCRIPTION GATE BANNER (shown only when no access) ──── -->
+    {% if not user_has_access and paid_modules %}
+    <div class="mb-10 rounded-2xl overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/30 p-8 flex flex-col md:flex-row items-center gap-6">
+            <div class="flex-1">
+                <h3 class="text-2xl font-bold mb-2">Unlock the Full Programme</h3>
+                <p class="text-gray-300 mb-1">
+                    Subscribe to access all hands-on AI modules — prompt engineering, automation,
+                    coding with AI, cybersecurity, and more.
+                </p>
+                <p class="text-sm text-gray-400">Already have an account with an organisation? Ask your admin to add you.</p>
+            </div>
+            <div class="flex-shrink-0 flex flex-col items-center gap-3">
+                <a href="{% url 'subscription_plans' %}"
+                   class="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl font-bold text-lg hover-lift neon-border">
+                    View Plans →
+                </a>
+                <span class="text-xs text-gray-500">Cancel any time</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── PAID LEARNING MODULES ─────────────────────────────────── -->
+    {% if paid_modules %}
+    <div class="mb-12">
+        <div class="flex items-center gap-3 mb-6">
+            <h2 class="text-3xl font-bold">Learning Modules</h2>
+            {% if user_has_access %}
+            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold uppercase tracking-wider">Unlocked</span>
+            {% else %}
+            <span class="px-3 py-1 bg-orange-500/15 text-orange-400 rounded-full text-xs font-semibold uppercase tracking-wider">Subscription Required</span>
+            {% endif %}
+        </div>
+
         <div class="grid md:grid-cols-2 gap-6">
             {% for item in modules_with_status %}
-            <div class="glass-effect rounded-2xl p-8 hover-lift neon-border {% if not item.is_unlocked %}opacity-50 cursor-not-allowed{% endif %} relative">
-                {% if not item.is_unlocked %}
-                <div class="absolute top-4 right-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+            {% if item.module.module_type != 'intro' %}
+            <div class="glass-effect rounded-2xl p-8 hover-lift neon-border relative
+                {% if not user_has_access or not item.is_unlocked %}opacity-60{% endif %}">
+
+                <!-- Lock overlay badges -->
+                {% if not user_has_access %}
+                <div class="absolute top-4 right-4 bg-indigo-500/20 text-indigo-400 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1">
+                    💳 Subscribe to Unlock
+                </div>
+                {% elif not item.is_unlocked %}
+                <div class="absolute top-4 right-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1">
                     🔒 Locked
                 </div>
                 {% endif %}
-                
+
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <div class="text-5xl mb-3">{{ item.module.icon }}</div>
@@ -66,15 +185,17 @@
                         <p class="text-gray-400 mb-4">{{ item.module.description|truncatewords:20 }}</p>
                     </div>
                 </div>
-                
-                {% if not item.is_unlocked %}
+
+                <!-- Prerequisite notice (only meaningful if subscribed but still locked) -->
+                {% if user_has_access and not item.is_unlocked and item.module.prerequisite %}
                 <div class="mb-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
                     <p class="text-sm text-orange-400">
-                        <span class="font-semibold">🎯 Complete "{{ item.module.prerequisite.title }}" to unlock</span>
+                        🎯 Complete "<strong>{{ item.module.prerequisite.title }}</strong>" to unlock
                     </p>
                 </div>
                 {% endif %}
-                
+
+                <!-- Progress bar -->
                 <div class="mb-4">
                     <div class="flex justify-between text-sm mb-2">
                         <span class="text-gray-400">Progress</span>
@@ -95,73 +216,52 @@
                         {% endfor %}
                     </div>
                 </div>
-                
+
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-400">⏱️ {{ item.module.duration_hours }} hours</span>
-                    {% if item.is_unlocked %}
-                    <a href="{% url 'module_detail' item.module.id %}" 
+                    {% if user_has_access and item.is_unlocked %}
+                    <a href="{% url 'module_detail' item.module.id %}"
                        class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle">
                         Start Learning →
                     </a>
-                    {% else %}
-                    <button disabled 
+                    {% elif user_has_access and not item.is_unlocked %}
+                    <button disabled
                        class="px-6 py-2 bg-gray-500/20 rounded-lg font-semibold cursor-not-allowed text-gray-500">
                         🔒 Locked
                     </button>
+                    {% else %}
+                    <a href="{% url 'subscription_plans' %}"
+                       class="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg font-semibold hover-lift">
+                        Subscribe →
+                    </a>
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
             {% endfor %}
         </div>
     </div>
-    
-    <!-- Two Column Layout -->
-    <div class="grid md:grid-cols-2 gap-8">
-        <!-- Recent Achievements -->
-        <div class="glass-effect rounded-2xl p-8">
-            <h3 class="text-2xl font-bold mb-6">Recent Achievements</h3>
-            {% if recent_achievements %}
-                <div class="space-y-4">
-                    {% for ua in recent_achievements %}
-                    <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-lg">
-                        <span class="text-4xl">{{ ua.achievement.icon }}</span>
-                        <div>
-                            <div class="font-semibold">{{ ua.achievement.name }}</div>
-                            <div class="text-sm text-gray-400">{{ ua.achievement.description }}</div>
-                        </div>
+    {% endif %}
+
+    <!-- Bottom row: Achievements -->
+    <div class="glass-effect rounded-2xl p-8 mb-12">
+        <h3 class="text-2xl font-bold mb-6">Recent Achievements</h3>
+        {% if recent_achievements %}
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for ua in recent_achievements %}
+                <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-lg">
+                    <span class="text-4xl">{{ ua.achievement.icon }}</span>
+                    <div>
+                        <div class="font-semibold">{{ ua.achievement.name }}</div>
+                        <div class="text-sm text-gray-400">{{ ua.achievement.description }}</div>
                     </div>
-                    {% endfor %}
                 </div>
-            {% else %}
-                <p class="text-gray-400 text-center py-8">Complete challenges to earn achievements!</p>
-            {% endif %}
-        </div>
-        
-<!--        &lt;!&ndash; Top Performers &ndash;&gt;-->
-<!--        <div class="glass-effect rounded-2xl p-8">-->
-<!--            <h3 class="text-2xl font-bold mb-6">Top Performers</h3>-->
-<!--            <div class="space-y-3">-->
-<!--                {% for performer in top_performers|slice:":5" %}-->
-<!--                <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">-->
-<!--                    <div class="flex items-center space-x-3">-->
-<!--                        <span class="text-2xl font-bold {% if forloop.counter == 1 %}text-yellow-400{% elif forloop.counter == 2 %}text-gray-300{% elif forloop.counter == 3 %}text-orange-400{% else %}text-gray-500{% endif %}">-->
-<!--                            #{{ forloop.counter }}-->
-<!--                        </span>-->
-<!--                        <div>-->
-<!--                            <div class="font-semibold">{{ performer.user.username }}</div>-->
-<!--                            <div class="text-sm text-gray-400">{{ performer.challenges_completed }} challenges</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="text-xl font-bold gradient-text">-->
-<!--                        {{ performer.total_points }}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--            <a href="{% url 'leaderboard' %}" class="block text-center mt-6 text-cyan-400 hover:text-cyan-300">-->
-<!--                View Full Leaderboard →-->
-<!--            </a>-->
-<!--        </div>-->
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-400 text-center py-8">Complete challenges to earn achievements!</p>
+        {% endif %}
     </div>
+
 </div>
 {% endblock %}

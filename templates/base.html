@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AI Learning Platform{% endblock %}</title>
+    <title>{% block title %}Ambrose AI{% endblock %}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{% static 'images/Logo-3.svg' %}">
@@ -18,170 +18,188 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            font-family: 'Outfit', sans-serif;
-        }
-
-        code, pre {
-            font-family: 'Fira Code', monospace;
-        }
+        * { font-family: 'Outfit', sans-serif; }
+        code, pre { font-family: 'Fira Code', monospace; }
 
         body {
             background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
             min-height: 100vh;
         }
 
+        /* ── Shared utility classes ── */
         .glass-effect {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .neon-border {
             box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
             border: 1px solid rgba(34, 211, 238, 0.5);
         }
-
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
-            }
-        }
-
         .gradient-text {
             background: linear-gradient(135deg, #22D3EE, #818CF8, #EC4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .hover-lift {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .hover-lift:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-
-        .sparkle {
-            position: relative;
-            overflow: hidden;
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.3); }
+            50%       { box-shadow: 0 0 40px rgba(34, 211, 238, 0.6); }
+        }
+        .sparkle { position: relative; overflow: hidden; }
         .sparkle::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%
-            );
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
             transform: rotate(45deg);
             animation: sparkle 3s infinite;
         }
-
         @keyframes sparkle {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
+            0%   { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%)  translateY(100%)  rotate(45deg); }
         }
-
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
+        .floating { animation: floating 3s ease-in-out infinite; }
         @keyframes floating {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-10px); }
         }
 
-        /* Logo styling */
-        .logo-img {
-            height: 180px;
+        /* ── Authenticated nav logo ── */
+        .nav-logo {
+            height: 52px;
             width: auto;
-            filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.5));
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
             transition: transform 0.3s ease;
         }
+        .nav-logo:hover { transform: scale(1.05); }
 
-        .logo-img:hover {
-            transform: scale(1.05);
+        /* ── Profile dropdown ── */
+        .profile-avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22D3EE, #818CF8);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.95rem; color: #0f172a;
+            cursor: pointer;
+            border: 2px solid rgba(34,211,238,0.4);
+            transition: border-color 0.2s, transform 0.2s;
+            flex-shrink: 0;
         }
+        .profile-avatar:hover { border-color: #22D3EE; transform: scale(1.05); }
 
-        .footer-logo {
-            height: 80px;
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 240px;
+            background: rgba(15, 23, 42, 0.97);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            z-index: 200;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.97);
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        .profile-dropdown.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .profile-dropdown-header {
+            padding: 1rem 1.1rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .profile-dropdown a, .profile-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            width: 100%;
+            padding: 0.65rem 1.1rem;
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.15s, color 0.15s;
+        }
+        .profile-dropdown a:hover, .profile-dropdown button:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        .profile-dropdown .dropdown-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+            margin: 0.3rem 0;
+        }
+        .profile-dropdown .logout-btn { color: #f87171; }
+        .profile-dropdown .logout-btn:hover { background: rgba(239,68,68,0.1); color: #fca5a5; }
+
+        /* ── Guest sticky nav ── */
+        .guest-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 0.85rem 2rem;
+        }
+        .guest-nav-logo {
+            height: 44px;
             width: auto;
-            filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.3));
-            opacity: 0.8;
+            filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.4));
         }
 
-        /* Prose styles for markdown content */
-        .prose {
-            color: #e5e7eb;
+        /* ── Footer logo ── */
+        .footer-logo {
+            height: 64px;
+            width: auto;
+            filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.3));
+            opacity: 0.85;
         }
-        .prose strong {
-            color: #22d3ee;
-            font-weight: 600;
-        }
+
+        /* ── Prose / markdown ── */
+        .prose { color: #e5e7eb; }
+        .prose strong { color: #22d3ee; font-weight: 600; }
         .prose code {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             padding: 0.2em 0.4em;
             border-radius: 0.25rem;
             font-size: 0.9em;
             color: #a5f3fc;
         }
         .prose pre {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(34, 211, 238, 0.3);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(34,211,238,0.3);
             border-radius: 0.5rem;
             padding: 1rem;
             overflow-x: auto;
             margin: 1rem 0;
         }
-        .prose pre code {
-            background: transparent;
-            padding: 0;
-            color: #e5e7eb;
-        }
-        .prose h1, .prose h2, .prose h3 {
-            color: #22d3ee;
-            font-weight: 700;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-        }
-        .prose ul, .prose ol {
-            margin: 1em 0;
-            padding-left: 1.5em;
-        }
-        .prose li {
-            margin: 0.5em 0;
-        }
-        .prose a {
-            color: #818cf8;
-            text-decoration: underline;
-        }
-        .prose a:hover {
-            color: #a5b4fc;
-        }
+        .prose pre code { background: transparent; padding: 0; color: #e5e7eb; }
+        .prose h1, .prose h2, .prose h3 { color: #22d3ee; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
+        .prose ul, .prose ol { margin: 1em 0; padding-left: 1.5em; }
+        .prose li { margin: 0.5em 0; }
+        .prose a { color: #818cf8; text-decoration: underline; }
+        .prose a:hover { color: #a5b4fc; }
         .prose blockquote {
             border-left: 4px solid #22d3ee;
             padding-left: 1em;
@@ -194,83 +212,213 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="text-gray-100">
-    <!-- Navigation -->
-    {% if user.is_authenticated %}
-    <nav class="glass-effect fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="{% url 'dashboard' %}" class="flex items-center">
-                        <img src="{% static 'images/Logo-3.svg' %}" alt="AI Learning Platform Logo" class="logo-img">
+
+<!-- ══ AUTHENTICATED NAV ══════════════════════════════════════════════ -->
+{% if user.is_authenticated %}
+<nav class="glass-effect fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-6">
+                <a href="{% url 'dashboard' %}" class="flex items-center">
+                    <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="nav-logo">
+                </a>
+                <div class="hidden md:flex items-center space-x-2">
+                    <a href="{% url 'dashboard' %}"
+                       class="px-4 py-2 rounded-lg hover:bg-white/10 transition text-sm font-medium">
+                        Dashboard
                     </a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="{% url 'dashboard' %}" class="px-4 py-2 rounded-lg hover:bg-white/10 transition">
-                            Dashboard
+                    {% if user.managed_organisation %}
+                    <a href="{% url 'org_dashboard' %}"
+                       class="px-4 py-2 rounded-lg hover:bg-purple-500/20 text-purple-300 transition text-sm font-medium">
+                        🏢 Organisation
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Profile dropdown trigger -->
+            <div class="relative" id="profileMenu">
+                <button onclick="toggleProfileMenu()" class="flex items-center gap-2.5 focus:outline-none" aria-label="User menu">
+                    <!-- Avatar -->
+                    <div class="profile-avatar">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <!-- Name + status — hidden on small screens -->
+                    <div class="hidden md:block text-left">
+                        <div class="text-sm font-semibold text-white leading-tight">{{ user.username }}</div>
+                        <div class="text-xs leading-tight
+                            {% if user.is_superuser or user.is_staff %}text-yellow-400
+                            {% elif user.managed_organisation %}text-purple-400
+                            {% else %}text-cyan-400{% endif %}">
+                            {% if user.is_superuser %}Admin
+                            {% elif user.is_staff %}Staff
+                            {% elif user.managed_organisation %}Org Admin
+                            {% else %}Student{% endif %}
+                        </div>
+                    </div>
+                    <!-- Chevron -->
+                    <svg id="profileChevron" class="hidden md:block w-3.5 h-3.5 text-gray-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Dropdown panel -->
+                <div class="profile-dropdown" id="profileDropdown">
+                    <!-- Header -->
+                    <div class="profile-dropdown-header">
+                        <div class="flex items-center gap-3">
+                            <div class="profile-avatar" style="width:44px;height:44px;font-size:1.1rem;">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-white text-sm">
+                                    {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}
+                                </div>
+                                {% if user.email %}
+                                <div class="text-xs text-gray-500 truncate max-w-[140px]">{{ user.email }}</div>
+                                {% endif %}
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                                    {% if user.is_superuser or user.is_staff %}bg-yellow-500/15 text-yellow-400
+                                    {% elif user.managed_organisation %}bg-purple-500/15 text-purple-300
+                                    {% else %}bg-cyan-500/15 text-cyan-400{% endif %}">
+                                    {% if user.is_superuser %}⚡ Admin
+                                    {% elif user.is_staff %}🔧 Staff
+                                    {% elif user.managed_organisation %}🏢 Org Admin
+                                    {% else %}🎓 Student{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Links -->
+                    <div class="py-1.5">
+                        <a href="{% url 'dashboard' %}">
+                            <span>🏠</span> Dashboard
                         </a>
-<!--                        <a href="{% url 'leaderboard' %}" class="px-4 py-2 rounded-lg hover:bg-white/10 transition">-->
-<!--                            Leaderboard-->
-<!--                        </a>-->
+                        <a href="{% url 'profile' %}">
+                            <span>👤</span> My Profile
+                        </a>
+                        {% if user.managed_organisation %}
+                        <a href="{% url 'org_dashboard' %}">
+                            <span>🏢</span> Organisation
+                        </a>
+                        {% endif %}
+                        {% if user.is_superuser or user.is_staff %}
+                        <a href="{% url 'admin:index' %}">
+                            <span>⚡</span> Admin Panel
+                        </a>
+                        {% endif %}
                     </div>
-                </div>
 
-                <div class="flex items-center space-x-4">
-                    <div class="text-sm">
-                        <span class="text-cyan-400 font-semibold">{{ user.username }}</span>
+                    <div class="dropdown-divider"></div>
+
+                    <div class="py-1.5">
+                        <a href="{% url 'logout' %}" class="logout-btn">
+                            <span>🚪</span> Sign Out
+                        </a>
                     </div>
-                    <a href="{% url 'profile' %}" class="px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 transition">
-                        Profile
-                    </a>
-                    <a href="{% url 'logout' %}" class="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition">
-                        Logout
-                    </a>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="pt-16">
-        {% endif %}
-
-        <!-- Messages -->
-        {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            {% for message in messages %}
-            <div class="glass-effect rounded-lg p-4 mb-4 {% if message.tags %}{{ message.tags }}{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
+<!-- ══ GUEST NAV ═══════════════════════════════════════════════════════ -->
+{% else %}
+<nav class="guest-nav">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <a href="{% url 'home' %}" class="flex items-center">
+            <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="guest-nav-logo">
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
+            <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
+            <a href="{% url 'home' %}#careers"       class="hover:text-white transition">Careers</a>
+            <a href="{% url 'home' %}#pricing"       class="hover:text-white transition">Pricing</a>
         </div>
-        {% endif %}
+        <div class="flex items-center gap-3">
+            <a href="{% url 'login' %}"
+               class="hidden sm:inline-block px-4 py-2 text-sm text-gray-300 hover:text-white transition font-medium">
+                Sign In
+            </a>
+            <a href="{% url 'register' %}"
+               class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-sm font-semibold hover-lift neon-border">
+                Get Started
+            </a>
+        </div>
+    </div>
+</nav>
+{% endif %}
 
-        <!-- Main Content -->
-        <main class="{% if user.is_authenticated %}py-8{% else %}py-0{% endif %}">
-            {% block content %}{% endblock %}
-        </main>
+<!-- ══ MAIN CONTENT AREA ══════════════════════════════════════════════ -->
+<!-- pt-16 offsets the fixed auth nav; guest pages handle their own top spacing -->
+<div class="{% if user.is_authenticated %}pt-16{% endif %}">
 
-        {% if user.is_authenticated %}
+    <!-- Django messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        {% for message in messages %}
+        <div class="glass-effect rounded-lg p-4 mb-4 {% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
 
-    <!-- Footer -->
-    <footer class="glass-effect mt-20 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-center space-y-4">
-                <!-- Logo -->
-                <img src="{% static 'images/Logo-3.svg' %}" alt="AI Learning Platform Logo" class="footer-logo">
+    <main class="{% if user.is_authenticated %}py-8{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
 
-                <!-- Copyright with dynamic year -->
-                <p class="text-gray-400 text-center">
-                    &copy; <span id="currentYear"></span> AI Learning Platform. All rights reserved.
-                </p>
-            </div>
+</div>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer class="border-t border-white/8 mt-16 py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5 text-sm text-gray-500">
+        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">
+            <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="footer-logo">
+        </a>
+
+        {% if user.is_authenticated %}
+        <div class="flex flex-wrap justify-center gap-6 text-sm">
+            <a href="{% url 'dashboard' %}"      class="hover:text-white transition">Dashboard</a>
+            <a href="{% url 'profile' %}"        class="hover:text-white transition">Profile</a>
+            <a href="mailto:hello@ambroseai.com" class="hover:text-white transition">Support</a>
         </div>
-    </footer>
+        {% else %}
+        <div class="flex flex-wrap justify-center gap-6 text-sm">
+            <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
+            <a href="{% url 'home' %}#pricing"       class="hover:text-white transition">Pricing</a>
+            <a href="{% url 'home' %}#faq"           class="hover:text-white transition">FAQ</a>
+            <a href="mailto:hello@ambroseai.com"     class="hover:text-white transition">Contact</a>
+        </div>
+        {% endif %}
 
-    <!-- Dynamic Year Script -->
-    <script>
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-    </script>
+        <p class="text-center">&copy; <span id="currentYear"></span> Ambrose AI. All rights reserved.</p>
+    </div>
+</footer>
 
-    {% block extra_js %}{% endblock %}
+<script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    // ── Profile dropdown ──────────────────────────────────────────────
+    function toggleProfileMenu() {
+        const dropdown = document.getElementById('profileDropdown');
+        const chevron  = document.getElementById('profileChevron');
+        if (!dropdown) return;
+        const isOpen = dropdown.classList.toggle('open');
+        if (chevron) chevron.style.transform = isOpen ? 'rotate(180deg)' : '';
+    }
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('profileMenu');
+        if (menu && !menu.contains(e.target)) {
+            const dropdown = document.getElementById('profileDropdown');
+            const chevron  = document.getElementById('profileChevron');
+            if (dropdown) dropdown.classList.remove('open');
+            if (chevron)  chevron.style.transform = '';
+        }
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>

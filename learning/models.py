@@ -1,10 +1,14 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.text import slugify
 
 class Module(models.Model):
     """Learning modules in the curriculum"""
     MODULE_TYPES = [
+        ('intro', 'Free Introduction'),
         ('chat', 'AI Chat Mastery'),
         ('builder', 'Build AI-Powered Tools'),
         ('coding', 'Code with AI Assistant'),
@@ -18,6 +22,10 @@ class Module(models.Model):
     duration_hours = models.IntegerField(default=15)
     icon = models.CharField(max_length=50, default='🎯')
     is_active = models.BooleanField(default=True)
+    is_free = models.BooleanField(
+        default=False,
+        help_text='Free modules are accessible to all registered users without a subscription',
+    )
     prerequisite = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='unlocks')
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -179,3 +187,119 @@ class Leaderboard(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.total_points} points"
+
+
+# ── SaaS models ────────────────────────────────────────────────────────────
+
+
+class Organisation(models.Model):
+    """An organisation (school, company) that has struck a deal for bulk access."""
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True)
+    admin_user = models.OneToOneField(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='managed_organisation',
+        help_text='Staff user who manages this organisation',
+    )
+    max_members = models.PositiveIntegerField(
+        default=30,
+        help_text='Maximum number of students allowed',
+    )
+    is_active = models.BooleanField(default=True)
+    notes = models.TextField(blank=True, help_text='Deal notes / internal reference')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    @property
+    def current_member_count(self):
+        return self.members.filter(is_active=True).count()
+
+    @property
+    def can_add_members(self):
+        return self.current_member_count < self.max_members
+
+
+class OrganisationMembership(models.Model):
+    """Links a user to an organisation — bypasses subscription requirement."""
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='org_membership',
+    )
+    organisation = models.ForeignKey(
+        Organisation, on_delete=models.CASCADE, related_name='members',
+    )
+    added_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True,
+        related_name='added_members',
+    )
+    is_active = models.BooleanField(default=True)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} @ {self.organisation.name}"
+
+
+class SubscriptionPlan(models.Model):
+    DURATION_CHOICES = [
+        ('monthly', 'Monthly'),
+        ('yearly', 'Yearly'),
+    ]
+
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default='USD')
+    duration = models.CharField(max_length=20, choices=DURATION_CHOICES)
+    duration_days = models.PositiveIntegerField(default=365)
+    description = models.TextField(blank=True)
+    features = models.JSONField(default=list, help_text='List of feature bullet-point strings')
+    is_active = models.BooleanField(default=True)
+    is_popular = models.BooleanField(default=False, help_text='Highlight as recommended')
+
+    class Meta:
+        ordering = ['price']
+
+    def __str__(self):
+        return f"{self.name} ({self.duration}) — {self.currency} {self.price}"
+
+
+class Subscription(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending Payment'),
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+        ('failed', 'Payment Failed'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.SET_NULL, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    # Unique reference we pass to Network Global
+    company_ref = models.UUIDField(default=uuid.uuid4, unique=True)
+    # TransToken returned by Network Global after createToken
+    transaction_token = models.CharField(max_length=500, blank=True)
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} — {self.plan} ({self.status})"
+
+    @property
+    def is_currently_active(self):
+        return (
+            self.status == 'active'
+            and (self.end_date is None or self.end_date > timezone.now())
+        )

@@ -1,0 +1,205 @@
+<!-- Free Intro Lesson — reading / slide style, no AI evaluation -->
+<style>
+.lesson-body {
+    line-height: 1.9;
+    font-size: 1.05rem;
+    color: #e2e8f0;
+}
+.lesson-body h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #22D3EE;
+    margin: 2rem 0 0.75rem;
+}
+.lesson-body h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #818CF8;
+    margin: 1.5rem 0 0.5rem;
+}
+.lesson-body p  { margin: 0.75rem 0; }
+.lesson-body ul,
+.lesson-body ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+.lesson-body li { margin: 0.4rem 0; }
+.lesson-body strong { color: #f1f5f9; }
+.lesson-body em    { color: #EC4899; font-style: italic; }
+.lesson-body blockquote {
+    border-left: 4px solid #22D3EE;
+    padding: 0.75rem 1.25rem;
+    margin: 1.25rem 0;
+    background: rgba(34,211,238,0.06);
+    border-radius: 0 0.75rem 0.75rem 0;
+    color: #94a3b8;
+    font-style: italic;
+}
+.lesson-body code {
+    background: rgba(34,211,238,0.1);
+    color: #22D3EE;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+}
+.lesson-body hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 2rem 0;
+}
+
+.callout {
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid;
+}
+.callout-key  { background: rgba(34,211,238,0.07); border-color: #22D3EE; }
+.callout-tip  { background: rgba(129,140,248,0.07); border-color: #818CF8; }
+.callout-note { background: rgba(251,191,36,0.07);  border-color: #FBBF24; }
+
+@keyframes lesson-in {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+}
+.lesson-animate { animation: lesson-in 0.5s ease both; }
+</style>
+
+<div class="max-w-3xl mx-auto lesson-animate">
+
+    <!-- Reading pane -->
+    <div class="glass-effect rounded-2xl p-8 md:p-12 mb-8">
+        <!-- Lesson badge -->
+        <div class="flex items-center gap-3 mb-6">
+            <span class="px-3 py-1 bg-cyan-500/15 text-cyan-400 rounded-full text-xs font-semibold uppercase tracking-wider">
+                Free Lesson {{ challenge.order }}
+            </span>
+            {% if has_passed %}
+            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold">
+                ✓ Completed
+            </span>
+            {% endif %}
+        </div>
+
+        <!-- Lesson title -->
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ challenge.title }}</h1>
+        <p class="text-gray-400 mb-8 text-lg">{{ challenge.description }}</p>
+
+        <!-- Lesson content (markdown rendered) -->
+        <div class="lesson-body" id="lessonContent">{{ challenge.instructions }}</div>
+    </div>
+
+    <!-- Key Takeaways (example_prompt re-purposed as takeaways) -->
+    {% if challenge.example_prompt %}
+    <div class="glass-effect rounded-2xl p-8 mb-8">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>💡</span> Key Takeaways
+        </h3>
+        <div class="lesson-body" id="takeawayContent">{{ challenge.example_prompt }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Previous attempts (for logged-in repeat visitors) -->
+    {% if previous_attempts %}
+    <div class="glass-effect rounded-2xl p-6 mb-8">
+        <p class="text-gray-400 text-sm">
+            You completed this lesson on {{ previous_attempts.0.created_at|date:"d M Y" }}.
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Complete & Navigate -->
+    <div class="glass-effect rounded-2xl p-8">
+        {% if not has_passed %}
+        <p class="text-gray-400 text-sm mb-4 text-center">
+            Read through the lesson, then mark it complete to unlock the next one.
+        </p>
+        <button id="completeBtn" onclick="completeLesson()"
+                class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold text-lg hover-lift neon-border pulse-glow mb-4">
+            <span id="completeBtnText">✓ Mark as Complete</span>
+            <span id="completeBtnLoading" class="hidden">⏳ Saving…</span>
+        </button>
+        {% else %}
+        <div class="w-full py-4 bg-green-500/20 border-2 border-green-500 rounded-xl font-bold text-lg text-green-400 text-center mb-4 success-celebration">
+            ✅ Lesson Completed!
+        </div>
+        {% endif %}
+
+        <!-- Prev / Next nav -->
+        <div class="flex gap-4">
+            {% if prev_challenge %}
+            <a href="{% url 'challenge' prev_challenge.id %}"
+               class="flex-1 py-3 glass-effect rounded-xl font-semibold text-center hover-lift text-sm">
+                ← Previous
+            </a>
+            {% endif %}
+            {% if next_challenge %}
+            <a id="nextBtn" href="{% url 'challenge' next_challenge.id %}"
+               class="flex-1 py-3 {% if has_passed %}bg-gradient-to-r from-green-500 to-emerald-500{% else %}glass-effect opacity-50 pointer-events-none{% endif %} rounded-xl font-semibold text-center hover-lift text-sm"
+               id="nextBtn">
+                Next Lesson →
+            </a>
+            {% else %}
+            <a id="nextBtn" href="{% url 'module_detail' challenge.module.id %}"
+               class="flex-1 py-3 {% if has_passed %}bg-gradient-to-r from-green-500 to-emerald-500{% else %}glass-effect opacity-50 pointer-events-none{% endif %} rounded-xl font-semibold text-center hover-lift text-sm">
+                {% if has_passed %}Complete Introduction →{% else %}Finish this lesson first{% endif %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Render markdown in lesson body and takeaways
+    ['lessonContent', 'takeawayContent'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = marked.parse(el.textContent || el.innerText);
+    });
+});
+
+async function completeLesson() {
+    const btn     = document.getElementById('completeBtn');
+    const btnText = document.getElementById('completeBtnText');
+    const loading = document.getElementById('completeBtnLoading');
+
+    btn.disabled = true;
+    btnText.classList.add('hidden');
+    loading.classList.remove('hidden');
+
+    try {
+        const resp = await fetch('{% url "submit_challenge" challenge.id %}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: 'Lesson completed', action: 'complete_intro' }),
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            // Show completed state
+            btn.className = 'w-full py-4 bg-green-500/20 border-2 border-green-500 rounded-xl font-bold text-lg text-green-400 text-center mb-4 success-celebration';
+            btn.innerHTML = '✅ Lesson Completed!';
+            btn.disabled = false;
+
+            // Unlock next button
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.classList.remove('opacity-50', 'pointer-events-none');
+                nextBtn.classList.add('bg-gradient-to-r', 'from-green-500', 'to-emerald-500');
+                nextBtn.classList.remove('glass-effect');
+                // Auto-advance after a moment
+                setTimeout(() => nextBtn.click(), 1200);
+            }
+        } else {
+            alert('Error saving progress. Please try again.');
+            btn.disabled = false;
+            btnText.classList.remove('hidden');
+            loading.classList.add('hidden');
+        }
+    } catch (e) {
+        alert('Connection error. Please try again.');
+        btn.disabled = false;
+        btnText.classList.remove('hidden');
+        loading.classList.add('hidden');
+    }
+}
+</script>

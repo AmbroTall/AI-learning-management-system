@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment {% if success %}Confirmed{% else %}Failed{% endif %} — Ambrose AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-lg w-full text-center">
+
+        {% if success %}
+        <!-- ── Payment Successful ──────────────────────────────────── -->
+        <div class="text-8xl mb-6 success-celebration">🎉</div>
+        <h1 class="text-4xl font-bold text-green-400 mb-4">Payment Confirmed!</h1>
+        <p class="text-xl text-gray-300 mb-2">
+            Welcome to Ambrose AI, <strong>{{ subscription.user.username }}</strong>.
+        </p>
+        <p class="text-gray-400 mb-8">
+            Your <strong class="text-cyan-400">{{ subscription.plan.name }}</strong> subscription is now active.
+            {% if subscription.end_date %}
+            Valid until <strong>{{ subscription.end_date|date:"d M Y" }}</strong>.
+            {% endif %}
+        </p>
+
+        <div class="glass-effect rounded-2xl p-8 mb-8 text-left">
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                <span>📋</span> What's included
+            </h3>
+            <ul class="space-y-3 text-gray-300 text-sm">
+                <li class="flex items-center gap-3"><span class="text-green-400">✓</span> All 4 AI learning modules</li>
+                <li class="flex items-center gap-3"><span class="text-green-400">✓</span> 100+ hands-on challenges</li>
+                <li class="flex items-center gap-3"><span class="text-green-400">✓</span> AI-powered evaluation &amp; feedback</li>
+                <li class="flex items-center gap-3"><span class="text-green-400">✓</span> File upload &amp; voice input</li>
+                <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Leaderboard &amp; achievement badges</li>
+            </ul>
+        </div>
+
+        <a href="{% url 'dashboard' %}"
+           class="inline-block px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold text-xl hover-lift neon-border pulse-glow">
+            Start Learning Now →
+        </a>
+
+        {% else %}
+        <!-- ── Payment Failed ───────────────────────────────────────── -->
+        <div class="text-8xl mb-6">😕</div>
+        <h1 class="text-4xl font-bold text-red-400 mb-4">Payment Not Completed</h1>
+        <p class="text-gray-300 text-lg mb-4">
+            We couldn't confirm your payment. This can happen if the payment was cancelled,
+            timed out, or the verification failed.
+        </p>
+
+        {% if error %}
+        <div class="glass-effect rounded-xl p-4 mb-6 border border-red-500/30 text-red-400 text-sm text-left">
+            <strong>Details:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="glass-effect rounded-2xl p-6 mb-8 text-gray-400 text-sm">
+            <p class="mb-2">Your money has <strong class="text-white">not been charged</strong>.</p>
+            <p>If you believe this is an error, please contact us with your reference:</p>
+            <code class="block mt-2 text-cyan-400">{{ subscription.company_ref }}</code>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <a href="{% url 'subscription_plans' %}"
+               class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift">
+                Try Again
+            </a>
+            <a href="mailto:hello@ambroseai.com?subject=Payment Issue {{ subscription.company_ref }}"
+               class="px-8 py-3 glass-effect rounded-xl font-semibold hover-lift">
+                Contact Support
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
