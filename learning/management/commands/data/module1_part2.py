@@ -100,55 +100,56 @@ Structure every complex prompt in three parts:
 3. **FORMAT:** How you want the answer structured
 
 **Your Challenge:**
-You're planning a big surprise birthday party for someone important to you. Give AI your COMPLETE context upfront to get the most personalised party planning help possible.
+You have an important job interview coming up. Give AI your COMPLETE context upfront to get the most personalised interview preparation help possible.
 
 **Your prompt must include:**
 
 **Context section:**
-- Who the party is for (their personality, interests, age)
-- Your relationship with them
-- Budget and guest count
-- Venue options you're considering
-- Any constraints (dietary needs, accessibility, surprise element)
+- The role you're applying for (job title, company, industry)
+- Your relevant experience and background
+- Your key strengths for this role
+- Areas you're nervous about or find tricky
+- The interview format (panel? one-to-one? competency-based? presentation?)
 
 **Task section:**
-- What specific help you need (theme ideas? timeline? food planning? entertainment?)
+- What specific help you need (preparing answers? researching the company? handling tricky questions?)
 
 **Format section:**
 - How to organise the response (sections, bullet points, priority order)
 
 **Why This Works:**
-When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "plan a birthday party" and "plan a surprise 60th for someone who loves gardening, hates fuss, and has 30 guests coming to a village hall on a £400 budget."''',
-        'example_prompt': '''I need help planning a surprise birthday party. Here's my complete situation:
+When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "help me prepare for an interview" and "help me prepare for a panel interview for a Marketing Manager role at a sustainability brand, where I'm strong on campaigns but nervous about people-management questions."''',
+        'example_prompt': '''I have an important job interview in 3 days and need to prepare thoroughly. Here's my complete situation:
 
-**CONTEXT — About the Birthday Person:**
-- Who: My mum, turning 60
-- Personality: Warm, social, loves being around family but hates being the centre of attention (ironic for a surprise party!)
-- Interests: Gardening, baking, quiz nights, 80s music, her book club
-- Important: She keeps saying "don't make a fuss" — but she'd secretly love it if we did something thoughtful
-- She thinks we're just having "a quiet family dinner"
+**CONTEXT — About the Role:**
+- Job title: Marketing Manager
+- Company: A growing e-commerce brand (about 80 staff) that sells sustainable homeware
+- What they're looking for: Someone to lead their social media and email marketing, manage a small team of 2, and drive revenue through digital channels
+- Why I want this role: It's a step up from my current coordinator role, and I believe strongly in their sustainability mission
 
-**CONTEXT — The Logistics:**
-- Date: Saturday, April 12th (her actual birthday)
-- Venue: We've booked the village hall near her house (capacity 60, basic kitchen, no decorations)
-- Guest count: About 35 people (family, neighbours, book club friends, old school friends)
-- Budget: £400 total (between me and my two siblings)
-- Dietary: Mum is vegetarian, one guest is gluten-free, most people eat everything
-- The surprise element: We need to get her there without suspicion. My brother will bring her "for a drink"
+**CONTEXT — About Me:**
+- Current role: Marketing Coordinator at a fashion retailer (2.5 years)
+- Strengths: Very strong on content creation, social media strategy, and campaign management — I led a campaign that grew our Instagram following by 40% in 6 months
+- Weaknesses: I haven't formally managed a team before (though I've mentored junior interns)
+- Nervous about: Questions about managing people, questions about budget management, and the salary negotiation at the end
+
+**CONTEXT — Interview Format:**
+- Two-stage interview: First is a 45-minute panel with the Marketing Director and HR
+- They'll use competency-based questions ("tell me about a time when...")
+- I'll need to give a 5-minute presentation on "how you would approach your first 90 days in this role"
 
 **TASK — What I Need:**
-1. A theme that feels personal to mum (not generic "60th" banners)
-2. Food plan for 35 people on a budget (mix of homemade and bought)
-3. A timeline for the day (setup, surprise moment, activities)
-4. 2-3 activity ideas that suit a mixed-age group (kids to 80-year-olds)
-5. How to keep the surprise secret (communication plan with guests)
-6. A decoration plan that's charming, not tacky
+1. Help me prepare strong answers to the 5 most likely competency questions for this role
+2. Structure my 5-minute 90-day plan presentation
+3. Prepare me for the "people management" weakness — I need a confident answer that turns this into a positive
+4. Suggest 3-4 smart questions I can ask them at the end
+5. Advise on how to handle the salary conversation professionally
 
 **FORMAT:**
-- Use clear numbered sections matching my 6 requests
-- Include a budget breakdown showing where the £400 goes
-- Give me a week-by-week prep timeline (we have 4 weeks)
-- Keep suggestions practical — I'm organising this while working full-time''',
+- Number each section clearly (1–5 matching my requests above)
+- For competency answers, use the STAR format (Situation, Task, Action, Result)
+- Keep advice practical and specific to this company and role
+- For the 90-day plan, give me a clear structure I can build into slides''',
     },
     {
         'title': 'Question 11: Role Play for Expert Advice',
@@ -246,39 +247,39 @@ Research shows that when AI explains its reasoning step-by-step, it makes fewer 
 You're facing a real decision. Ask AI to help — but specifically request that it **shows its thinking at each step.**
 
 **Your Decision:**
-I am currently looking at a career change into the AI sector. What are the benefits of doing this over my current job working in the hospitality industry? Don't mention salaries. My main goal is to work remotely.
+Should you leave your job and go freelance, or stay in employment? This is one of the most common career crossroads people face.
 
 **Your prompt must include:**
-1. The decision with full context (both options, your priorities)
+1. The decision with full context (your situation, financial position, priorities)
 2. A request for step-by-step analysis (not just a recommendation)
-3. Specific steps you want AI to follow (e.g., "evaluate remote work potential," "consider transferable skills," "assess long-term growth")
+3. Specific steps you want AI to follow (e.g., "evaluate financial readiness," "assess work-life balance," "consider career growth")
 4. Ask AI to give a final recommendation WITH its reasoning
 
 **The result should feel like a thoughtful conversation, not a snap judgement.**''',
         'example_prompt': '''I need help thinking through a big career decision. Don't just tell me what to do — walk me through your thinking step by step.
 
 **THE DECISION:**
-I am currently looking at a career change into the AI sector. What are the benefits of doing this over my current job working in the hospitality industry? Don't mention salaries. My main goal is to work remotely.
+Should I leave my full-time job and go freelance as a graphic designer, or stay in my current employment?
 
 **MY SITUATION:**
-- Current: Working as a restaurant supervisor in a busy hotel (3 years in hospitality)
-- Age: 29, based in Birmingham
-- What I like about hospitality: Working with people, fast-paced problem-solving, teamwork
-- What I don't like: Can't work remotely, long unsociable hours, physically exhausting, limited progression without relocating
-- My main goal: I want to work remotely — flexibility to work from home or anywhere
-- Tech skills: Comfortable with computers, use social media daily, have played around with AI tools like ChatGPT
-- Interest in AI: Fascinated by how AI is changing every industry, completed this AI prompt engineering course
-- Constraints: I need to keep earning while I transition — can't afford to stop working
+- Current role: In-house graphic designer at a marketing agency (3 years)
+- What I like: Steady income, team environment, benefits (pension, 25 days holiday)
+- What I don't like: Limited creative freedom, feel like I'm doing the same type of work repeatedly, no say in which clients we take on
+- Freelance idea: I already have 3 regular clients I work with in evenings/weekends, earning about £800/month extra
+- Financial situation: 4 months of living expenses saved, rent £700/month, no major debt
+- Personal situation: No dependents, renting, flexible lifestyle
+- Main goal: More creative control and the ability to choose my projects
 
-**ANALYSE THIS STEP BY STEP (don't mention salaries):**
+**ANALYSE THIS STEP BY STEP:**
 
-**Step 1:** What are the realistic remote work opportunities in the AI sector vs hospitality? (Be specific about AI roles that can be done remotely)
-**Step 2:** What transferable skills do I already have from hospitality that are valuable in AI/tech? (Connect the dots for me)
-**Step 3:** What would I need to learn to make this transition? (Specific skills, courses, timeframes)
-**Step 4:** How does the AI sector compare for work-life balance and flexibility vs hospitality?
-**Step 5:** What are the growth opportunities and job security like in AI compared to hospitality long-term?
-**Step 6:** What are the biggest risks of making this change, and how can I reduce them?
-**Step 7:** Give me your final recommendation with clear reasoning — should I make this move?
+**Step 1:** Assess my financial readiness — am I in a safe enough position to go freelance?
+**Step 2:** Evaluate my existing freelance foundation — what do my current 3 clients tell us about my potential?
+**Step 3:** What are the realistic income scenarios in year 1 of freelancing? (Best case, likely case, worst case)
+**Step 4:** How does work-life balance and wellbeing compare between the two options?
+**Step 5:** What am I giving up by leaving employment? (Consider benefits, stability, professional development, team connection)
+**Step 6:** What do I gain by going freelance that I can't get in my current role?
+**Step 7:** What are the biggest risks of making this change, and how can I reduce them?
+**Step 8:** Give me your final recommendation with clear reasoning — should I make this move, and if so, when and how?
 
 Show your working at every step. I want to understand HOW you reached your conclusion, not just what it is.''',
     },
@@ -296,8 +297,8 @@ Show your working at every step. I want to understand HOW you reached your concl
 - The types of constraints that work best
 
 **The Paradox:**
-"Write something about my business" → generic, bland
-"Write a 150-word About page that avoids cliches, uses exactly 2 customer quotes, starts with a question, and must mention our founding story" → focused, interesting!
+"Write me a cover letter" → generic, forgettable
+"Write a 200-word opening paragraph that avoids clichés, opens with a story, uses exactly one specific achievement, and never uses the word 'passionate'" → focused, memorable!
 
 **Types of Constraints You Can Use:**
 - **Length:** Exact word count or character limit
@@ -308,47 +309,45 @@ Show your working at every step. I want to understand HOW you reached your concl
 - **Audience:** Who it's for (and who it's NOT for)
 
 **Your Challenge:**
-Write an "About Me" page for a professional website (yours, or a fictional one). But here's the key — include **at least 5 specific constraints** that force AI to produce something unique and compelling.
+Write the opening section of a **job application cover letter** for a role you'd genuinely want. But here's the key — include **at least 5 specific constraints** that force AI to produce something unique and compelling.
 
 **Minimum constraints to include:**
 1. Exact word count range
 2. A tone described with 2-3 specific adjectives
-3. Something it MUST include (a story, a number, a quote)
-4. Something it must AVOID (cliches, jargon, specific phrases)
-5. A structural requirement (how it starts, how it ends, number of paragraphs)
+3. Something it MUST include (a specific achievement, a number, or a personal connection to the role)
+4. Something it must AVOID (clichés, specific overused words, generic phrases)
+5. A structural requirement (how it starts, what the final sentence achieves)
 
 **The more creative and specific your constraints, the better the output. Push yourself!**''',
-        'example_prompt': '''Write an "About Me" section for my freelance copywriting website.
+        'example_prompt': '''Write the opening section of a cover letter for a job application.
 
-**About Me:**
-- Name: Jordan Lee
-- Profession: Freelance copywriter, specialising in small businesses and startups
-- Experience: 3 years freelance, before that 2 years in-house at an e-commerce company
-- Personality: Down-to-earth, slightly funny, hates corporate waffle
-- Clients: Local coffee shops, online stores, personal trainers, small tech startups
-- What makes me different: I actually BUY from my clients. I only work with businesses I genuinely like.
+**About Me and the Role:**
+- My name: Alex Sharma
+- Role I'm applying for: Social Media Manager at a mental health charity
+- My background: 2 years managing social media for a retail brand, grew TikTok from 0 to 22,000 followers in 8 months
+- What makes me different: I volunteer at a youth mental health group on weekends — this role genuinely means something to me personally
+- Key strength: I create content that feels human, not corporate
 
 **CONSTRAINTS (follow ALL of these):**
 
-1. **Length:** Exactly 160-180 words. Not one word more.
-2. **Tone:** Confident, warm, and a tiny bit cheeky. Like a smart friend you'd trust with your business.
+1. **Length:** Exactly 150-170 words. Not a word more.
+2. **Tone:** Warm, purposeful, and quietly confident — like someone who genuinely cares about the cause, not someone who's just job-hunting.
 3. **Must include:**
-   - A specific number (e.g., "helped 40+ businesses" or reference a result)
-   - The phrase "words that actually work" somewhere natural
-   - ONE short sentence (under 5 words) for impact
+   - My TikTok achievement (22,000 followers) mentioned naturally, not as a brag
+   - A hint at my personal connection to mental health (without oversharing)
+   - One sentence that shows I've researched this specific charity
 4. **Must avoid:**
-   - The words "passionate," "creative," "storyteller," "wordsmith," or "craft"
-   - Starting with "Hi, I'm Jordan" or any version of introducing yourself first
-   - Any sentence longer than 25 words
+   - The words "passionate," "excited," "thrilled," or "opportunity"
+   - Starting with "I am writing to apply for..."
+   - Any sentence that could work for ANY cover letter (be specific to this role and charity)
 5. **Structure:**
-   - Start with a bold statement or question (hook the reader immediately)
-   - Second paragraph: what I do and who I help
-   - Third paragraph: why I'm different (the "I only work with businesses I'd buy from" angle)
-   - End with a call-to-action that doesn't say "get in touch" or "let's chat"
-6. **Voice:** First person. No third person ("Jordan is a copywriter...").
-7. **Feeling:** After reading it, someone should think "I like this person" — not "this person is trying to impress me."
+   - Open with something that shows you understand what this charity does and why it matters
+   - Middle: who I am and why I'm the right fit (lead with the human connection, then the skills)
+   - Close with something that invites a conversation, not a generic sign-off
+6. **Voice:** First person. Direct. No passive voice.
+7. **Feeling:** After reading it, the hiring manager should think "I want to meet this person" — not "this is a well-written letter."
 
-Make every word count. This is a copywriter's website — the About page IS the audition.''',
+Make every word count.''',
     },
     {
         'title': 'Question 14: Your AI Learning Coach',
@@ -379,16 +378,16 @@ Set up AI as your personal learning coach in a **two-part prompt:**
 Tell AI how you learn, your constraints, communication preferences, and goals.
 
 **Part 2 — Request Help With a Topic:**
-Pick any skill you genuinely want to learn (it doesn't have to be tech!) and ask for a personalised learning plan that matches your profile.
+Pick any skill you genuinely want to learn and ask for a personalised learning plan that matches your profile.
 
 **Ideas for topics:**
-- Public speaking
-- Basic coding (Python, HTML)
-- Graphic design
-- Personal finance
-- A new language
+- Public speaking and presenting
 - Cooking a specific cuisine
-- Data analysis
+- A new language (Spanish, French, Arabic, etc.)
+- Mindfulness and stress management
+- Photography and composition
+- Personal finance and budgeting
+- Fitness and healthy habits
 
 **Make sure Part 2 explicitly references your learning profile from Part 1.**''',
         'example_prompt': '''I want you to be my personal learning coach. First, let me tell you how I learn best, then help me learn something new.
@@ -405,245 +404,175 @@ Pick any skill you genuinely want to learn (it doesn't have to be tech!) and ask
 - I love analogies — connecting new concepts to things I already know
 
 **My Constraints:**
-- Available time: 2 hours per day (evenings, after work)
-- Budget: Up to £40/month for tools or resources
-- Currently working full-time so I need flexible learning
-- I have a laptop and a smartphone
+- Available time: 1 hour per day (evenings, after work)
+- Budget: Up to £30/month for ingredients and basic equipment
+- Currently working full-time so I need flexible, manageable sessions
+- I have a standard home kitchen with basic equipment
 
 **My Communication Preferences:**
-- Be direct — if I'm wrong or heading in the wrong direction, tell me immediately
-- Use simple language first, introduce jargon only when necessary (and define it)
+- Be direct — if I'm doing something wrong, tell me immediately
+- Use simple language first, introduce technical terms only when necessary (and define them)
 - Break big concepts into bite-sized pieces
-- Celebrate progress but don't over-praise — I want honest feedback
+- Give me honest feedback — I want to genuinely improve, not just feel good
 
 **My Learning Goal:**
-I want to learn graphic design so I can create professional-looking social media posts, presentations, and basic branding materials for my side business. I don't need to become a professional designer — I just want my business materials to look polished and consistent.
+I want to learn to cook Japanese food at home — specifically sushi, ramen, and a few popular side dishes. I don't need to become a professional chef — I just want to confidently cook authentic-tasting Japanese meals for friends and family.
 
 ---
 
 **PART 2 — Create My Learning Plan:**
 
-Based on my learning profile above (hands-on, 2 hours/day, structured, "why before how"), create a 4-week learning plan for graphic design fundamentals.
+Based on my learning profile above (hands-on, 1 hour/day, structured, "why before how"), create a 4-week learning plan for Japanese cooking fundamentals.
 
 **Week-by-week, I need:**
-- What to learn each day (specific topic, max 45 min of learning)
-- A daily practice task (a specific design to create with exact requirements)
-- One resource to check out (free YouTube video, article, or tutorial)
-- A "mini milestone" at the end of each week (something I can share to see my progress)
+- What to learn each day (specific technique or dish, max 1 hour)
+- A daily cooking task (a specific recipe or technique with exact requirements)
+- One resource to check out (free YouTube video, article, or technique guide)
+- A "mini milestone" at the end of each week (a dish I can cook for someone)
 
 **Requirements:**
-- Start with fundamentals (colour theory, typography, layout basics)
-- Focus on social media graphics and simple brand materials
-- Recommend 1-2 design tools (with free tiers) and teach me how to use them
-- Include real design challenges (e.g., "design an Instagram post for a coffee shop sale")
-- By week 4, I should be able to create a consistent set of branded templates for my business
+- Start with fundamentals (knife skills, rice cooking, basic stocks and sauces)
+- Progress toward sushi, ramen, and side dishes by week 4
+- Recommend essential Japanese pantry ingredients to buy in week 1
+- Include real cooking challenges (e.g., "make a perfect bowl of miso soup from scratch")
+- By week 4, I should be able to cook a full Japanese meal for 2 people
 
-Remember my profile: hands-on tasks over theory, explain WHY each design principle works, keep it to 2-hour daily sessions with clear structure.''',
+Remember my profile: hands-on tasks over theory, explain WHY each technique matters, keep it to 1-hour daily sessions with a clear focus.''',
     },
     {
-        'title': 'Question 15: When to Start Fresh vs Continue',
-        'description': 'A strategic skill: knowing when to build on context and when to reset',
+        'title': 'Question 15: Challenge Your Own Thinking',
+        'description': 'Use AI to stress-test your ideas and spot the flaws before they become problems',
         'difficulty': 'advanced',
         'order': 15,
         'points': 35,
-        'instructions': '''Not every conversation should keep going. Sometimes starting fresh is smarter.
+        'instructions': '''The most dangerous plans are the ones that only sound good in your head. AI can be your strongest critic.
 
 **What You'll Learn:**
-- When to continue a conversation (and how)
-- When to start a new conversation (and why)
-- How to carry forward key context efficiently
+- How to use AI as a "devil's advocate" to find weaknesses in your thinking
+- Why challenging your own plans makes them stronger
+- How to separate good ideas from ones that just feel good
 
-**When to CONTINUE the same conversation:**
-- You're iterating on the same topic (editing a document, refining an idea)
-- AI needs to remember decisions you made together
-- You're building something step-by-step (a plan, a project)
+**The Technique:**
+Most people ask AI to SUPPORT their ideas. The smarter move is to ask AI to CHALLENGE them.
 
-**When to START FRESH:**
-- You're switching to a completely different topic
-- The conversation has gotten long and confused
-- You want AI to approach something without bias from earlier messages
-- The previous conversation went in a wrong direction
+Say: "I'm planning to do X. I think it's a good idea because of Y and Z. Now argue against it. Find every flaw, risk, and blind spot."
 
-**When starting fresh, SUMMARISE key context:** Don't make AI re-discover everything. Give it a brief summary of where you left off.
+**When This Is Powerful:**
+- Before starting a business or side project
+- Before making a big financial decision
+- Before committing to a plan at work
+- Before having an important conversation you've already mentally "planned out"
 
 **Your Challenge:**
-You have two scenarios. For each one, decide: **continue or start fresh?** Then write the appropriate prompt.
+Think of a plan or decision you're genuinely considering (or use the scenario below). Ask AI to be your devil's advocate.
 
-**Scenario A:** Yesterday you spent 30 minutes with AI designing a logo concept for your side business. Today you want to write the homepage copy for the same business.
+**Your prompt must include:**
+1. Your plan or idea, explained clearly
+2. The reasons WHY you think it's a good idea (be honest — this is exactly what AI will challenge)
+3. A specific instruction to argue against it, find the risks, and challenge your assumptions
+4. Ask AI to end with a verdict: is this plan worth pursuing, and what would make it stronger?
 
-**Scenario B:** You asked AI to help you plan a holiday itinerary and got great suggestions. Now you want to refine the plan and add specific restaurant recommendations.
+**Scenario to use if you don't have your own:**
+You want to leave your flat-share and rent your own place for the first time. You think you can afford it and you're ready for the independence.''',
+        'example_prompt': '''I have a plan and I want you to challenge it — not support it.
 
-**For each scenario:**
-1. State your decision (continue or fresh) and explain WHY
-2. Write the actual prompt you'd use
-3. If starting fresh, show how you'd summarise the previous context efficiently''',
-        'example_prompt': '''Here are my two scenarios. I'll decide whether to continue or start fresh, and write the right prompt for each.
+**MY PLAN:**
+I want to leave my flat-share (where I currently split costs with 2 housemates) and rent a one-bedroom flat on my own starting next month.
 
----
+**WHY I THINK IT'S A GOOD IDEA:**
+- I earn £2,400/month take-home. A 1-bed flat near me costs around £850/month — that's 35% of my income, which I've read is the "acceptable" limit
+- I've been in a flat-share for 3 years and I'm ready for my own space and independence
+- I work from home 3 days a week and having a quiet, dedicated workspace would genuinely improve my productivity
+- I have £2,000 saved which would cover the deposit and first month's rent
+- My lease ends in 8 weeks — the timing feels right
 
-**SCENARIO A: Logo design → Homepage copy**
+**NOW CHALLENGE THIS:**
+Act as a brutally honest financial advisor and life planner. Your job is NOT to encourage me — it's to find every weakness in my reasoning.
 
-**Decision: START FRESH**
+Specifically:
+1. **Challenge my affordability calculation** — What costs am I not accounting for beyond rent?
+2. **Challenge my savings situation** — Is £2,000 really enough of a safety net? What could go wrong?
+3. **Challenge my timing** — Is "my lease is ending" actually a good reason to make a major financial decision?
+4. **Challenge my "I'm ready" assumption** — What would someone NOT ready for this look like? Do any of those signs apply to me?
+5. **Find the emotional reasoning** — Where in my plan am I deciding based on feelings rather than facts?
+6. **Worst-case scenarios** — Walk me through 3 realistic things that could go wrong in the first 6 months
 
-**Why:** These are different tasks requiring different "thinking modes." The logo conversation would have AI focused on visual concepts, colours, and design language. Homepage copy needs a completely different focus — messaging, persuasion, and writing. Keeping the old context could actually pollute the new task with unnecessary visual design details.
+**VERDICT:**
+After challenging everything, give me your honest verdict: Is this plan solid, risky, or reckless? And what would need to be true for this to be a genuinely good decision?
 
-**New Conversation Prompt:**
-I'm building a website for my side business and need help writing the homepage copy.
-
-Quick context from a previous session (so you're up to speed):
-- Business: "GreenBox" — a subscription service delivering eco-friendly household products
-- Brand personality: Friendly, honest, slightly playful (not preachy about sustainability)
-- Target customer: Busy professionals aged 25-40 who want to be more eco-friendly but don't have time to research every product
-- Visual style: Clean, modern, green and cream colour palette
-- Tagline we developed: "Good stuff, delivered. No guilt required."
-
-Now I need homepage copy with these sections:
-1. Hero section (headline + subheadline + CTA button text)
-2. "How it works" (3 simple steps)
-3. "Why GreenBox?" (3 compelling benefits — not generic)
-4. Social proof section (write 3 realistic-sounding customer testimonials)
-5. Final CTA section (motivating close)
-
-Tone: Match our brand — friendly, honest, a tiny bit cheeky. Like a smart friend who happens to know a lot about sustainability.
-Length: Each section should be scannable (short sentences, bullet points where appropriate).
-
----
-
-**SCENARIO B: Holiday itinerary → Refine with restaurants**
-
-**Decision: CONTINUE**
-
-**Why:** This is iterative work on the SAME topic. AI needs to remember which cities we chose, the travel dates, the accommodation, and the overall vibe of the trip. Starting fresh would mean re-explaining all the context and losing the specific suggestions it already tailored for us.
-
-**Follow-up Prompt (in same conversation):**
-Love the itinerary! Let's build on it. I want to add specific restaurant recommendations.
-
-For each day of the trip, suggest:
-- A lunch spot (casual, local favourite, under £15 per person)
-- A dinner spot (can be a bit nicer, up to £30 per person)
-- One "must-try" local food experience (street food, market, food tour, etc.)
-
-For each restaurant:
-1. Why you're recommending it (what makes it special)
-2. What to order (their signature dish or best item)
-3. Whether I need to book ahead
-
-Remember our preferences from earlier: we love trying local food, one of us is vegetarian, and we prefer independent places over chains. Keep it consistent with the relaxed vibe we planned.''',
+Be direct. I'd rather hear the hard truth now than learn it the hard way.''',
     },
     {
-        'title': 'Question 16: Prompt Templates That Save Time',
-        'description': 'Create reusable prompt templates you can use again and again',
+        'title': 'Question 16: Preparing for Difficult Conversations',
+        'description': "Use AI to prepare for conversations you're nervous about — at work or in life",
         'difficulty': 'advanced',
         'order': 16,
         'points': 35,
-        'instructions': '''Why write a great prompt once when you can use it forever?
+        'instructions': '''Some of the most important moments in life happen in conversations. AI can help you prepare for them.
 
 **What You'll Learn:**
-- How to create reusable prompt templates
-- Using placeholders for variable information
-- Building your own "prompt library"
+- How to use AI to plan what to say before a difficult conversation
+- How to anticipate what the other person might say — and how to respond
+- How to stay calm, clear, and confident when it matters most
 
-**The Concept:**
-A prompt template is like a fill-in-the-blanks version of a proven prompt. You create the structure once, then swap in new details each time.
+**The Reality:**
+Most of us go into difficult conversations underprepared. We know what we want to say, but:
+- We freeze when challenged
+- We haven't thought through how the other person will react
+- We say something we regret because we're nervous
 
-**Example:**
-Instead of writing a new meeting agenda prompt every week, create a template:
-"Generate a meeting agenda for [MEETING TYPE] with [ATTENDEES]. Topics: [LIST]. Duration: [TIME]. Include: time allocation per topic, discussion questions, and action item slots."
+AI can help you plan what to say, roleplay the other person's responses, and stress-test your approach before the real thing.
+
+**When This Helps:**
+- Asking for a pay rise or better working conditions
+- Addressing a conflict with a colleague or friend
+- Giving difficult feedback to someone
+- Asking for something you feel nervous about requesting
 
 **Your Challenge:**
-Create a **reusable prompt template** for one of these common tasks:
-- Generating meeting agendas from rough notes
-- Writing professional emails (any type)
-- Creating social media content for a brand
-- Summarising long documents or articles
-- Preparing for any type of meeting or conversation
+Prepare for a real (or realistic) difficult conversation using AI.
 
-**Your template must include:**
-1. Clear placeholders in [BRACKETS] for variable information
-2. Fixed structure that works every time
-3. Built-in quality controls (format, tone, length)
-4. Instructions at the top explaining how to use the template
+**Your prompt must include:**
+1. The situation — who you're talking to and what the conversation is about
+2. What you want to achieve from the conversation
+3. What you're nervous about (what might go wrong?)
+4. A request for: how to open, what to say, and how to handle pushback
+5. Ask AI to show you the other person's likely responses so you can prepare replies
 
-**Then demonstrate the template** by filling it in with a real example.
+**Use the scenario below, or your own:**
+You want to ask your manager if you can work from home one day per week. Your manager generally prefers the team to be in the office.''',
+        'example_prompt': '''I need to prepare for an important work conversation. Help me plan what to say and prepare for the responses I might face.
 
-**What to Submit:**
-First, create your template with clear [PLACEHOLDER] fields. Then show the template filled in with a real example so we can see it in action. Your submission should include both the blank template AND the completed version.
+**THE SITUATION:**
+I want to ask my manager (David) if I can work from home one day per week — ideally Fridays. Our company doesn't have a formal remote working policy, and David generally prefers the team in the office. He values "team presence" and has mentioned before that he thinks people are more productive face-to-face.
 
-**Real-World Value:**
-Professionals who use AI daily have personal libraries of prompt templates. This saves enormous time and ensures consistent quality. You're building a tool you'll actually use.''',
-        'example_prompt': '''I want to create a reusable prompt template for turning messy meeting notes into professional, actionable meeting summaries. First, build the template, then show it in action.
+**WHAT I WANT TO ACHIEVE:**
+- Get agreement (or at least a trial period) for one day working from home per week
+- Keep my relationship with David positive — I don't want this to come across as a complaint
+- Understand his concerns so I can address them properly
 
----
+**WHAT I'M NERVOUS ABOUT:**
+- He'll just say "no" without really considering it
+- He'll think I'm not committed to the team
+- I'll get flustered and back down if he pushes back
+- He'll bring up someone else who was refused a similar request
 
-**THE TEMPLATE:**
+**WHAT I NEED FROM YOU:**
 
-Create a reusable template with this structure:
+1. **Opening Statement:** Write the first 3-4 sentences I should use to start this conversation — confident, professional, not apologetic
 
-**Template Name:** Meeting Notes → Action Plan Converter
+2. **My Case:** Give me 3 strong, specific reasons to present (focused on productivity and results, not "I'd prefer it")
 
-**How to use:** Replace everything in [BRACKETS] with your specific information. Keep everything else exactly as written.
+3. **Handling Pushback:** For each of these responses from David, give me a calm, confident reply:
+   - "I just think people are more productive when they're in the office"
+   - "If I let you do it, everyone will want the same"
+   - "I'm not sure it's something we can accommodate right now"
+   - "Let's revisit this in 6 months"
 
-**The Template:**
-```
-Transform these meeting notes into a professional summary and action plan.
+4. **A Compromise I Can Offer:** What's a reasonable middle ground if he's reluctant? (e.g., a trial period, checking in more regularly, specific conditions)
 
-MEETING DETAILS:
-- Meeting name: [NAME OF MEETING]
-- Date: [DATE]
-- Attendees: [LIST OF PEOPLE AND THEIR ROLES]
-- Duration: [HOW LONG]
-- Meeting purpose: [WHY THIS MEETING HAPPENED]
+5. **Closing the Conversation:** How should I end the conversation — whether he says yes, maybe, or no — while keeping the relationship positive and the door open?
 
-RAW NOTES:
-[PASTE YOUR MESSY NOTES HERE]
-
-CREATE THIS OUTPUT:
-
-1. MEETING SUMMARY (3-5 sentences)
-   - What was the meeting about?
-   - What were the main outcomes?
-
-2. KEY DECISIONS MADE
-   - List each decision with brief context
-   - Note who approved/agreed
-
-3. ACTION ITEMS TABLE
-   Format: | Task | Owner | Deadline | Priority (High/Med/Low) |
-   - Extract EVERY action item mentioned
-   - If no deadline was stated, suggest a reasonable one
-   - If no owner was assigned, flag it as "NEEDS OWNER"
-
-4. OPEN QUESTIONS
-   - Anything that was raised but not resolved
-   - Anything that needs follow-up
-
-5. NEXT MEETING
-   - Suggested agenda items based on open items
-   - Recommended date if discussed
-
-Keep it professional, concise, and action-oriented.
-```
-
----
-
-**NOW DEMONSTRATE IT — Fill in the template with this real example:**
-
-MEETING DETAILS:
-- Meeting name: Q1 Marketing Planning
-- Date: 15th January 2025
-- Attendees: Lisa (Marketing Manager), Tom (Content Lead), Priya (Social Media), Jamie (Designer)
-- Duration: 45 minutes
-- Meeting purpose: Plan marketing activities for Q1
-
-RAW NOTES:
-"Lisa opened saying we need to focus on 3 channels this quarter — email, LinkedIn, and the blog. Tom said the blog has been getting good traffic and we should aim for 2 posts per week instead of 1. Priya asked who would write the extra posts — Tom said he'd do one if Priya handled social promotion. Jamie mentioned the website banner needs updating, it still shows Christmas stuff. Lisa agreed and said Jamie should do it by end of this week.
-
-Big discussion about the email newsletter — open rates dropped to 15%. Priya suggested we A/B test subject lines. Lisa loved it, said let's start with the February newsletter. Tom volunteered to write 3 versions to test. Nobody brought up the budget yet — Lisa said she'll send it around by Friday and we can discuss async.
-
-Priya asked about the product launch in March — needs assets 3 weeks early. Jamie said that's tight but doable if he gets the brief by Feb 1st. Lisa will send the brief. Quick chat about team social event — maybe bowling? No decision made, Priya will poll the team.
-
-Lisa: let's meet again in 2 weeks to check progress."
-
-Transform these notes using the template above.''',
+I want to walk into this meeting feeling prepared and calm, not like I'm asking for a favour.''',
     },
 ]

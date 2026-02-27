@@ -74,8 +74,9 @@ class Command(BaseCommand):
         
         # Create all challenges for Module 1
         created_count = 0
+        updated_count = 0
         for challenge_data in all_module1_challenges:
-            challenge, created = Challenge.objects.get_or_create(
+            challenge, created = Challenge.objects.update_or_create(
                 module=module1,
                 title=challenge_data['title'],
                 defaults=challenge_data
@@ -83,9 +84,12 @@ class Command(BaseCommand):
             if created:
                 created_count += 1
                 self.stdout.write(f'  ✓ Created challenge {challenge.order}: {challenge.title}')
-        
+            else:
+                updated_count += 1
+                self.stdout.write(f'  ↺ Updated challenge {challenge.order}: {challenge.title}')
+
         self.stdout.write(self.style.SUCCESS(
-            f'\n✅ Module 1 Complete: {created_count} new challenges created'
+            f'\n✅ Module 1 Complete: {created_count} new, {updated_count} updated'
         ))
         
         # Set up challenge prerequisites (sequential order)

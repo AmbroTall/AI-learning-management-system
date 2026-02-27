@@ -11,6 +11,7 @@ import anthropic
 from django.conf import settings
 import json
 import re
+import time
 
 from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
@@ -261,18 +262,33 @@ def submit_challenge(request, challenge_id):
     if not user_prompt:
         return JsonResponse({'error': 'Prompt is required'}, status=400)
     
+    def call_with_retry(fn, retries=3, backoff=2):
+        for attempt in range(retries):
+            try:
+                return fn()
+            except (
+                anthropic.APIConnectionError,
+                anthropic.APITimeoutError,
+                anthropic.RateLimitError,
+                anthropic.InternalServerError,
+            ) as e:
+                if attempt == retries - 1:
+                    raise
+                time.sleep(backoff ** attempt)
+
     try:
         # Call Claude API
         client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
-        
-        message = client.messages.create(
+
+        message = call_with_retry(lambda: client.messages.create(
             model="claude-sonnet-4-20250514",
-            max_tokens=1000,
+            max_tokens=8192,
+            system="You are a helpful AI assistant. Always use British English spelling and conventions throughout your responses (e.g. 'pyjamas' not 'pajamas', 'colour' not 'color', 'favour' not 'favor', 'organise' not 'organize').",
             messages=[
                 {"role": "user", "content": user_prompt}
             ]
-        )
-        
+        ))
+
         ai_response = message.content[0].text
         
         # If this is just a help request, return the response without evaluation
@@ -302,13 +318,13 @@ def submit_challenge(request, challenge_id):
         }}
         """
         
-        eval_message = client.messages.create(
+        eval_message = call_with_retry(lambda: client.messages.create(
             model="claude-sonnet-4-20250514",
             max_tokens=500,
             messages=[
                 {"role": "user", "content": evaluation_prompt}
             ]
-        )
+        ))
         
         # Parse evaluation
         eval_text = eval_message.content[0].text

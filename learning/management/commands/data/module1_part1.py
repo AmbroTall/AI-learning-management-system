@@ -87,7 +87,7 @@ Think of it like ordering food. "Give me something good" vs "I'd like a medium v
 - Recently got promoted to team lead at work and I'm incredibly proud
 
 **The occasion:**
-- Surprise party at a pub, about 40 guests (mix of friends, family, and work colleagues)
+- Surprise party at a restaurant function room, about 40 guests (mix of friends, family, and work colleagues)
 - Sam's parents will be there, so nothing too embarrassing!
 - I'm giving the speech right after the cake
 
@@ -97,7 +97,7 @@ Think of it like ordering food. "Give me something good" vs "I'd like a medium v
 
 **Must include:** The half marathon story and the cooking joke. End on something genuinely heartfelt.
 
-**Must avoid:** Anything about Sam's ex, or the holiday in Ibiza (Sam's mum doesn't know about that one).''',
+**Must avoid:** Anything about driving abroad or the ski trip in Switzerland.''',
     },
     {
         'title': 'Question 3: The Magic of Context',
