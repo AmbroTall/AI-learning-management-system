@@ -17,7 +17,7 @@
                 <div class="text-5xl font-bold gradient-text">#{{ user_rank }}</div>
             </div>
             <div class="text-right">
-                <div class="text-3xl font-bold text-cyan-400 mb-2">{{ user_leaderboard.total_points }}</div>
+                <div class="text-3xl font-bold text-cyan-400 mb-2">{{ user_progress_pct }}%</div>
                 <div class="text-gray-400">{{ user_leaderboard.challenges_completed }} challenges completed</div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                     <tr class="border-b border-white/10">
                         <th class="text-left py-4 px-4 text-gray-400 font-semibold">Rank</th>
                         <th class="text-left py-4 px-4 text-gray-400 font-semibold">Username</th>
-                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Points</th>
+                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Progress</th>
                         <th class="text-center py-4 px-4 text-gray-400 font-semibold">Challenges</th>
                         <th class="text-center py-4 px-4 text-gray-400 font-semibold">Modules</th>
                         <th class="text-center py-4 px-4 text-gray-400 font-semibold">Streak</th>
@@ -58,7 +58,8 @@
                             </div>
                         </td>
                         <td class="py-4 px-4 text-center">
-                            <div class="text-xl font-bold gradient-text">{{ performer.total_points }}</div>
+                            {% widthratio performer.challenges_completed total_challenges 100 as perf_pct %}
+                            <div class="text-xl font-bold gradient-text">{{ perf_pct }}%</div>
                         </td>
                         <td class="py-4 px-4 text-center">
                             <div class="text-lg text-cyan-400">{{ performer.challenges_completed }}</div>

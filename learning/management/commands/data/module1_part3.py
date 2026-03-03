@@ -224,7 +224,7 @@ This is a big decision. Help me make it with open eyes.''',
     {
         'title': 'Question 20: Content Creator\'s Toolkit',
         'description': 'Generate a complete content plan with posts, ideas, and scheduling',
-        'difficulty': 'intermediate',
+        'difficulty': 'advanced',
         'order': 20,
         'points': 35,
         'instructions': '''Content creation is one of the most popular real-world uses of AI. Let's master it.

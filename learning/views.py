@@ -406,19 +406,27 @@ def submit_challenge(request, challenge_id):
 def leaderboard_view(request):
     """Display global leaderboard"""
     top_users = Leaderboard.objects.all()[:50]
-    
+
     # Get current user rank
     user_leaderboard = Leaderboard.objects.get(user=request.user)
     user_rank = Leaderboard.objects.filter(
         total_points__gt=user_leaderboard.total_points
     ).count() + 1
-    
+
+    # Calculate progress percentage for the current user
+    total_challenges = Challenge.objects.filter(module__is_active=True).count()
+    user_progress_pct = round(
+        (user_leaderboard.challenges_completed / total_challenges * 100), 1
+    ) if total_challenges > 0 else 0
+
     context = {
         'top_users': top_users,
         'user_leaderboard': user_leaderboard,
         'user_rank': user_rank,
+        'total_challenges': total_challenges,
+        'user_progress_pct': user_progress_pct,
     }
-    
+
     return render(request, 'leaderboard.html', context)
 
 

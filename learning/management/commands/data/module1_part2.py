@@ -70,8 +70,8 @@ Be practical — I've never organised an event before.
 I'm going for it. Let's make this happen.
 
 Create a 2-week action plan:
-- **Week 1:** Planning, permissions, and reaching out to people
-- **Week 2:** Final preparations and promotion
+- **Week 1 (Days 1–7):** Planning, permissions, and reaching out to people
+- **Week 2 (Days 8–14):** Final preparations and promotion
 
 For each day, give me:
 - One main task (should take 1-2 hours)
@@ -100,56 +100,56 @@ Structure every complex prompt in three parts:
 3. **FORMAT:** How you want the answer structured
 
 **Your Challenge:**
-You have an important job interview coming up. Give AI your COMPLETE context upfront to get the most personalised interview preparation help possible.
+You have an important technical presentation or assessment coming up. Give AI your COMPLETE context upfront to get the most personalised preparation help possible.
 
 **Your prompt must include:**
 
 **Context section:**
-- The role you're applying for (job title, company, industry)
-- Your relevant experience and background
-- Your key strengths for this role
-- Areas you're nervous about or find tricky
-- The interview format (panel? one-to-one? competency-based? presentation?)
+- What you are presenting or demonstrating (the topic, project, or solution)
+- Your audience (who they are and what they already know)
+- Your relevant background and key strengths
+- Areas you feel less confident about
+- The format (solo presentation? live demo? Q&A session? group assessment?)
 
 **Task section:**
-- What specific help you need (preparing answers? researching the company? handling tricky questions?)
+- What specific help you need (structuring your content? handling tough questions? explaining technical work clearly?)
 
 **Format section:**
 - How to organise the response (sections, bullet points, priority order)
 
 **Why This Works:**
-When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "help me prepare for an interview" and "help me prepare for a panel interview for a Marketing Manager role at a sustainability brand, where I'm strong on campaigns but nervous about people-management questions."''',
-        'example_prompt': '''I have an important job interview in 3 days and need to prepare thoroughly. Here's my complete situation:
+When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "help me prepare for a presentation" and "help me prepare to deliver a 20-minute technical demo of a network monitoring tool to a mixed panel of technical and non-technical assessors, where I'm strong on the build but nervous about explaining the business value simply."''',
+        'example_prompt': '''I have an important technical assessment presentation in 3 days and need to prepare thoroughly. Here's my complete situation:
 
-**CONTEXT — About the Role:**
-- Job title: Marketing Manager
-- Company: A growing e-commerce brand (about 80 staff) that sells sustainable homeware
-- What they're looking for: Someone to lead their social media and email marketing, manage a small team of 2, and drive revenue through digital channels
-- Why I want this role: It's a step up from my current coordinator role, and I believe strongly in their sustainability mission
+**CONTEXT — About the Presentation:**
+- Topic: Demonstrating a network monitoring tool I built to detect suspicious traffic patterns
+- Type: 20-minute presentation with a live demo, followed by 10 minutes of Q&A
+- Purpose: End-of-module assessment — I need to convince the panel I understand both the technical implementation and why it matters in a real-world context
+- Audience: 2 IT instructors and 3 industry guest assessors (a mix of technical and non-technical backgrounds)
 
 **CONTEXT — About Me:**
-- Current role: Marketing Coordinator at a fashion retailer (2.5 years)
-- Strengths: Very strong on content creation, social media strategy, and campaign management — I led a campaign that grew our Instagram following by 40% in 6 months
-- Weaknesses: I haven't formally managed a team before (though I've mentored junior interns)
-- Nervous about: Questions about managing people, questions about budget management, and the salary negotiation at the end
+- I built the tool myself using Python and Wireshark integrations
+- Strengths: Very strong on the technical execution, explaining how the code works, and walking through the features live
+- Weaknesses: Explaining WHY it matters to non-technical people, and structuring a clear narrative rather than just a feature walk-through
+- Nervous about: Questions about scalability, alternative approaches I didn't explore, and keeping within the 20-minute time limit
 
-**CONTEXT — Interview Format:**
-- Two-stage interview: First is a 45-minute panel with the Marketing Director and HR
-- They'll use competency-based questions ("tell me about a time when...")
-- I'll need to give a 5-minute presentation on "how you would approach your first 90 days in this role"
+**CONTEXT — Presentation Format:**
+- 20 minutes presentation + live demo, then 10 minutes Q&A
+- Assessors will score on: Technical knowledge, clarity of explanation, and ability to handle questions
+- No formal slides required — I've prepared a one-page technical summary handout
 
 **TASK — What I Need:**
-1. Help me prepare strong answers to the 5 most likely competency questions for this role
-2. Structure my 5-minute 90-day plan presentation
-3. Prepare me for the "people management" weakness — I need a confident answer that turns this into a positive
-4. Suggest 3-4 smart questions I can ask them at the end
-5. Advise on how to handle the salary conversation professionally
+1. Help me structure a compelling 20-minute narrative (not just a feature walk-through)
+2. Prepare me for the 5 most likely challenging questions from the panel
+3. Help me explain the technical work simply for the non-technical assessors
+4. Suggest how to make the live demo engaging rather than just functional
+5. Advise on how to handle a question I genuinely don't know the answer to
 
 **FORMAT:**
 - Number each section clearly (1–5 matching my requests above)
-- For competency answers, use the STAR format (Situation, Task, Action, Result)
-- Keep advice practical and specific to this company and role
-- For the 90-day plan, give me a clear structure I can build into slides''',
+- For Q&A preparation, provide both the likely question AND a strong approach to answering it
+- Keep advice practical and specific to my tool and my audience
+- For the narrative structure, give me a clear sequence I can rehearse''',
     },
     {
         'title': 'Question 11: Role Play for Expert Advice',
@@ -297,57 +297,57 @@ Show your working at every step. I want to understand HOW you reached your concl
 - The types of constraints that work best
 
 **The Paradox:**
-"Write me a cover letter" → generic, forgettable
-"Write a 200-word opening paragraph that avoids clichés, opens with a story, uses exactly one specific achievement, and never uses the word 'passionate'" → focused, memorable!
+"Write me a course description" → generic, forgettable
+"Write a 160-word course description that opens with a question, avoids buzzwords, speaks directly to someone who's tried and struggled before, and ends with a specific measurable promise" → focused, compelling!
 
 **Types of Constraints You Can Use:**
 - **Length:** Exact word count or character limit
 - **Style:** Must include/avoid specific words or phrases
 - **Structure:** Specific format or sections required
-- **Content:** Must reference certain topics, examples, or data
+- **Content:** Must reference certain outcomes, examples, or data
 - **Tone:** Specific emotional register
 - **Audience:** Who it's for (and who it's NOT for)
 
 **Your Challenge:**
-Write the opening section of a **job application cover letter** for a role you'd genuinely want. But here's the key — include **at least 5 specific constraints** that force AI to produce something unique and compelling.
+Write a compelling promotional description for a **training course, workshop, or learning programme** of your choice (real or fictional). Apply **at least 5 specific constraints** that force AI to produce something unique and genuinely persuasive.
 
 **Minimum constraints to include:**
 1. Exact word count range
 2. A tone described with 2-3 specific adjectives
-3. Something it MUST include (a specific achievement, a number, or a personal connection to the role)
-4. Something it must AVOID (clichés, specific overused words, generic phrases)
-5. A structural requirement (how it starts, what the final sentence achieves)
+3. Something it MUST include (a specific learning outcome, a statistic, or a relatable pain point)
+4. Something it must AVOID (clichés, specific overused phrases, generic promises)
+5. A structural requirement (how it opens, what the final line achieves)
 
 **The more creative and specific your constraints, the better the output. Push yourself!**''',
-        'example_prompt': '''Write the opening section of a cover letter for a job application.
+        'example_prompt': '''Write a promotional description for a course on cybersecurity fundamentals for non-technical office workers.
 
-**About Me and the Role:**
-- My name: Alex Sharma
-- Role I'm applying for: Social Media Manager at a mental health charity
-- My background: 2 years managing social media for a retail brand, grew TikTok from 0 to 22,000 followers in 8 months
-- What makes me different: I volunteer at a youth mental health group on weekends — this role genuinely means something to me personally
-- Key strength: I create content that feels human, not corporate
+**About the Course:**
+- Name: "Cyber Aware" — a short online course for office workers with no IT background
+- What they'll learn: How to spot phishing emails, create strong passwords, safely use public Wi-Fi, and report security incidents correctly
+- Length: 4 hours total (self-paced, 8 short modules)
+- Audience: Office workers aged 25-55 who use computers daily but don't think of themselves as "tech people"
+- What makes it different: Uses real stories of real-world attacks (anonymised), not theoretical scenarios — every example could have happened to someone in their office
 
 **CONSTRAINTS (follow ALL of these):**
 
-1. **Length:** Exactly 150-170 words. Not a word more.
-2. **Tone:** Warm, purposeful, and quietly confident — like someone who genuinely cares about the cause, not someone who's just job-hunting.
+1. **Length:** Exactly 160-180 words. Not a word more or fewer.
+2. **Tone:** Reassuring, direct, and slightly urgent — like advice from a knowledgeable friend, not a warning from an IT department.
 3. **Must include:**
-   - My TikTok achievement (22,000 followers) mentioned naturally, not as a brag
-   - A hint at my personal connection to mental health (without oversharing)
-   - One sentence that shows I've researched this specific charity
+   - A reference to how frequently phishing attacks target ordinary employees (use a statistic if possible)
+   - The phrase "no IT experience needed" at least once — naturally, not as a disclaimer
+   - One specific, tangible outcome (not "you'll feel more confident" — something measurable, like being able to identify a phishing attempt)
 4. **Must avoid:**
-   - The words "passionate," "excited," "thrilled," or "opportunity"
-   - Starting with "I am writing to apply for..."
-   - Any sentence that could work for ANY cover letter (be specific to this role and charity)
+   - The words "cutting-edge," "empowering," "transformative," or "game-changing"
+   - Any sentence that could work for ANY online course (everything must feel specific to cybersecurity for ordinary people)
+   - Passive voice
 5. **Structure:**
-   - Open with something that shows you understand what this charity does and why it matters
-   - Middle: who I am and why I'm the right fit (lead with the human connection, then the skills)
-   - Close with something that invites a conversation, not a generic sign-off
-6. **Voice:** First person. Direct. No passive voice.
-7. **Feeling:** After reading it, the hiring manager should think "I want to meet this person" — not "this is a well-written letter."
+   - Open with a question or scenario that immediately resonates with the target audience
+   - Middle: what they'll learn and why it matters in their daily work life
+   - Close with something that removes hesitation to sign up
+6. **Voice:** Second person ("you"). Direct. Conversational.
+7. **Feeling:** After reading it, someone should think "this was written for people like me" — not "this sounds like every other course description."
 
-Make every word count.''',
+Make every word earn its place.''',
     },
     {
         'title': 'Question 14: Your AI Learning Coach',
@@ -372,13 +372,13 @@ Before asking AI to teach you something, tell it HOW you learn best:
 This is like telling a personal trainer about your fitness level before they design your programme.
 
 **Your Challenge:**
-Set up AI as your personal learning coach in a **two-part prompt:**
+Create a **single, complete prompt** that does two things at once — both sections must be present in your submission:
 
-**Part 1 — Establish Your Learning Profile:**
+**Section 1 — Your Learning Profile:**
 Tell AI how you learn, your constraints, communication preferences, and goals.
 
-**Part 2 — Request Help With a Topic:**
-Pick any skill you genuinely want to learn and ask for a personalised learning plan that matches your profile.
+**Section 2 — Your Learning Request:**
+Pick any skill you genuinely want to learn. Ask for a personalised learning plan that **explicitly references your profile from Section 1.**
 
 **Ideas for topics:**
 - Public speaking and presenting
@@ -389,7 +389,7 @@ Pick any skill you genuinely want to learn and ask for a personalised learning p
 - Personal finance and budgeting
 - Fitness and healthy habits
 
-**Make sure Part 2 explicitly references your learning profile from Part 1.**''',
+**IMPORTANT:** This challenge requires a complete prompt containing BOTH sections. Section 2 must explicitly reference Section 1 (e.g., "Based on my learning profile above, specifically my preference for hands-on tasks and my 1-hour daily limit..."). A learning profile without a specific learning request is incomplete and will not be accepted.''',
         'example_prompt': '''I want you to be my personal learning coach. First, let me tell you how I learn best, then help me learn something new.
 
 ---

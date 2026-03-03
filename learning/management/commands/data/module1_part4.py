@@ -38,24 +38,25 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 9. 90-day launch plan (specific action steps)
 
 **Pick a real idea you're excited about** — or use one of these:
-- Online tutoring service
 - Handmade products (candles, jewellery, art)
 - Social media management for local businesses
 - Personal fitness coaching
-- Custom gift basket service
-- Freelance writing or design
+- Custom gift basket or hamper service
+- Freelance photography or videography
+- Event catering or baking for events
 
 **Make it real and specific.** Generic plans are useless. The more details you give AI about YOUR situation, the more useful the plan.''',
         'example_prompt': '''I want to start a side business and need a practical mini business plan. Help me think through this properly.
 
-**MY IDEA:** Online tutoring for GCSE Maths students
+**MY IDEA:** Social media management for local small businesses
 
 **ABOUT ME:**
-- I'm a 26-year-old maths graduate working full-time as an accountant
-- I tutored friends at university and loved it
-- Available: 10-15 hours per week (evenings and weekends)
-- Budget to start: £200
-- I have: Laptop with webcam, decent internet, quiet room at home
+- I'm a 24-year-old working full-time in customer service at a retail company
+- I run my own personal Instagram account (4,500 followers) and have always enjoyed creating content
+- I've helped a friend promote their local café on social media informally — their following grew from 200 to 1,800 in 3 months
+- Available: 10-12 hours per week (evenings and weekends)
+- Budget to start: £150
+- I have: Laptop, smartphone with a good camera, Canva (free plan), basic knowledge of Instagram and Facebook
 - I've never run a business before
 
 **CREATE A MINI BUSINESS PLAN WITH THESE SECTIONS:**
@@ -66,53 +67,52 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 - Why will it succeed?
 
 **2. The Problem I'm Solving**
-- Why do students need private maths tutoring?
-- What's wrong with existing options? (too expensive? impersonal? hard to find?)
-- Why would parents choose me?
+- Why do local small businesses struggle with social media?
+- What's wrong with existing options? (agencies too expensive? generic content? no local knowledge?)
+- Why would a local business choose me over a big agency?
 
 **3. Target Customer (Be Specific)**
-- Exactly who am I targeting? (age, location, situation)
+- Exactly which types of businesses am I targeting? (restaurants? hair salons? independent shops?)
 - What's their pain point?
-- Where do they look for tutors?
-- What would they pay?
+- Where do I find them?
+- What would they pay per month?
 
 **4. Service Details**
-- What exactly am I offering? (1:1 sessions? group? homework help?)
-- How will sessions work? (platform, duration, materials)
-- What makes my service different from other online tutoring platforms?
+- What exactly am I offering? (number of posts per week? content creation? community management?)
+- What's included in the service vs. what's an add-on?
+- What makes my service different from hiring a big agency?
 
 **5. Pricing Strategy**
-- What should I charge per hour? (research the market)
-- Packages or pay-per-session?
-- Any introductory offers to get started?
+- What should I charge per month? (research the market for freelance social media managers)
+- Starter packages vs. ongoing monthly retainers?
+- Any introductory offers to land the first clients?
 
 **6. Startup Costs**
 - Everything I need to spend to get started (be specific, include amounts)
 - Monthly running costs
-- Keep it under my £200 budget
+- Keep total startup costs under my £150 budget
 
 **7. Revenue Projections (First 6 Months)**
-- Month 1: How many students, how much revenue (be realistic!)
+- Month 1: How many clients, how much revenue (be realistic — this is a side hustle!)
 - Month 3: Growth target
 - Month 6: Where I want to be
-- Show the maths (hours x rate x students)
+- Show the maths (clients x monthly rate)
 
-**8. Marketing Plan (How to Get My First 10 Students)**
-- 5 specific marketing actions I can take in the first month
+**8. Marketing Plan (How to Get My First 3 Clients)**
+- 5 specific actions I can take in the first month to find clients
 - Free strategies AND any paid options worth trying
-- Where exactly to find parents looking for tutors
+- How to approach a local business owner without feeling awkward about it
 
 **9. Risks & Honest Challenges**
 - Top 5 things that could go wrong
 - For each risk, what's my backup plan?
-- Biggest challenge I'll face and how to handle it
+- Biggest challenge I'll face running this alongside a full-time job
 
 **10. 90-Day Launch Plan**
 - Week 1-2: Setup (exactly what to do)
-- Week 3-4: First marketing push
-- Month 2: First students and refining
-- Month 3: Growth actions
-- Include specific daily/weekly tasks
+- Week 3-4: First outreach and marketing push
+- Month 2: First clients and refining the service
+- Month 3: Growth and building a portfolio
 
 **REQUIREMENTS:**
 - Be realistic, not optimistic. I'd rather know the truth.
@@ -122,89 +122,86 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 - At the end, give me a GO/NO-GO assessment: is this idea worth pursuing given my situation?''',
     },
     {
-        'title': 'Question 26: Your Personal Brand',
-        'description': 'Create a consistent personal brand package across multiple formats',
+        'title': 'Question 26: The Technical Communication Toolkit',
+        'description': 'Communicate a technical project consistently across five different professional formats',
         'difficulty': 'advanced',
         'order': 26,
         'points': 40,
-        'instructions': '''Your personal brand is what people say about you when you're not in the room. Let's make it intentional.
+        'instructions': '''In IT and tech, the ability to communicate the same solution clearly to completely different audiences is a critical professional skill. This challenge puts that to the test.
 
 **What You'll Learn:**
-- How to use AI to create consistent messaging across platforms
-- Adapting the same core story for different formats and audiences
-- Building a cohesive professional identity
+- How to use AI to create consistent messaging across multiple formats
+- Adapting the same core technical content for completely different readers
+- Building a professional communication package for a real project
 
 **The Challenge:**
-Create a complete **personal brand package** — the same core story told in different formats for different platforms.
+You have a technical project, solution, or IT system. Create a **complete communication package** — the same core information presented in 5 completely different formats for 5 different audiences.
 
 **You'll create ALL of these in a single, well-structured prompt:**
-1. **LinkedIn headline** (120 characters max — the most valuable real estate on your profile)
-2. **LinkedIn About section** (200 words — the full story)
-3. **30-second elevator pitch** (what you'd say at a networking event)
-4. **Professional bio** (100 words — for conference programmes, guest blog intros, or team pages)
-5. **Twitter/X bio** (160 characters — punchy and memorable)
+1. **Technical overview** (for your development team or technical colleagues)
+2. **Executive briefing** (for management who need to make a decision)
+3. **Client-facing proposal section** (for a potential client or end user)
+4. **Training module introduction** (for learners who need to understand and use it)
+5. **Professional social media post** (for a company or organisation page)
 
-**The key constraint: CONSISTENCY.** All 5 should clearly be the same person with the same story, just adapted for the format.
+**The key constraint: CONSISTENCY.** All 5 must clearly be about the same project with the same core message — just adapted for the format and reader.
 
 **Your prompt must include:**
-- Your background and career journey
-- What makes you unique (your "angle")
-- Your target audience (who do you want to attract?)
-- Your personality and tone
-- Specific constraints for each format
+- Your project or solution details (what it is, what problem it solves, how it works)
+- What makes it effective or valuable
+- Your target reader for each piece and what they care about
+- Specific format constraints for each piece
 
-**This is a real exercise** — use your actual background (or a realistic fictional one). These are things you can genuinely use.''',
-        'example_prompt': '''Create a complete personal brand package for me. All 5 pieces should tell the same story but adapted for each platform.
+**Use a real IT project you've worked on, or a realistic fictional one.** These are the types of communications you'll produce in professional settings.''',
+        'example_prompt': '''Create a complete communication package for my IT project. All 5 pieces should clearly be about the same solution, adapted for each specific audience.
 
-**ABOUT ME:**
-- Name: Priya Sharma
-- Current: Transitioning into tech (just finished a full-stack web development bootcamp)
-- Previous career: 6 years as a secondary school science teacher
-- What I bring: I can explain complex things simply (teacher brain!), I'm obsessed with building things that help people learn, and I've been coding side projects for the past year
-- My angle: I'm not just a career changer — I'm someone who understands USERS because I spent 6 years watching people struggle to learn, and I build with empathy
-- Notable: Built a free revision tool for my students that 500+ kids used for their GCSEs
-- Personality: Warm, energetic, slightly nerdy (in a good way), real (not fake-professional)
-- Goal: Land a junior developer role at a company that values education, learning, or social impact
-- NOT: I don't want to sound desperate, over-eager, or like I'm apologising for my background
+**ABOUT THE PROJECT:**
+- What it is: A web-based IT helpdesk ticketing system I built for a small business (50 employees)
+- The problem it solves: Staff were reporting IT issues by walking over, calling, or emailing the IT person directly — there was no tracking, no prioritisation, and issues were constantly getting lost
+- How it works: Staff submit tickets through a simple web form, IT staff see a prioritised dashboard with status updates, automated emails keep users informed, and monthly reports show resolution times
+- Built with: Python (Django), SQLite database, deployed on a local server
+- Results: Average response time improved from "whenever IT gets to it" to 2.3 hours for standard issues; no reported lost tickets since launch
 
 **CREATE THESE 5 PIECES:**
 
-**1. LinkedIn Headline (max 120 characters)**
-- Must communicate: what I do + what makes me different
-- Not: "Aspiring developer" or "Career changer" (these sound weak)
-- Should make someone curious enough to click
+**1. Technical Overview (for IT colleagues or a development team)**
+- Length: 200-250 words
+- Audience: People who understand technical terminology
+- Focus: Architecture, tech stack, how it works under the hood
+- Include: Database structure overview, key technical features, deployment approach
+- Tone: Precise, technically accurate, professional peer-to-peer
 
-**2. LinkedIn About Section (exactly 180-200 words)**
-- Open with a hook (NOT "I'm a passionate...")
-- Tell my career change story as a strength
-- Include the revision tool achievement (500+ students)
-- Show what I'm looking for
-- End with personality, not just professionalism
-- Write in first person, conversational but polished
+**2. Executive Briefing (for a non-technical manager or director)**
+- Length: 120-150 words
+- Audience: Decision-maker who doesn't want technical details
+- Focus: The problem, the solution, and the measurable business impact
+- Must include: A clear before/after comparison and what it means for the business
+- Tone: Clear, business-focused, no jargon
 
-**3. 30-Second Elevator Pitch (spoken version)**
-- For: Networking events, career fairs, "tell me about yourself"
-- Write it as I'd actually SAY it (contractions, natural speech patterns)
-- Structure: Hook → Background → What I do now → What I'm looking for → Memorable close
-- Must sound confident, not rehearsed
-- Time it: should take exactly 25-30 seconds to say aloud
+**3. Client-Facing Proposal Section (for a potential client considering this solution)**
+- Length: 150-200 words
+- Audience: A business owner or IT manager at a similar-sized company
+- Focus: Benefits, reliability, and ease of adoption
+- Must include: A specific outcome they can expect
+- Tone: Professional, benefit-focused, confidence-building
 
-**4. Professional Bio (exactly 100 words, third person)**
-- For: Conference talks, guest blog posts, "about the author" sections
-- Third person ("Priya Sharma is...")
-- Professional but warm
-- Includes key credentials and the school project
-- Ends with a human touch (hobby, fun fact)
+**4. Training Module Introduction (for employees who will use the system)**
+- Length: 100-130 words
+- Audience: Non-technical office workers
+- Focus: What they need to do, why it's easy, and how it helps them get IT issues resolved faster
+- Must include: Simple steps for what to do when they have an IT problem
+- Tone: Friendly, reassuring, clear
 
-**5. Twitter/X Bio (max 160 characters)**
-- Punchy and memorable
-- Communicate who I am and what I do
-- Can be a bit playful
-- Include one emoji max (if it adds value)
+**5. Professional Social Media Post (for a company or organisation page)**
+- Length: 120-150 words
+- Audience: Professional network — other IT professionals and businesses
+- Focus: The problem solved and the approach taken
+- Must include: Something that sparks interest or useful discussion
+- Tone: Confident, professional, slightly conversational
 
-**CRITICAL:** All 5 must feel like the same person. Read them side by side — is the personality consistent? Is the core message the same? Does the "teacher who builds things" thread run through all of them?
+**CRITICAL:** All 5 must feel like they're about the same project. The core message — "we replaced IT chaos with a clean, trackable, faster system" — must come through in each piece, just framed for that specific reader. Read them side by side: is the project identity consistent? Does the value come through in every version?
 
-After writing all 5, briefly explain the strategy: what's the consistent thread and how each piece serves a different purpose.''',
+After all 5, write a brief note (2-3 sentences) explaining how you adjusted the technical detail and focus for each audience.''',
     },
     {
         'title': 'Question 27: Event Planning Pro',
@@ -300,87 +297,96 @@ Plan a complete event from start to finish. This could be:
 **TONE:** Make this feel achievable. I'm nervous about organising this and I need a plan I can follow step by step.''',
     },
     {
-        'title': 'Question 28: Explain Anything to Anyone',
-        'description': 'Master the art of adapting complex information for any audience level',
+        'title': 'Question 28: The Learning Scenario Designer',
+        'description': 'Design realistic learning scenarios and practice exercises that develop genuine understanding',
         'difficulty': 'intermediate',
         'order': 28,
         'points': 35,
-        'instructions': '''The ability to explain things clearly at any level is one of the most valuable skills in any career.
+        'instructions': '''One of the most valuable skills in any professional field: the ability to DESIGN learning experiences — not just complete them.
 
 **What You'll Learn:**
-- How to use AI to create layered explanations
-- Adapting complexity while keeping accuracy
-- A technique used by the best teachers, managers, and communicators
+- How to use AI to create realistic, effective learning scenarios
+- Designing questions and exercises that build genuine understanding
+- Thinking about common mistakes and misconceptions — and how to address them
 
-**The Challenge:**
-Pick ONE complex topic and create **3 completely different explanations** for 3 different audiences. Each should be accurate but adapted for how that audience thinks and what they care about.
+**Why This Matters:**
+Whether you're training a colleague, creating study materials, writing assessments, or helping someone understand a topic — being able to design good learning scenarios is a superpower.
 
-**Pick a topic:**
-- How artificial intelligence actually works
-- How the economy affects everyday prices
-- How climate change impacts daily life
-- How a startup gets funded (from idea to investment)
-- How vaccines work
-- How the internet actually delivers a webpage to your screen
+**The Difference Between a Weak and a Strong Scenario:**
+- **Weak:** "A company experiences a data breach. What should they do?"
+- **Strong:** "At 9pm on a Friday, the IT manager of a 30-person marketing agency receives an alert that an unknown IP address has been accessing the shared cloud storage for the past 6 hours. Two senior staff are on holiday. The office is closed and there's no on-call policy. What are the first 3 actions to take, and why does the ORDER matter?"
 
-**Your 3 audiences:**
-1. A bright 8-year-old (simple, fun, uses analogies from their world)
-2. A non-technical colleague at work (clear, practical, focuses on "so what?")
-3. A senior executive who needs to make a decision about it (concise, business-focused, implications-oriented)
+The second one is specific, pressured, and forces genuine thinking — not just reciting knowledge.
 
-**For each version, specify:**
-- The audience and what they care about
-- The tone and language level
-- Word count
-- What analogies or frameworks to use
-- What to emphasise and what to skip
+**Your Challenge:**
+Pick a technical or professional topic you know well (or want to explore). Use AI to design a **complete learning scenario package** around it.
 
-**The test:** Could you actually give each version to that person and have them understand it? If yes, you've mastered audience adaptation.''',
-        'example_prompt': '''Explain "how artificial intelligence actually works" to 3 completely different audiences. Each explanation must be accurate but adapted for its audience.
+**Your prompt must request:**
+1. A realistic, detailed scenario (a specific situation someone could actually face)
+2. A set of guided questions that lead learners through the scenario step by step
+3. The "expert answer" for each question (what a knowledgeable person would say)
+4. Three common mistakes beginners make — and what each mistake reveals about their thinking
+5. A practical follow-up challenge (something learners can DO after working through the scenario)
 
-**TOPIC:** How AI (like ChatGPT) actually works — not science fiction, but the real basics.
+**Topic ideas:**
+- Network security incident response
+- Troubleshooting a slow or failing web application
+- Designing a database schema for a new project
+- Managing a software project that's falling behind schedule
+- Responding to a customer data protection request
+- Setting up IT systems for a newly onboarded team''',
+        'example_prompt': '''Design a complete learning scenario package for IT students learning about cybersecurity incident response.
 
----
+**TOPIC:** Responding to a suspected phishing attack in a small business
 
-**VERSION 1: For an 8-year-old named Lily who loves dogs and Minecraft**
+**Target learners:** IT students who understand what phishing is conceptually but have never practised the response process in a realistic, pressured context.
 
-- **What she cares about:** Is it alive? Can it think? Why does it sometimes say wrong things?
-- **Language:** Simple words only. No word longer than 3 syllables unless you explain it.
-- **Approach:** Use an analogy from her world (training a puppy? building in Minecraft? a really smart library?)
-- **Tone:** Fun, friendly, wonder-inducing (not scary)
-- **Length:** 100 words maximum
-- **Must answer:** "Is AI actually smart, or is it pretending?"
-- **Must avoid:** Anything that sounds scary or confusing
+**Learning goal:** By the end of this scenario, learners should be able to identify the correct immediate steps in an incident response, explain WHY those steps come in a specific order, and recognise the reactive mistakes that make things worse.
 
 ---
 
-**VERSION 2: For my colleague Sarah (Marketing Manager, 35, no technical background)**
+**CREATE THE FOLLOWING:**
 
-- **What she cares about:** How can I use this at work? Should I be worried about my job? What can it do well and what can't it do?
-- **Language:** Professional but accessible. Define any technical terms.
-- **Approach:** Focus on practical understanding. She doesn't need to know about neural networks — she needs to know what it can and can't do reliably.
-- **Tone:** Helpful, demystifying, honest
-- **Length:** 200 words
-- **Must answer:** "Is it a tool I should learn to use, or a threat I should worry about?"
-- **Must include:** One real example of how it helps in marketing specifically
-- **Must avoid:** Hype OR fearmongering
+**1. The Scenario (realistic and specific)**
+Write a detailed scenario description that:
+- Has a specific time, place, and context (not just "a company was attacked")
+- Involves real decisions with no single obvious "right" answer on the surface
+- Includes enough detail to feel immersive but not overwhelming
+- Creates a sense of pressure — time, available resources, or ambiguity
+- Is 150-200 words in length
+
+**2. Guided Questions (6-8 questions)**
+Design questions that:
+- Build on each other (each answer sets up the next question)
+- Progress from "what happened?" to "why does this matter?" to "what should you do and why?"
+- Include at least one question that challenges a common assumption
+- Are specific to THIS scenario, not generic cybersecurity questions
+- For each question, also include: "What a strong answer looks like" (the expert model answer, 2-4 sentences)
+
+**3. The Expert Walkthrough**
+Write a model response showing how an experienced IT professional would work through this scenario:
+- What they notice first and why
+- Their decision-making process (including what they rule out)
+- Why they prioritise steps in a specific order
+- What they document and when
+(250-300 words, written in narrative form)
+
+**4. Common Mistakes (three beginner mistakes)**
+For each mistake:
+- Describe exactly what the learner does wrong
+- Explain WHY this is wrong (what assumption or knowledge gap it reveals)
+- Give the correct approach and explain why it matters
+
+**5. Practical Follow-Up Challenge**
+A hands-on task the learner can complete after working through the scenario:
+- Something active (not just further reading)
+- Directly builds on what the scenario taught
+- Completable in 20-30 minutes
+- Includes clear success criteria (how the learner knows they've done it well)
 
 ---
 
-**VERSION 3: For the CEO of a mid-size company (considering investing in AI tools for the business)**
-
-- **What he cares about:** Cost, ROI, risk, competitive advantage, timeline to implement
-- **Language:** Executive-level. Concise, every word matters.
-- **Approach:** He doesn't need to know HOW it works in detail — he needs to know WHAT it means for his business and WHAT decisions to make.
-- **Tone:** Direct, strategic, authoritative
-- **Length:** 150 words maximum
-- **Must answer:** "Should we invest in this now, or wait?"
-- **Must include:** A clear recommendation with reasoning
-- **Structure:** 3 short paragraphs max: What it is (briefly) → What it means for you → What to do next
-
----
-
-After all 3, write a brief note (3-4 sentences) explaining what you changed for each audience and WHY. Help me understand the principles behind audience adaptation.''',
+**Quality check:** After generating everything, review the scenario and questions together. Would a motivated IT student genuinely learn something? Would it feel like a situation they could actually face?''',
     },
     {
         'title': 'Question 29: The Multi-Agent Thinker',
@@ -517,11 +523,11 @@ Every technique you've learned across all 29 lessons:
 Choose a real scenario from YOUR life — something you actually need help with — and demonstrate mastery by writing a **series of 3-4 connected prompts** that build on each other.
 
 **Pick your own scenario, or use one of these:**
-- Planning a career change (research → plan → prepare → execute)
-- Launching a side project (idea → plan → marketing → first steps)
-- Preparing for a big life event (wedding, move, new job)
-- Solving a real problem at work (diagnose → analyse → plan → communicate)
-- Creating a personal development plan (assess → plan → track → adjust)
+- Planning and launching a personal IT project (app, tool, or portfolio piece)
+- Preparing for a major certification or assessment (study plan → practice → review → execute)
+- Launching a side hustle or creative project (idea → plan → marketing → first steps)
+- Solving a real problem in your community or organisation (diagnose → analyse → plan → communicate)
+- Creating a personal development plan for a specific skill (assess → plan → track → adjust)
 
 **YOUR SERIES OF PROMPTS MUST DEMONSTRATE:**
 
@@ -557,99 +563,102 @@ Choose a real scenario from YOUR life — something you actually need help with 
 - Would someone else find this impressive and practical?
 
 **This is YOUR moment. Show what you've learned. Make it real, make it useful, and make it yours.**''',
-        'example_prompt': '''I'm using all my prompt engineering skills to tackle a real challenge: I'm about to start a new job as a Junior Product Manager and I want to crush my first 90 days. Here's my full series:
+        'example_prompt': '''I'm using all my prompt engineering skills to tackle a real challenge: I'm planning to build and launch a personal IT portfolio project over the next 10 weeks. Here's my full series:
 
 ---
 
 **PROMPT 1 — ANALYSIS & RESEARCH**
 
-Act as a Senior Product Manager who mentors junior PMs. You've onboarded at 4 different companies and now coach new PMs on their first 90 days.
+Act as a senior software developer who mentors students building their first portfolio projects. You've seen hundreds of student projects — you know exactly what makes them impressive and what makes them forgettable.
 
 **My Context:**
-- Starting role: Junior Product Manager at a mid-size SaaS company (project management tool, 50 employees)
-- Previous experience: 2 years as a customer success manager (same industry, different company)
-- What I know: Customer needs, user pain points, basic data analysis, stakeholder communication
-- What I'm nervous about: I've never done product strategy, roadmapping, or worked with engineering teams
-- Start date: 3 weeks from now
-- My manager: VP of Product (reportedly hands-off, values initiative)
+- I'm an IT student with 8 months of learning behind me (HTML, CSS, basic Python, intro to databases)
+- My goal: Build one solid portfolio project that demonstrates real skills and solves a genuine problem
+- Available time: 10-12 hours per week for the next 10 weeks
+- Tools I have: VS Code, GitHub (basic), Python, SQLite, basic knowledge of Flask
+- What I want to avoid: Building something nobody would actually use, or copying a tutorial without understanding it
+- End goal: Have something I'm proud to show and talk about in detail
 
-Based on your experience mentoring junior PMs, give me:
-1. The 5 biggest mistakes new PMs make in their first 90 days (so I can avoid them)
-2. The 3 things that impress managers most in the first month
-3. A framework for my first 90 days broken into: Listen (Days 1-30), Contribute (Days 31-60), Lead (Days 61-90)
-4. What to learn BEFORE I start (next 3 weeks)
+Based on your experience, give me:
+1. The 5 most common mistakes students make when building portfolio projects (so I can avoid them)
+2. The qualities that make a portfolio project genuinely impressive vs. forgettable
+3. 5 project ideas well-suited to my skill level that solve a real problem (not just another to-do app)
+4. A framework for the 10 weeks: Plan → Build → Test → Document → Present
 
-Be honest about the hard parts. I'd rather be prepared than surprised.
+Be honest — I want something I'm actually capable of building well, not something impressive on paper that I can't explain.
 
 ---
 
-**PROMPT 2 — BUILD THE PLAN**
+**PROMPT 2 — CHOOSE AND PLAN**
 
-Based on your 90-day framework, let's build a detailed plan for the "Listen" phase (Days 1-30).
+Based on your suggestions, I've chosen to build a **personal expense tracker web app** — a simple tool where users can log expenses, set monthly budgets, and see simple visual summaries of their spending.
+
+Now let's build a detailed development plan for the first 4 weeks (the foundation phase).
 
 For each week, create:
-- **Key objective** (what I should accomplish)
-- **People to meet** (who, and what to ask them — give me specific questions)
-- **Things to learn** (about the product, the market, the team)
-- **One small win** (something I can deliver to build credibility early)
-- **Potential trap** (what to watch out for this week)
+- **Main goal** (what I should have working by Sunday)
+- **Daily tasks** (specific, achievable tasks for 1.5-2 hours each evening)
+- **One technical concept to learn** (link to what I'm building that week)
+- **Weekly checkpoint** (how I know the week was successful — a specific, testable outcome)
+- **Common mistake to avoid** (one thing that trips students up at this stage)
 
 **Constraints:**
-- I don't want to step on anyone's toes (I'm new!)
-- I want to ask great questions, not pretend I know things
-- I need to balance learning with showing initiative
-- Keep each week's plan realistic (I'll also be doing onboarding, setting up tools, etc.)
+- Each daily task must be completable in 1.5-2 hours
+- I shouldn't skip ahead — each week must build on the previous one
+- Include time for research, not just coding
+- Keep it realistic (I have coursework too)
 
-Also: create a "First Day Checklist" — the specific things I should do on Day 1 to make a great impression without trying too hard.
-
----
-
-**PROMPT 3 — CREATE A STAKEHOLDER MAP**
-
-Now help me prepare for the relationships I need to build. Based on a typical 50-person SaaS company with a product team, create:
-
-1. **Stakeholder Map:**
-   A list of the key people I need to build relationships with in the first month:
-   - Role and what they care about
-   - How they relate to product
-   - What I can offer them / learn from them
-   - Suggested approach (coffee chat? Slack message? Sit in on their meeting?)
-
-2. **My "Getting to Know You" Questions:**
-   Create a template of 5-7 questions I can adapt for different stakeholders:
-   - Engineers (what do they need from product?)
-   - Customer success (what are customers struggling with?)
-   - Sales (what features do they keep getting asked about?)
-   - Design (how does the current design process work?)
-   - My manager (what does success look like for me at 30/60/90 days?)
-
-3. **Communication Style Guide:**
-   How should I communicate differently with:
-   - Engineers (they value X, avoid Y)
-   - Executives (they value X, avoid Y)
-   - Cross-functional peers (they value X, avoid Y)
-
-Keep it practical — I want to walk in feeling prepared, not overwhelmed.
+Also: create a "Project Setup Checklist" — everything I need to do before writing a single line of code.
 
 ---
 
-**PROMPT 4 — THE 30-SECOND INTRO**
+**PROMPT 3 — DOCUMENTATION PLAN**
 
-Final piece: I'll need to introduce myself many times in the first week. Create 3 versions of my self-introduction:
+Now help me think about how to document and present this project professionally.
 
-1. **Team meeting intro** (30 seconds, to the product and engineering team):
-   Warm, shows competence without arrogance, mentions what I bring from customer success
+Create:
 
-2. **Quick hallway/Slack intro** (2 sentences, casual):
-   For when someone asks "oh, you're the new PM?"
+1. **README Structure:**
+   A template for my GitHub README that:
+   - Explains what the project does and who it's for (in plain English)
+   - Shows how to install and run it (step-by-step)
+   - Includes a screenshot section placeholder
+   - Explains the technical choices I made (and why)
+   - Shows what I learned from building it
 
-3. **One-on-one with my manager** (1 minute, first meeting):
-   Shows I'm prepared, asks the right opening questions, establishes how I want to work together
+2. **Project Writeup (for a portfolio or presentation):**
+   A 250-word narrative explaining the project as if presenting it to someone who hasn't seen it:
+   - The problem it solves
+   - How I approached building it
+   - The biggest technical challenge and how I solved it
+   - What I'd improve if I had more time
 
-For each: write the actual words I'd say, not just a description. Make them sound natural, not rehearsed.
+3. **5 Questions I Should Be Able to Answer:**
+   The questions someone knowledgeable would ask when reviewing this project — with guidance on how to prepare strong answers for each one.
+
+Keep it professional but authentic — this should sound like a student who genuinely built something, not a marketing brochure.
 
 ---
 
-This is my real situation. Make it genuinely useful — I'll actually be using everything you create here.''',
+**PROMPT 4 — THE PITCH VERSION**
+
+Final piece: I want to be able to talk about this project confidently in different situations.
+
+Create 3 versions of how I'd describe it:
+
+1. **The 60-second verbal explanation** (for when someone asks "what did you build?"):
+   Engaging, clear, avoids jargon — makes the listener understand the value immediately
+
+2. **The technical deep-dive (2-3 minutes):**
+   For a technical audience — covers the architecture, key decisions, and challenges overcome
+
+3. **The one-sentence version:**
+   For a social media post, profile bio, or casual introduction — punchy and memorable
+
+For each: write the actual words, not just a description. Make them feel natural and confident.
+
+---
+
+This is my actual plan. Make it genuinely useful — I'll be following this for the next 10 weeks.''',
     },
 ]
