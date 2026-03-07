@@ -119,36 +119,36 @@ You have an important technical presentation or assessment coming up. Give AI yo
 
 **Why This Works:**
 When AI has full context from the start, it doesn't waste time on generic advice. Every suggestion is tailored to YOUR situation. This is the difference between "help me prepare for a presentation" and "help me prepare to deliver a 20-minute technical demo of a network monitoring tool to a mixed panel of technical and non-technical assessors, where I'm strong on the build but nervous about explaining the business value simply."''',
-        'example_prompt': '''I have an important technical assessment presentation in 3 days and need to prepare thoroughly. Here's my complete situation:
+        'example_prompt': '''I have an important presentation in 3 days and need to prepare thoroughly. Here's my complete situation:
 
 **CONTEXT — About the Presentation:**
-- Topic: Demonstrating a network monitoring tool I built to detect suspicious traffic patterns
-- Type: 20-minute presentation with a live demo, followed by 10 minutes of Q&A
-- Purpose: End-of-module assessment — I need to convince the panel I understand both the technical implementation and why it matters in a real-world context
-- Audience: 2 IT instructors and 3 industry guest assessors (a mix of technical and non-technical backgrounds)
+- Topic: Presenting a 3-month social media content strategy I developed for a local restaurant chain
+- Type: 15-minute presentation followed by 10 minutes of Q&A
+- Purpose: Convince the business owner and their small team to approve and fund the strategy
+- Audience: The business owner (non-digital, very results-focused), their office manager (sceptical of social media ROI), and a junior marketing assistant (already on my side)
 
 **CONTEXT — About Me:**
-- I built the tool myself using Python and Wireshark integrations
-- Strengths: Very strong on the technical execution, explaining how the code works, and walking through the features live
-- Weaknesses: Explaining WHY it matters to non-technical people, and structuring a clear narrative rather than just a feature walk-through
-- Nervous about: Questions about scalability, alternative approaches I didn't explore, and keeping within the 20-minute time limit
+- I developed the full strategy myself — content pillars, posting schedule, tone of voice, and platform priorities
+- Strengths: Very confident explaining the creative ideas and content plan; I know my research is solid
+- Weaknesses: Justifying the budget spend, explaining analytics and metrics in simple terms, and keeping the business owner engaged when the conversation gets detailed
+- Nervous about: Being asked "but how do we know it'll work?", losing the room if I spend too long on the detail, and the office manager raising objections I haven't prepared for
 
 **CONTEXT — Presentation Format:**
-- 20 minutes presentation + live demo, then 10 minutes Q&A
-- Assessors will score on: Technical knowledge, clarity of explanation, and ability to handle questions
-- No formal slides required — I've prepared a one-page technical summary handout
+- 15-minute presentation (slides), then 10 minutes Q&A
+- They'll judge on: clarity of the plan, confidence in the numbers, and whether it feels right for their brand
+- I've prepared 8 slides and a one-page summary handout
 
 **TASK — What I Need:**
-1. Help me structure a compelling 20-minute narrative (not just a feature walk-through)
-2. Prepare me for the 5 most likely challenging questions from the panel
-3. Help me explain the technical work simply for the non-technical assessors
-4. Suggest how to make the live demo engaging rather than just functional
+1. Help me structure a compelling 15-minute narrative (not just a walk-through of slides)
+2. Prepare me for the 5 most likely challenging questions from the business owner and office manager
+3. Help me explain ROI and social media metrics simply for a non-digital audience
+4. Suggest how to open the presentation in a way that immediately gets the business owner's attention
 5. Advise on how to handle a question I genuinely don't know the answer to
 
 **FORMAT:**
 - Number each section clearly (1–5 matching my requests above)
 - For Q&A preparation, provide both the likely question AND a strong approach to answering it
-- Keep advice practical and specific to my tool and my audience
+- Keep advice practical and specific to my situation and my audience
 - For the narrative structure, give me a clear sequence I can rehearse''',
     },
     {
@@ -297,55 +297,55 @@ Show your working at every step. I want to understand HOW you reached your concl
 - The types of constraints that work best
 
 **The Paradox:**
-"Write me a course description" → generic, forgettable
-"Write a 160-word course description that opens with a question, avoids buzzwords, speaks directly to someone who's tried and struggled before, and ends with a specific measurable promise" → focused, compelling!
+"Write me a product description" → generic, forgettable
+"Write a 160-word product description that opens with a question, avoids buzzwords, speaks directly to someone who's been disappointed before, and ends with a specific reason to buy today" → focused, compelling!
 
 **Types of Constraints You Can Use:**
 - **Length:** Exact word count or character limit
 - **Style:** Must include/avoid specific words or phrases
 - **Structure:** Specific format or sections required
-- **Content:** Must reference certain outcomes, examples, or data
+- **Content:** Must reference certain features, benefits, or details
 - **Tone:** Specific emotional register
 - **Audience:** Who it's for (and who it's NOT for)
 
 **Your Challenge:**
-Write a compelling promotional description for a **training course, workshop, or learning programme** of your choice (real or fictional). Apply **at least 5 specific constraints** that force AI to produce something unique and genuinely persuasive.
+Write a compelling promotional description for a **new business, product, or event** of your choice (real or fictional). Apply **at least 5 specific constraints** that force AI to produce something unique and genuinely persuasive.
 
 **Minimum constraints to include:**
 1. Exact word count range
 2. A tone described with 2-3 specific adjectives
-3. Something it MUST include (a specific learning outcome, a statistic, or a relatable pain point)
+3. Something it MUST include (a specific benefit, a real detail, or a relatable pain point)
 4. Something it must AVOID (clichés, specific overused phrases, generic promises)
 5. A structural requirement (how it opens, what the final line achieves)
 
 **The more creative and specific your constraints, the better the output. Push yourself!**''',
-        'example_prompt': '''Write a promotional description for a course on cybersecurity fundamentals for non-technical office workers.
+        'example_prompt': '''Write a promotional description for a new independent coffee shop opening in Manchester city centre.
 
-**About the Course:**
-- Name: "Cyber Aware" — a short online course for office workers with no IT background
-- What they'll learn: How to spot phishing emails, create strong passwords, safely use public Wi-Fi, and report security incidents correctly
-- Length: 4 hours total (self-paced, 8 short modules)
-- Audience: Office workers aged 25-55 who use computers daily but don't think of themselves as "tech people"
-- What makes it different: Uses real stories of real-world attacks (anonymised), not theoretical scenarios — every example could have happened to someone in their office
+**About the Business:**
+- Name: "Common Ground" — a specialty coffee shop in the Northern Quarter
+- What makes it different: Every coffee on the menu is single-origin, sourced directly from small farms, and the story of each farm is printed on the menu
+- Also serves: Home-baked pastries, a small seasonal lunch menu, and specialty loose-leaf teas
+- Vibe: Relaxed, unpretentious, designed to be a genuine third space (not just a grab-and-go)
+- Audience: Coffee enthusiasts and curious regulars aged 22-45 who are bored of chain coffee shops but not snobby about it
 
 **CONSTRAINTS (follow ALL of these):**
 
 1. **Length:** Exactly 160-180 words. Not a word more or fewer.
-2. **Tone:** Reassuring, direct, and slightly urgent — like advice from a knowledgeable friend, not a warning from an IT department.
+2. **Tone:** Warm, curious, and quietly confident — like a recommendation from a friend who really knows their coffee, not a brand press release.
 3. **Must include:**
-   - A reference to how frequently phishing attacks target ordinary employees (use a statistic if possible)
-   - The phrase "no IT experience needed" at least once — naturally, not as a disclaimer
-   - One specific, tangible outcome (not "you'll feel more confident" — something measurable, like being able to identify a phishing attempt)
+   - A reference to the farm-to-cup sourcing story (specific, not vague)
+   - One sensory detail that makes someone want to walk through the door right now
+   - A clear signal that this is NOT a chain coffee shop experience
 4. **Must avoid:**
-   - The words "cutting-edge," "empowering," "transformative," or "game-changing"
-   - Any sentence that could work for ANY online course (everything must feel specific to cybersecurity for ordinary people)
+   - The words "artisan," "craft," "passionate," or "journey"
+   - Any sentence that could work for any other coffee shop in any other city
    - Passive voice
 5. **Structure:**
-   - Open with a question or scenario that immediately resonates with the target audience
-   - Middle: what they'll learn and why it matters in their daily work life
-   - Close with something that removes hesitation to sign up
-6. **Voice:** Second person ("you"). Direct. Conversational.
-7. **Feeling:** After reading it, someone should think "this was written for people like me" — not "this sounds like every other course description."
+   - Open with something that immediately separates Common Ground from every Pret and Costa on the high street
+   - Middle: what the experience actually feels like and what you'll find on the menu
+   - Close with a line that makes someone want to visit this week, not eventually
+6. **Voice:** Second person ("you"). Conversational and specific.
+7. **Feeling:** After reading it, someone should think "this place was made for people like me."
 
 Make every word earn its place.''',
     },
@@ -356,6 +356,9 @@ Make every word earn its place.''',
         'order': 14,
         'points': 30,
         'instructions': '''One of the most powerful uses of AI: a personal tutor that adapts to exactly how YOU learn.
+
+**STRICT REQUIREMENT — READ FIRST:**
+This challenge requires a prompt with TWO clearly labelled sections. A submission that only contains Section 1 (a learning profile) without Section 2 (a specific learning request that references the profile) **must score 0 and FAIL.** Both sections are mandatory. No exceptions.
 
 **What You'll Learn:**
 - How to "train" AI on your learning preferences
@@ -378,7 +381,7 @@ Create a **single, complete prompt** that does two things at once — both secti
 Tell AI how you learn, your constraints, communication preferences, and goals.
 
 **Section 2 — Your Learning Request:**
-Pick any skill you genuinely want to learn. Ask for a personalised learning plan that **explicitly references your profile from Section 1.**
+Pick any skill you genuinely want to learn. Ask for a personalised learning plan that **explicitly references your profile from Section 1** (e.g., "Based on my learning profile above, specifically my preference for hands-on tasks and my 1-hour daily limit...").
 
 **Ideas for topics:**
 - Public speaking and presenting
@@ -389,7 +392,7 @@ Pick any skill you genuinely want to learn. Ask for a personalised learning plan
 - Personal finance and budgeting
 - Fitness and healthy habits
 
-**IMPORTANT:** This challenge requires a complete prompt containing BOTH sections. Section 2 must explicitly reference Section 1 (e.g., "Based on my learning profile above, specifically my preference for hands-on tasks and my 1-hour daily limit..."). A learning profile without a specific learning request is incomplete and will not be accepted.''',
+**FAIL CONDITION:** If your submission does not contain BOTH a clearly-labelled Section 1 (learning profile) AND a clearly-labelled Section 2 (learning request that references Section 1), the attempt will receive a score of 0 and will not pass. A learning profile alone, however detailed, is an incomplete submission.''',
         'example_prompt': '''I want you to be my personal learning coach. First, let me tell you how I learn best, then help me learn something new.
 
 ---

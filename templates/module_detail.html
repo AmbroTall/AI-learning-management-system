@@ -35,26 +35,26 @@
             ← Back to Dashboard
         </a>
         
-        <div class="glass-effect rounded-2xl p-12 neon-border">
-            <div class="flex items-start justify-between">
-                <div>
-                    <div class="text-6xl mb-4">{{ module.icon }}</div>
-                    <h1 class="text-5xl font-bold mb-4 gradient-text">{{ module.title }}</h1>
-                    <div class="text-xl text-gray-300 mb-6 max-w-2xl markdown-content" id="moduleDescription">{{ module.description }}</div>
-                    
-                    <div class="flex items-center space-x-6 text-sm text-gray-400">
+        <div class="glass-effect rounded-2xl p-4 sm:p-12 neon-border">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                <div class="flex-1">
+                    <div class="text-5xl sm:text-6xl mb-4">{{ module.icon }}</div>
+                    <h1 class="text-3xl sm:text-5xl font-bold mb-4 gradient-text">{{ module.title }}</h1>
+                    <div class="text-base sm:text-xl text-gray-300 mb-6 max-w-2xl markdown-content" id="moduleDescription">{{ module.description }}</div>
+
+                    <div class="flex flex-wrap gap-3 sm:gap-0 sm:items-center sm:space-x-6 text-sm text-gray-400">
                         <div>⏱️ {{ module.duration_hours }} hours</div>
                         <div>📚 {{ challenges.count }} challenges</div>
                         <div>🎯 {{ user_progress.challenges_completed }}/{{ challenges.count }} completed</div>
                     </div>
                 </div>
-                
-                <div class="text-right">
+
+                <div class="sm:text-right">
                     <div class="text-sm text-gray-400 mb-2">Your Progress</div>
-                    <div class="text-5xl font-bold gradient-text mb-4">
+                    <div class="text-3xl sm:text-5xl font-bold gradient-text mb-2 sm:mb-4">
                         {% widthratio user_progress.challenges_completed challenges.count 100 %}%
                     </div>
-                    <div class="text-2xl font-bold text-cyan-400">{{ user_progress.total_points }} points</div>
+                    <div class="text-xl sm:text-2xl font-bold text-cyan-400">{{ user_progress.total_points }} points</div>
                 </div>
             </div>
             
@@ -71,46 +71,46 @@
     
     <!-- Challenges List -->
     <div class="mb-12">
-        <h2 class="text-3xl font-bold mb-6">Challenges</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Challenges</h2>
         <div class="space-y-4">
             {% for challenge in challenges %}
             {% with user_attempts|get_item:challenge.id as attempt %}
             {% with is_locked=challenge|is_challenge_locked:user_attempts %}
-            <div class="glass-effect rounded-xl p-6 hover-lift {% if attempt and attempt.passed %}border-2 border-green-500/50{% elif is_locked %}opacity-60 border-2 border-gray-500/30{% endif %}">
-                <div class="flex items-start justify-between">
+            <div class="glass-effect rounded-xl p-4 sm:p-6 hover-lift {% if attempt and attempt.passed %}border-2 border-green-500/50{% elif is_locked %}opacity-60 border-2 border-gray-500/30{% endif %}">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div class="flex-1">
-                        <div class="flex items-center space-x-3 mb-2">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
                             {% if is_locked %}
-                            <span class="text-3xl">🔒</span>
+                            <span class="text-2xl">🔒</span>
                             {% endif %}
-                            <h3 class="text-2xl font-bold {% if is_locked %}text-gray-500{% endif %}">{{ challenge.title }}</h3>
+                            <h3 class="text-lg sm:text-2xl font-bold {% if is_locked %}text-gray-500{% endif %}">{{ challenge.title }}</h3>
                             <span class="px-3 py-1 rounded-full text-xs font-semibold
                                 {% if challenge.difficulty == 'beginner' %}bg-green-500/20 text-green-400
                                 {% elif challenge.difficulty == 'intermediate' %}bg-yellow-500/20 text-yellow-400
                                 {% else %}bg-red-500/20 text-red-400{% endif %}">
                                 {{ challenge.get_difficulty_display }}
                             </span>
-                            
+
                             {% if attempt and attempt.passed %}
                             <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
                                 ✓ Completed
                             </span>
                             {% endif %}
                         </div>
-                        
-                        <p class="text-gray-400 mb-4">{{ challenge.description }}</p>
-                        
+
+                        <p class="text-gray-400 mb-3 text-sm sm:text-base">{{ challenge.description }}</p>
+
                         {% if is_locked %}
-                        <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 mb-4">
+                        <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 mb-3">
                             <p class="text-orange-400 text-sm">🔒 Complete the previous challenge to unlock this one</p>
                         </div>
                         {% endif %}
-                        
-                        <div class="flex items-center space-x-6 text-sm">
+
+                        <div class="flex flex-wrap gap-3 text-sm">
                             <div class="text-gray-400">
                                 <span class="text-cyan-400 font-semibold">{{ challenge.points }}</span> points
                             </div>
-                            
+
                             {% if attempt and attempt.total_attempts > 0 %}
                             <div class="text-gray-400">
                                 {{ attempt.total_attempts }} attempt{{ attempt.total_attempts|pluralize }}
@@ -123,15 +123,15 @@
                             {% endif %}
                         </div>
                     </div>
-                    
-                    <div class="ml-6">
+
+                    <div class="sm:ml-6 sm:flex-shrink-0">
                         {% if is_locked %}
-                        <button disabled class="px-6 py-3 bg-gray-600/30 rounded-lg font-semibold text-gray-500 cursor-not-allowed whitespace-nowrap">
+                        <button disabled class="w-full sm:w-auto px-6 py-3 bg-gray-600/30 rounded-lg font-semibold text-gray-500 cursor-not-allowed whitespace-nowrap">
                             🔒 Locked
                         </button>
                         {% else %}
-                        <a href="{% url 'challenge' challenge.id %}" 
-                           class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle whitespace-nowrap">
+                        <a href="{% url 'challenge' challenge.id %}"
+                           class="block w-full sm:w-auto text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle whitespace-nowrap">
                             {% if attempt and attempt.passed %}
                                 Practice Again
                             {% elif attempt and attempt.total_attempts > 0 %}

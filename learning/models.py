@@ -29,6 +29,8 @@ class Module(models.Model):
     
     def is_unlocked_for_user(self, user):
         """Check if this module is unlocked for the given user"""
+        if user.is_superuser:
+            return True  # Superusers can access all modules
         if not self.prerequisite:
             return True  # First module is always unlocked
         
@@ -76,6 +78,8 @@ class Challenge(models.Model):
     
     def is_unlocked_for_user(self, user):
         """Check if this challenge is unlocked for the given user"""
+        if user.is_superuser:
+            return True  # Superusers can access all challenges
         if not self.prerequisite_challenge:
             return True  # First challenge is always unlocked
         

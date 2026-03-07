@@ -19,6 +19,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
+# Redirect unauthenticated users to the app's login page (not Django's default /accounts/login/)
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,6 +69,7 @@ WSGI_APPLICATION = 'ai_learning.wsgi.application'
 import dj_database_url
 
 DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = ""
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(

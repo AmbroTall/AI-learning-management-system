@@ -208,15 +208,15 @@ This structure works for ANY complex request — project plans, travel itinerari
 - Breakfast can be simple (I'm not a morning cook)
 
 **Weekly Schedule:**
-- Monday–Wednesday: Home by 6pm, can cook 30 min
-- Thursday: Late day, need something I prepped earlier or 15-min max
-- Friday: Takeaway night (skip this)
+- Monday–Wednesday: Home by 6pm, can cook around 30 minutes
+- Thursday: Long day — need something I can prep ahead OR cook in under 15 minutes
+- Friday: Keep it simple — a quick easy dinner, nothing elaborate
 - Saturday: Free to cook something fun (up to 1 hour)
 - Sunday: Meal prep day + a nice brunch
 
 **Format I Want:**
-- Day-by-day breakdown (breakfast, lunch, dinner)
-- Sunday prep list (what to make ahead)
+- Full day-by-day breakdown for ALL 7 days (breakfast, lunch, dinner — including Thursday and Friday)
+- Sunday prep list (what to make ahead for the week)
 - Full shopping list organised by supermarket section (produce, dairy, etc.)
 - Estimated cost per meal
 

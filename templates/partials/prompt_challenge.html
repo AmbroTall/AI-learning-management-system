@@ -3,8 +3,8 @@
     <!-- Left Column: Instructions -->
     <div class="space-y-6">
         <!-- Instructions Card -->
-        <div class="glass-effect rounded-2xl p-8">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div class="glass-effect rounded-2xl p-4 sm:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">📋</span> Instructions
             </h2>
             <div class="prose prose-invert max-w-none markdown-content" id="instructionsContent">
@@ -14,8 +14,8 @@
         
         {% if challenge.example_prompt %}
         <!-- Example Card -->
-        <div class="glass-effect rounded-2xl p-8">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div class="glass-effect rounded-2xl p-4 sm:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">💡</span> Example
             </h2>
             <div class="bg-black/30 rounded-lg p-4 border border-cyan-500/30">
@@ -27,8 +27,8 @@
         
         <!-- Previous Attempts -->
         {% if previous_attempts %}
-        <div class="glass-effect rounded-2xl p-8">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div class="glass-effect rounded-2xl p-4 sm:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">📊</span> Your Attempts
             </h2>
             <div class="space-y-3">
@@ -54,8 +54,8 @@
     <!-- Right Column: Playground -->
     <div class="space-y-6">
         <!-- Prompt Input -->
-        <div class="glass-effect rounded-2xl p-8 neon-border">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div class="glass-effect rounded-2xl p-4 sm:p-8 neon-border">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">🎯</span> Your Prompt
             </h2>
             <textarea id="userPrompt" 
@@ -70,16 +70,16 @@
         </div>
         
         <!-- AI Response -->
-        <div id="responseSection" class="glass-effect rounded-2xl p-8 hidden">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div id="responseSection" class="glass-effect rounded-2xl p-4 sm:p-8 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">🤖</span> AI Response
             </h2>
             <div id="aiResponse" class="markdown-content bg-black/30 rounded-lg p-4 border border-purple-500/30 text-gray-300 max-h-96 overflow-y-auto"></div>
         </div>
         
         <!-- Evaluation -->
-        <div id="evaluationSection" class="glass-effect rounded-2xl p-8 hidden">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <div id="evaluationSection" class="glass-effect rounded-2xl p-4 sm:p-8 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">⭐</span> Evaluation
             </h2>
             
