@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:15
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -14,6 +15,7 @@ services:
 
   web:
     build: .
+    restart: always
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
@@ -23,6 +25,25 @@ services:
       - DATABASE_URL=postgresql://ai_user:ai_password123@db:5432/ai_learning_db
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - DEBUG=True
+    depends_on:
+      - db
+
+  db-backup:
+    image: postgres:15
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:ro
+      - ./backups:/backups
+    environment:
+      - PGPASSWORD=ai_password123
+    entrypoint: >
+      /bin/sh -c "
+        while true; do
+          sleep 86400;
+          pg_dump -h db -U ai_user ai_learning_db | gzip > /backups/backup_$$(date +%Y%m%d_%H%M%S).sql.gz;
+          find /backups -name '*.sql.gz' -mtime +7 -delete;
+        done
+      "
     depends_on:
       - db
 

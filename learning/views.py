@@ -152,12 +152,14 @@ def module_detail(request, module_id):
             challenge=challenge
         ).order_by('-created_at')
         
+        is_unlocked = challenge.is_unlocked_for_user(request.user)
         user_attempts[challenge.id] = {
             'total_attempts': attempts.count(),
             'passed': attempts.filter(passed=True).exists(),
             'best_score': attempts.aggregate(max_score=Sum('score'))['max_score'] or 0,
             'last_attempt': attempts.first(),
-            'is_unlocked': challenge.is_unlocked_for_user(request.user)
+            'is_unlocked': is_unlocked,
+            'is_locked': not is_unlocked,
         }
     
     context = {
@@ -176,7 +178,7 @@ def challenge_view(request, challenge_id):
     challenge = get_object_or_404(Challenge, id=challenge_id, is_active=True)
 
     # Check if user has completed previous challenges (enforce sequential order)
-    if challenge.order > 1:
+    if challenge.order > 1 and not request.user.is_superuser:
         # Get the previous challenge in this module
         previous_challenge = Challenge.objects.filter(
             module=challenge.module,
@@ -299,17 +301,32 @@ def submit_challenge(request, challenge_id):
             })
         
         # Otherwise, evaluate the response
+
+        # Extract any hard fail conditions from the instructions (e.g. Q14's two-section requirement)
+        fail_condition_match = re.search(
+            r'(\*\*STRICT REQUIREMENT.*?)(?=\*\*What You|$)',
+            challenge.instructions,
+            re.DOTALL
+        )
+        fail_condition_block = ''
+        if fail_condition_match:
+            fail_condition_block = f"""
+        MANDATORY RULES — APPLY BEFORE SCORING:
+        {fail_condition_match.group(1).strip()}
+        These rules override the general scoring criteria. If any mandatory condition is not met, set score to 0 and passed to false regardless of overall quality.
+        """
+
         evaluation_prompt = f"""
         Challenge: {challenge.title}
         Instructions: {challenge.instructions}
         User's Prompt: {user_prompt}
         AI Response: {ai_response}
-        
+        {fail_condition_block}
         Evaluate this attempt on a scale of 0-100 based on:
         1. Did the user craft an effective prompt?
         2. Did the AI response meet the challenge requirements?
         3. Quality and clarity of the result
-        
+
         Respond in JSON format:
         {{
             "score": <0-100>,

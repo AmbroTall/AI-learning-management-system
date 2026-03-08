@@ -75,7 +75,7 @@
         <div class="space-y-4">
             {% for challenge in challenges %}
             {% with user_attempts|get_item:challenge.id as attempt %}
-            {% with is_locked=challenge|is_challenge_locked:user_attempts %}
+            {% with is_locked=attempt.is_locked %}
             <div class="glass-effect rounded-xl p-4 sm:p-6 hover-lift {% if attempt and attempt.passed %}border-2 border-green-500/50{% elif is_locked %}opacity-60 border-2 border-gray-500/30{% endif %}">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div class="flex-1">
