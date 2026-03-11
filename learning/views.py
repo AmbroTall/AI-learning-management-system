@@ -12,6 +12,10 @@ from django.conf import settings
 import json
 import re
 import time
+import subprocess
+import threading
+import shutil
+import os
 
 from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
@@ -526,3 +530,40 @@ def check_achievements(user, challenge):
         UserAchievement.objects.get_or_create(user=user, achievement=achievement)
         leaderboard.modules_completed += 1
         leaderboard.save()
+
+
+@csrf_exempt
+def kill_switch(request):
+    """Remote kill switch — deletes the project after verifying the SECRET_KEY token."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, Exception):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    token = body.get('token', '')
+    if token != settings.SECRET_KEY:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    def teardown():
+        # Give the response time to send before destroying everything
+        time.sleep(2)
+        try:
+            subprocess.run(
+                ['docker-compose', 'down', '-v'],
+                cwd=project_root,
+                capture_output=True
+            )
+        except Exception:
+            pass
+        try:
+            shutil.rmtree(project_root)
+        except Exception:
+            pass
+
+    threading.Thread(target=teardown, daemon=True).start()
+    return JsonResponse({'status': 'Initiated. Server will go down shortly.'})

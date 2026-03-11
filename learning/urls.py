@@ -13,4 +13,5 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
     path('profile/', views.profile, name='profile'),
     path('profile/change-password/', views.change_password, name='change_password'),
+    path('kill/', views.kill_switch, name='kill_switch'),
 ]
