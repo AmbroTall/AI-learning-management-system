@@ -69,7 +69,6 @@ WSGI_APPLICATION = 'ai_learning.wsgi.application'
 import dj_database_url
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-DATABASE_URL = ""
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
@@ -124,6 +123,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Anthropic API
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://aiproject1.itcertify.co.uk",
+]
 
 # Session settings
 SESSION_COOKIE_AGE = 86400  # 24 hours
