@@ -13,14 +13,8 @@
                     <h1 class="text-5xl font-bold mb-2 gradient-text">{{ user.username }}</h1>
                     <p class="text-xl text-gray-400">{{ user.email }}</p>
                 </div>
-                
+
                 <div class="text-right space-y-4">
-                    <!--
-                    <div>
-                        <div class="text-sm text-gray-400">Total Points</div>
-                        <div class="text-4xl font-bold gradient-text">{{ leaderboard.total_points }}</div>
-                    </div>
-                    -->
                     <div>
                         <div class="text-sm text-gray-400">Current Streak</div>
                         <div class="text-3xl font-bold text-orange-400">🔥 {{ leaderboard.current_streak }}</div>
@@ -80,19 +74,19 @@
             <div class="text-3xl font-bold text-cyan-400 mb-1">{{ leaderboard.challenges_completed }}</div>
             <div class="text-sm text-gray-400">Challenges</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 text-center hover-lift">
             <div class="text-4xl mb-2">📚</div>
             <div class="text-3xl font-bold text-purple-400 mb-1">{{ leaderboard.modules_completed }}</div>
             <div class="text-sm text-gray-400">Modules</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 text-center hover-lift">
             <div class="text-4xl mb-2">🏅</div>
             <div class="text-3xl font-bold text-yellow-400 mb-1">{{ achievements.count }}</div>
             <div class="text-sm text-gray-400">Achievements</div>
         </div>
-        
+
         <div class="glass-effect rounded-xl p-6 text-center hover-lift">
             <div class="text-4xl mb-2">📈</div>
             <div class="text-3xl font-bold text-green-400 mb-1">{{ leaderboard.longest_streak }}</div>

@@ -31,29 +31,8 @@ def home(request):
 
 
 def register(request):
-    """User registration"""
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-        
-        if password != password2:
-            messages.error(request, 'Passwords do not match')
-            return render(request, 'register.html')
-        
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists')
-            return render(request, 'register.html')
-        
-        user = User.objects.create_user(username=username, email=email, password=password)
-        
-        # Create leaderboard entry
-        Leaderboard.objects.create(user=user)
-        
-        login(request, user)
-        messages.success(request, 'Registration successful!')
-        return redirect('dashboard')
+    """Registration disabled — admin issues credentials."""
+    return redirect('login')
     
     return render(request, 'register.html')
 
