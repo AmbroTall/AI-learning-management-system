@@ -562,6 +562,47 @@ def submit_challenge(request, challenge_id):
     if not user_prompt:
         return JsonResponse({'error': 'Prompt is required'}, status=400)
 
+    # ── Rate limiting ───────────────────────────────────────────────────
+    COOLDOWN_SECONDS = 60
+    MAX_ATTEMPTS_PER_HOUR = 10
+
+    now = timezone.now()
+    last_attempt = ChallengeAttempt.objects.filter(
+        user=request.user, challenge=challenge
+    ).order_by('-created_at').first()
+
+    if last_attempt:
+        elapsed = (now - last_attempt.created_at).total_seconds()
+        if elapsed < COOLDOWN_SECONDS:
+            wait = int(COOLDOWN_SECONDS - elapsed)
+            return JsonResponse({
+                'error': 'rate_limited',
+                'message': (
+                    f"Please wait {wait} more second{'s' if wait != 1 else ''} before submitting again. "
+                    "Use this time to re-read the challenge prompt carefully — "
+                    "the answer is usually in the details!"
+                ),
+                'wait_seconds': wait,
+            }, status=429)
+
+    recent_count = ChallengeAttempt.objects.filter(
+        user=request.user,
+        challenge=challenge,
+        created_at__gte=now - timedelta(hours=1),
+    ).count()
+
+    if recent_count >= MAX_ATTEMPTS_PER_HOUR:
+        return JsonResponse({
+            'error': 'rate_limited',
+            'message': (
+                "You've reached the limit of 10 submissions per hour for this challenge. "
+                "Take a break and re-read the challenge instructions — "
+                "a fresh perspective often makes the solution much clearer!"
+            ),
+            'wait_seconds': 3600,
+        }, status=429)
+    # ───────────────────────────────────────────────────────────────────
+
     try:
         client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
 

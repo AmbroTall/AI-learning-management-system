@@ -110,6 +110,12 @@ print("Hello, World!")
                 </button>
             </div>
             
+            <!-- Rate limit / error banner -->
+            <div id="errorBanner" class="hidden glass-effect rounded-xl p-4 border-2 border-orange-500 bg-orange-500/10 mb-4">
+                <p class="text-orange-300 font-semibold mb-1">⏳ Slow down!</p>
+                <p id="errorBannerMsg" class="text-orange-200 text-sm"></p>
+            </div>
+
             <!-- Evaluation Results -->
             <div id="codeEvaluationSection" class="glass-effect rounded-xl p-6 hidden">
                 <h3 class="text-xl font-bold mb-4 flex items-center">
@@ -144,6 +150,13 @@ print("Hello, World!")
 </div>
 
 <script>
+function showError(msg) {
+    const banner = document.getElementById('errorBanner');
+    document.getElementById('errorBannerMsg').textContent = msg;
+    banner.classList.remove('hidden');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 // Render markdown in instructions and example prompt
 document.addEventListener('DOMContentLoaded', function() {
     const instructionsEl = document.getElementById('codingInstructionsContent');
@@ -294,7 +307,7 @@ async function askAI() {
             });
             aiHelpResponse.classList.remove('hidden');
         } else {
-            alert('Error: ' + data.error);
+            showError(data.message || data.error || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         alert('Failed to get help. Please try again.');
@@ -322,7 +335,8 @@ async function submitCode() {
     submitCodeBtn.disabled = true;
     submitCodeText.classList.add('hidden');
     submitCodeLoading.classList.remove('hidden');
-    
+    document.getElementById('errorBanner').classList.add('hidden');
+
     try {
         const response = await fetch('{% url "submit_challenge" challenge.id %}', {
             method: 'POST',
@@ -355,7 +369,7 @@ async function submitCode() {
             codeEvaluationSection.classList.remove('hidden');
             codeEvaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
-            alert('Error: ' + data.error);
+            showError(data.message || data.error || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         alert('Failed to submit. Please try again.');

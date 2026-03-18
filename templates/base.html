@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Ambrose AI{% endblock %}</title>
+    <title>{% block title %}LearnPulse{% endblock %}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{% static 'images/Logo-3.svg' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -219,8 +219,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <div class="flex items-center space-x-6">
-                <a href="{% url 'dashboard' %}" class="flex items-center">
-                    <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="nav-logo">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 32 32" aria-hidden="true" style="flex-shrink:0;">
+                        <rect width="32" height="32" rx="7" fill="rgba(34,211,238,0.12)"/>
+                        <polyline points="2,16 6,16 8,8 10,24 12,13 14,19 16,16 20,16 22,10 24,22 26,16 30,16"
+                            fill="none" stroke="#22D3EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="gradient-text" style="font-weight:800;font-size:1.2rem;letter-spacing:-0.02em;">LearnPulse</span>
                 </a>
                 <div class="hidden md:flex items-center space-x-2">
                     <a href="{% url 'dashboard' %}"
@@ -326,8 +331,13 @@
 {% else %}
 <nav class="guest-nav">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="{% url 'home' %}" class="flex items-center">
-            <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="guest-nav-logo">
+        <a href="{% url 'home' %}" class="flex items-center gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 32 32" aria-hidden="true" style="flex-shrink:0;">
+                <rect width="32" height="32" rx="7" fill="rgba(34,211,238,0.12)"/>
+                <polyline points="2,16 6,16 8,8 10,24 12,13 14,19 16,16 20,16 22,10 24,22 26,16 30,16"
+                    fill="none" stroke="#22D3EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="gradient-text" style="font-weight:800;font-size:1.2rem;letter-spacing:-0.02em;">LearnPulse</span>
         </a>
         <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
             <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
@@ -372,26 +382,31 @@
 <!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
 <footer class="border-t border-white/8 mt-16 py-10 px-6">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5 text-sm text-gray-500">
-        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">
-            <img src="{% static 'images/Logo-3.svg' %}" alt="Ambrose AI" class="footer-logo">
+        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 32 32" aria-hidden="true" style="flex-shrink:0;">
+                <rect width="32" height="32" rx="7" fill="rgba(34,211,238,0.12)"/>
+                <polyline points="2,16 6,16 8,8 10,24 12,13 14,19 16,16 20,16 22,10 24,22 26,16 30,16"
+                    fill="none" stroke="#22D3EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="gradient-text" style="font-weight:800;font-size:1.35rem;letter-spacing:-0.02em;">LearnPulse</span>
         </a>
 
         {% if user.is_authenticated %}
         <div class="flex flex-wrap justify-center gap-6 text-sm">
             <a href="{% url 'dashboard' %}"      class="hover:text-white transition">Dashboard</a>
             <a href="{% url 'profile' %}"        class="hover:text-white transition">Profile</a>
-            <a href="mailto:hello@ambroseai.com" class="hover:text-white transition">Support</a>
+            <a href="mailto:hello@learnpulse.online" class="hover:text-white transition">Support</a>
         </div>
         {% else %}
         <div class="flex flex-wrap justify-center gap-6 text-sm">
             <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
             <a href="{% url 'home' %}#pricing"       class="hover:text-white transition">Pricing</a>
             <a href="{% url 'home' %}#faq"           class="hover:text-white transition">FAQ</a>
-            <a href="mailto:hello@ambroseai.com"     class="hover:text-white transition">Contact</a>
+            <a href="mailto:hello@learnpulse.online"     class="hover:text-white transition">Contact</a>
         </div>
         {% endif %}
 
-        <p class="text-center">&copy; <span id="currentYear"></span> Ambrose AI. All rights reserved.</p>
+        <p class="text-center">&copy; <span id="currentYear"></span> LearnPulse. All rights reserved.</p>
     </div>
 </footer>
 

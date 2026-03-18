@@ -119,6 +119,12 @@
                 <pre id="outputText" class="bg-black/50 rounded-lg p-4 border border-green-500/30 text-green-400 font-mono text-sm overflow-x-auto"></pre>
             </div>
             
+            <!-- Rate limit / error banner -->
+            <div id="errorBanner" class="hidden glass-effect rounded-2xl p-6 border-2 border-orange-500 bg-orange-500/10 mb-6">
+                <p class="text-orange-300 font-semibold text-lg mb-1">⏳ Slow down!</p>
+                <p id="errorBannerMsg" class="text-orange-200 text-sm"></p>
+            </div>
+
             <!-- Evaluation -->
             <div id="evaluationSection" class="glass-effect rounded-2xl p-8 hidden">
                 <h2 class="text-2xl font-bold mb-4 flex items-center">
@@ -169,6 +175,14 @@ const outputText = document.getElementById('outputText');
 
 // Evaluation
 const evaluationSection = document.getElementById('evaluationSection');
+const errorBanner = document.getElementById('errorBanner');
+const errorBannerMsg = document.getElementById('errorBannerMsg');
+
+function showError(msg) {
+    errorBannerMsg.textContent = msg;
+    errorBanner.classList.remove('hidden');
+    errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 const scoreValue = document.getElementById('scoreValue');
 const scoreBar = document.getElementById('scoreBar');
 const feedbackText = document.getElementById('feedbackText');
@@ -201,6 +215,7 @@ askAiBtn.addEventListener('click', async function() {
         
         const data = await response.json();
         
+        errorBanner.classList.add('hidden');
         if (data.success) {
             if (typeof marked !== 'undefined') {
                 aiHelpText.innerHTML = marked.parse(data.ai_response);
@@ -208,7 +223,7 @@ askAiBtn.addEventListener('click', async function() {
                 aiHelpText.textContent = data.ai_response;
             }
             aiHelpResponse.classList.remove('hidden');
-            
+
             // If response contains code, offer to insert it
             const codeMatch = data.ai_response.match(/```python\n([\s\S]*?)```/);
             if (codeMatch && codeMatch[1]) {
@@ -221,6 +236,8 @@ askAiBtn.addEventListener('click', async function() {
                 };
                 aiHelpText.appendChild(insertBtn);
             }
+        } else {
+            showError(data.message || data.error || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         alert('Failed to get AI help. Please try again.');
@@ -280,7 +297,8 @@ submitCodeBtn.addEventListener('click', async function() {
         });
         
         const data = await response.json();
-        
+
+        errorBanner.classList.add('hidden');
         if (data.success) {
             scoreValue.textContent = data.score;
             scoreBar.style.width = data.score + '%';
@@ -309,6 +327,8 @@ submitCodeBtn.addEventListener('click', async function() {
             passStatus.classList.remove('hidden');
             
             evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            showError(data.message || data.error || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         alert('Failed to submit. Please try again.');

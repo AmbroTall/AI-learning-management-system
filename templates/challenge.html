@@ -160,6 +160,12 @@
                 <div id="aiResponse" class="bg-black/30 rounded-lg p-4 border border-purple-500/30 text-gray-300 text-sm max-h-96 overflow-y-auto prose prose-invert max-w-none"></div>
             </div>
             
+            <!-- Rate limit / error banner -->
+            <div id="errorBanner" class="hidden glass-effect rounded-2xl p-6 border-2 border-orange-500 bg-orange-500/10 mb-6">
+                <p class="text-orange-300 font-semibold text-lg mb-1">⏳ Slow down!</p>
+                <p id="errorBannerMsg" class="text-orange-200 text-sm"></p>
+            </div>
+
             <!-- Evaluation -->
             <div id="evaluationSection" class="glass-effect rounded-2xl p-8 hidden">
                 <h2 class="text-2xl font-bold mb-4 flex items-center">
@@ -203,6 +209,14 @@ const scoreValue = document.getElementById('scoreValue');
 const scoreBar = document.getElementById('scoreBar');
 const feedbackText = document.getElementById('feedbackText');
 const passStatus = document.getElementById('passStatus');
+const errorBanner = document.getElementById('errorBanner');
+const errorBannerMsg = document.getElementById('errorBannerMsg');
+
+function showError(msg) {
+    errorBannerMsg.textContent = msg;
+    errorBanner.classList.remove('hidden');
+    errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
 submitBtn.addEventListener('click', async function() {
     const prompt = userPrompt.value.trim();
@@ -218,7 +232,8 @@ submitBtn.addEventListener('click', async function() {
     btnLoading.classList.remove('hidden');
     responseSection.classList.add('hidden');
     evaluationSection.classList.add('hidden');
-    
+    errorBanner.classList.add('hidden');
+
     try {
         const response = await fetch('{% url "submit_challenge" challenge.id %}', {
             method: 'POST',
@@ -270,7 +285,7 @@ submitBtn.addEventListener('click', async function() {
             // Scroll to results
             evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
-            alert('Error: ' + data.error);
+            showError(data.message || data.error || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         alert('Failed to submit challenge. Please try again.');
