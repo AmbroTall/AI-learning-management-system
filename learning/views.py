@@ -285,26 +285,52 @@ def submit_challenge(request, challenge_id):
         
         # Otherwise, evaluate the response
 
-        # Extract any hard fail conditions from the instructions (e.g. Q14's two-section requirement)
-        fail_condition_match = re.search(
-            r'(\*\*STRICT REQUIREMENT.*?)(?=\*\*What You|$)',
-            challenge.instructions,
-            re.DOTALL
-        )
-        fail_condition_block = ''
-        if fail_condition_match:
-            fail_condition_block = f"""
-        MANDATORY RULES — APPLY BEFORE SCORING:
-        {fail_condition_match.group(1).strip()}
-        These rules override the general scoring criteria. If any mandatory condition is not met, set score to 0 and passed to false regardless of overall quality.
-        """
+        # Hard deterministic fail check — runs before Claude evaluation.
+        # If the instructions contain a STRICT REQUIREMENT block, verify the user's
+        # prompt satisfies it structurally before spending an API call.
+        # Currently enforces Q14's two-section requirement (Section 1 + Section 2).
+        if '**STRICT REQUIREMENT' in challenge.instructions:
+            has_section1 = bool(re.search(r'(section|part)\s*(1|one)\b', user_prompt, re.IGNORECASE))
+            has_section2 = bool(re.search(r'(section|part)\s*(2|two)\b', user_prompt, re.IGNORECASE))
+            if not (has_section1 and has_section2):
+                evaluation = {
+                    'score': 0,
+                    'feedback': (
+                        'Your submission must contain BOTH a clearly labelled Section 1 '
+                        '(learning profile) AND a Section 2 (learning request that references '
+                        'your profile). A learning profile alone is an incomplete submission. '
+                        'Please reread the instructions and try again.'
+                    ),
+                    'passed': False,
+                }
+                attempt_count = ChallengeAttempt.objects.filter(
+                    user=request.user, challenge=challenge
+                ).count() + 1
+                ChallengeAttempt.objects.create(
+                    user=request.user,
+                    challenge=challenge,
+                    user_prompt=user_prompt,
+                    ai_response=ai_response,
+                    score=evaluation['score'],
+                    feedback=evaluation['feedback'],
+                    passed=evaluation['passed'],
+                    attempt_number=attempt_count,
+                )
+                return JsonResponse({
+                    'success': True,
+                    'ai_response': ai_response,
+                    'score': evaluation['score'],
+                    'feedback': evaluation['feedback'],
+                    'passed': evaluation['passed'],
+                    'attempt_number': attempt_count,
+                })
 
         evaluation_prompt = f"""
         Challenge: {challenge.title}
         Instructions: {challenge.instructions}
         User's Prompt: {user_prompt}
         AI Response: {ai_response}
-        {fail_condition_block}
+
         Evaluate this attempt on a scale of 0-100 based on:
         1. Did the user craft an effective prompt?
         2. Did the AI response meet the challenge requirements?
