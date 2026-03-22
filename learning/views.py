@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Sum, Count
@@ -345,7 +345,7 @@ def submit_challenge(request, challenge_id):
         """
         
         eval_message = call_with_retry(lambda: client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-haiku-4-5-20251001",
             max_tokens=500,
             messages=[
                 {"role": "user", "content": evaluation_prompt}
@@ -426,6 +426,167 @@ def submit_challenge(request, challenge_id):
         return JsonResponse({
             'error': str(e)
         }, status=500)
+
+
+@login_required
+@csrf_exempt
+def submit_challenge_stream(request, challenge_id):
+    """Submit a challenge attempt and stream the AI response via SSE."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid method'}, status=405)
+
+    challenge = get_object_or_404(Challenge, id=challenge_id)
+    data = json.loads(request.body)
+    user_prompt = data.get('prompt', '')
+    request_type = data.get('type') or data.get('action', 'submit')
+    if request_type in ('run_code', 'get_help'):
+        request_type = 'help'
+
+    if not user_prompt:
+        return JsonResponse({'error': 'Prompt is required'}, status=400)
+
+    # Capture user reference for use inside the generator
+    user = request.user
+
+    def generate():
+        client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+
+        # Hard deterministic fail check (same logic as submit_challenge)
+        if request_type == 'submit' and '**STRICT REQUIREMENT' in challenge.instructions:
+            has_section1 = bool(re.search(r'(section|part)\s*(1|one)\b', user_prompt, re.IGNORECASE))
+            has_section2 = bool(re.search(r'(section|part)\s*(2|two)\b', user_prompt, re.IGNORECASE))
+            if not (has_section1 and has_section2):
+                feedback_msg = (
+                    'Your submission must contain BOTH a clearly labelled Section 1 '
+                    '(learning profile) AND a Section 2 (learning request that references '
+                    'your profile). A learning profile alone is an incomplete submission. '
+                    'Please reread the instructions and try again.'
+                )
+                attempt_count = ChallengeAttempt.objects.filter(
+                    user=user, challenge=challenge
+                ).count() + 1
+                ChallengeAttempt.objects.create(
+                    user=user,
+                    challenge=challenge,
+                    user_prompt=user_prompt,
+                    ai_response=feedback_msg,
+                    score=0,
+                    feedback=feedback_msg,
+                    passed=False,
+                    attempt_number=attempt_count,
+                )
+                yield f'data: {json.dumps({"type": "chunk", "text": feedback_msg})}\n\n'
+                yield f'data: {json.dumps({"type": "evaluation", "score": 0, "feedback": feedback_msg, "passed": False, "attempt_number": attempt_count})}\n\n'
+                yield f'data: {json.dumps({"type": "done"})}\n\n'
+                return
+
+        # Stream main Claude response
+        ai_response_parts = []
+        try:
+            with client.messages.stream(
+                model="claude-sonnet-4-20250514",
+                max_tokens=8192,
+                system=(
+                    "You are a helpful AI assistant. Always use British English spelling and "
+                    "conventions throughout your responses (e.g. 'pyjamas' not 'pajamas', "
+                    "'colour' not 'color', 'favour' not 'favor', 'organise' not 'organize')."
+                ),
+                messages=[{"role": "user", "content": user_prompt}]
+            ) as stream:
+                for text in stream.text_stream:
+                    ai_response_parts.append(text)
+                    yield f'data: {json.dumps({"type": "chunk", "text": text})}\n\n'
+        except Exception as e:
+            yield f'data: {json.dumps({"type": "error", "message": str(e)})}\n\n'
+            return
+
+        ai_response = ''.join(ai_response_parts)
+
+        if request_type == 'help':
+            yield f'data: {json.dumps({"type": "done"})}\n\n'
+            return
+
+        # Evaluation call — truncate ai_response to keep prompt small and fast
+        evaluation_prompt = f"""
+        Challenge: {challenge.title}
+        Instructions: {challenge.instructions}
+        User's Prompt: {user_prompt}
+        AI Response: {ai_response}
+
+        Evaluate this attempt on a scale of 0-100 based on:
+        1. Did the user craft an effective prompt?
+        2. Did the AI response meet the challenge requirements?
+        3. Quality and clarity of the result
+
+        Respond in JSON format:
+        {{
+            "score": <0-100>,
+            "feedback": "<specific feedback>",
+            "passed": <true/false (score >= 70)>
+        }}
+        """
+
+        try:
+            eval_message = client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=500,
+                messages=[{"role": "user", "content": evaluation_prompt}]
+            )
+            eval_text = eval_message.content[0].text
+            json_match = re.search(r'\{[\s\S]*?\}', eval_text)
+            evaluation = json.loads(json_match.group()) if json_match else {
+                'score': 50, 'feedback': 'Could not parse evaluation', 'passed': False
+            }
+        except Exception as e:
+            evaluation = {'score': 50, 'feedback': f'Evaluation error: {str(e)}', 'passed': False}
+
+        # Save attempt
+        attempt_count = ChallengeAttempt.objects.filter(
+            user=user, challenge=challenge
+        ).count() + 1
+
+        attempt = ChallengeAttempt.objects.create(
+            user=user,
+            challenge=challenge,
+            user_prompt=user_prompt,
+            ai_response=ai_response,
+            score=evaluation['score'],
+            feedback=evaluation['feedback'],
+            passed=evaluation['passed'],
+            attempt_number=attempt_count
+        )
+
+        if evaluation['passed']:
+            user_progress, created = UserProgress.objects.get_or_create(
+                user=user, module=challenge.module
+            )
+            first_time_pass = not ChallengeAttempt.objects.filter(
+                user=user,
+                challenge=challenge,
+                passed=True,
+                created_at__lt=attempt.created_at
+            ).exists()
+
+            if first_time_pass:
+                user_progress.challenges_completed += 1
+                user_progress.total_points += challenge.points
+                user_progress.save()
+
+                leaderboard = Leaderboard.objects.get(user=user)
+                leaderboard.total_points += challenge.points
+                leaderboard.challenges_completed += 1
+                leaderboard.last_activity_date = timezone.now().date()
+                leaderboard.save()
+
+                check_achievements(user, challenge)
+
+        yield f'data: {json.dumps({"type": "evaluation", "score": evaluation["score"], "feedback": evaluation["feedback"], "passed": evaluation["passed"], "attempt_number": attempt_count})}\n\n'
+        yield f'data: {json.dumps({"type": "done"})}\n\n'
+
+    response = StreamingHttpResponse(generate(), content_type='text/event-stream')
+    response['X-Accel-Buffering'] = 'no'
+    response['Cache-Control'] = 'no-cache'
+    return response
 
 
 @login_required

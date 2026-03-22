@@ -62,17 +62,32 @@
                       class="w-full h-48 px-4 py-3 bg-black/30 border border-cyan-500/30 rounded-lg focus:outline-none focus:border-cyan-500 text-white font-mono resize-none"
                       placeholder="Type your prompt here..."></textarea>
             
-            <button id="submitBtn" 
+            <button id="submitBtn"
                     class="w-full mt-4 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-bold text-lg hover-lift neon-border pulse-glow">
                 <span id="btnText">Submit Challenge</span>
                 <span id="btnLoading" class="hidden">⏳ Processing...</span>
             </button>
+        </div>
+
+        <!-- Tips panel (shown while processing) -->
+        <div id="tipsPanel" class="hidden glass-effect rounded-2xl p-5 border border-cyan-500/20">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl flex-shrink-0" id="tipIcon">💡</span>
+                <div>
+                    <div class="text-xs text-cyan-400 font-semibold uppercase tracking-wider mb-1">Did you know?</div>
+                    <div id="tipText" class="text-gray-300 text-sm leading-relaxed"></div>
+                </div>
+            </div>
+            <div class="mt-3 flex gap-1" id="tipDots"></div>
         </div>
         
         <!-- AI Response -->
         <div id="responseSection" class="glass-effect rounded-2xl p-4 sm:p-8 hidden">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
                 <span class="mr-3">🤖</span> AI Response
+                <span id="streamingIndicator" class="hidden ml-3 flex items-center gap-1 text-sm text-cyan-400 font-normal">
+                    <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Streaming…
+                </span>
             </h2>
             <div id="aiResponse" class="markdown-content bg-black/30 rounded-lg p-4 border border-purple-500/30 text-gray-300 max-h-96 overflow-y-auto"></div>
         </div>
@@ -121,75 +136,167 @@ const btnLoading = document.getElementById('btnLoading');
 const userPrompt = document.getElementById('userPrompt');
 const responseSection = document.getElementById('responseSection');
 const evaluationSection = document.getElementById('evaluationSection');
-const aiResponse = document.getElementById('aiResponse');
+const aiResponseEl = document.getElementById('aiResponse');
 const scoreValue = document.getElementById('scoreValue');
 const scoreBar = document.getElementById('scoreBar');
 const feedbackText = document.getElementById('feedbackText');
 const passStatus = document.getElementById('passStatus');
+const tipsPanel = document.getElementById('tipsPanel');
+const tipText = document.getElementById('tipText');
+const tipIcon = document.getElementById('tipIcon');
+const tipDots = document.getElementById('tipDots');
+const streamingIndicator = document.getElementById('streamingIndicator');
 
-submitBtn.addEventListener('click', async function() {
-    const prompt = userPrompt.value.trim();
-    
-    if (!prompt) {
-        alert('Please enter a prompt');
-        return;
+// ── Tips ────────────────────────────────────────────────────────────────────
+const TIPS = [
+    { icon: '🎯', text: 'Be specific about the format you want — ask for bullet points, numbered lists, or a table to get structured answers.' },
+    { icon: '🧠', text: 'Front-load your context. The more relevant background you give AI upfront, the less back-and-forth you need.' },
+    { icon: '📏', text: 'Set a word limit in your prompt to keep AI responses tight and focused — "in 150 words or fewer" works wonders.' },
+    { icon: '🎭', text: 'Assign a role: "Act as a senior software engineer with 10 years of Python experience" unlocks much richer responses.' },
+    { icon: '🔗', text: 'Break complex tasks into steps. Ask AI to think step-by-step to improve accuracy on multi-part problems.' },
+    { icon: '✏️', text: 'Tell AI what to avoid. "No jargon", "no passive voice", or "don\'t use the word innovative" sharpens the output.' },
+    { icon: '🔄', text: 'Iterate, don\'t start over. Build on AI\'s last response with "Now make it shorter" or "Add a section on X".' },
+    { icon: '📐', text: 'Use constraints creatively — a word limit, a forbidden phrase, or a required opening line forces more original output.' },
+    { icon: '🌍', text: 'Real-world context beats abstract requests. Share who your audience is and what action you want them to take.' },
+    { icon: '⚡', text: 'Ctrl + Enter submits your prompt quickly — no need to reach for the mouse.' },
+];
+
+let tipIndex = 0;
+let tipInterval = null;
+
+function buildDots(total, active) {
+    tipDots.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+        const d = document.createElement('span');
+        d.className = `inline-block w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === active ? 'bg-cyan-400 w-3' : 'bg-white/20'}`;
+        tipDots.appendChild(d);
     }
-    
-    // Show loading
+}
+
+function showTip(index) {
+    const tip = TIPS[index];
+    tipIcon.textContent = tip.icon;
+    tipText.textContent = tip.text;
+    buildDots(TIPS.length, index);
+}
+
+function startTips() {
+    tipIndex = Math.floor(Math.random() * TIPS.length);
+    showTip(tipIndex);
+    tipsPanel.classList.remove('hidden');
+    tipInterval = setInterval(() => {
+        tipIndex = (tipIndex + 1) % TIPS.length;
+        showTip(tipIndex);
+    }, 4000);
+}
+
+function stopTips() {
+    clearInterval(tipInterval);
+    tipInterval = null;
+    tipsPanel.classList.add('hidden');
+}
+
+// ── Streaming submit ─────────────────────────────────────────────────────────
+submitBtn.addEventListener('click', async function () {
+    const prompt = userPrompt.value.trim();
+    if (!prompt) { alert('Please enter a prompt'); return; }
+
+    // Reset UI
     submitBtn.disabled = true;
     btnText.classList.add('hidden');
     btnLoading.classList.remove('hidden');
     responseSection.classList.add('hidden');
     evaluationSection.classList.add('hidden');
-    
+    aiResponseEl.innerHTML = '';
+    startTips();
+
+    let rawText = '';  // accumulate plain text for final markdown render
+
     try {
-        const response = await fetch('{% url "submit_challenge" challenge.id %}', {
+        const response = await fetch('{% url "submit_challenge_stream" challenge.id %}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: prompt })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
         });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Render AI response with markdown
-            aiResponse.innerHTML = marked.parse(data.ai_response);
-            // Highlight code blocks
-            aiResponse.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-            responseSection.classList.remove('hidden');
-            
-            // Show evaluation
-            scoreValue.textContent = data.score;
-            scoreBar.style.width = data.score + '%';
-            feedbackText.innerHTML = marked.parse(data.feedback);
-            evaluationSection.classList.remove('hidden');
-            
-            // Show pass/fail status
-            if (data.passed) {
-                passStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 text-center font-bold success-celebration';
-                passStatus.textContent = '🎉 Challenge Passed! +{{ challenge.points }} points';
-            } else {
-                passStatus.className = 'p-4 rounded-lg mb-4 bg-orange-500/20 border-2 border-orange-500 text-orange-400 text-center font-bold';
-                passStatus.textContent = '💪 Keep trying! Score 70+ to pass';
-            }
-            passStatus.classList.remove('hidden');
-            
-            // Scroll to results
-            evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-            alert('Error: ' + data.error);
+
+        if (!response.ok) {
+            throw new Error(`Server error ${response.status}`);
         }
+
+        // Show response panel and streaming indicator
+        responseSection.classList.remove('hidden');
+        streamingIndicator.classList.remove('hidden');
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // keep incomplete line
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                let event;
+                try { event = JSON.parse(line.slice(6)); } catch { continue; }
+
+                if (event.type === 'chunk') {
+                    rawText += event.text;
+                    // Live plain-text preview while streaming (fast, no markdown overhead)
+                    aiResponseEl.textContent = rawText;
+                    // Auto-scroll response box
+                    aiResponseEl.scrollTop = aiResponseEl.scrollHeight;
+                }
+
+                else if (event.type === 'evaluation') {
+                    // Replace plain text with rendered markdown now that streaming is done
+                    streamingIndicator.classList.add('hidden');
+                    aiResponseEl.innerHTML = marked.parse(rawText);
+                    aiResponseEl.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+
+                    scoreValue.textContent = event.score;
+                    scoreBar.style.width = event.score + '%';
+                    feedbackText.innerHTML = marked.parse(event.feedback);
+
+                    if (event.passed) {
+                        passStatus.className = 'p-4 rounded-lg mb-4 bg-green-500/20 border-2 border-green-500 text-green-400 text-center font-bold success-celebration';
+                        passStatus.textContent = '🎉 Challenge Passed! +{{ challenge.points }} points';
+                    } else {
+                        passStatus.className = 'p-4 rounded-lg mb-4 bg-orange-500/20 border-2 border-orange-500 text-orange-400 text-center font-bold';
+                        passStatus.textContent = '💪 Keep trying! Score 70+ to pass';
+                    }
+                    passStatus.classList.remove('hidden');
+                    evaluationSection.classList.remove('hidden');
+                    evaluationSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                else if (event.type === 'error') {
+                    streamingIndicator.classList.add('hidden');
+                    alert('Error: ' + event.message);
+                }
+            }
+        }
+
+        // If stream ended without an evaluation event (help mode), render markdown
+        if (rawText && evaluationSection.classList.contains('hidden')) {
+            streamingIndicator.classList.add('hidden');
+            aiResponseEl.innerHTML = marked.parse(rawText);
+            aiResponseEl.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+        }
+
     } catch (error) {
+        streamingIndicator.classList.add('hidden');
         alert('Failed to submit challenge. Please try again.');
         console.error(error);
     } finally {
         submitBtn.disabled = false;
         btnText.classList.remove('hidden');
         btnLoading.classList.add('hidden');
+        stopTips();
     }
 });
 
@@ -201,22 +308,16 @@ function tryAgain() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Allow Ctrl+Enter to submit
-userPrompt.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        submitBtn.click();
-    }
+// Ctrl+Enter to submit
+userPrompt.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitBtn.click();
 });
 
-// Render markdown in instructions and example prompt
-document.addEventListener('DOMContentLoaded', function() {
+// Render markdown in instructions and example prompt on load
+document.addEventListener('DOMContentLoaded', function () {
     const instructionsEl = document.getElementById('instructionsContent');
-    if (instructionsEl) {
-        instructionsEl.innerHTML = marked.parse(instructionsEl.textContent);
-    }
+    if (instructionsEl) instructionsEl.innerHTML = marked.parse(instructionsEl.textContent);
     const exampleEl = document.getElementById('examplePromptContent');
-    if (exampleEl) {
-        exampleEl.innerHTML = marked.parse(exampleEl.textContent);
-    }
+    if (exampleEl) exampleEl.innerHTML = marked.parse(exampleEl.textContent);
 });
 </script>

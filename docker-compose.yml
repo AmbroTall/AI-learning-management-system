@@ -16,11 +16,11 @@ services:
   web:
     build: .
     restart: always
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn ai_learning.wsgi:application --bind 0.0.0.0:8000 --workers 3 --threads 4 --worker-class gthread --timeout 120 --keep-alive 5 --log-level info
     volumes:
       - .:/app
     ports:
-      - "80:8000"
+      - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://ai_user:ai_password123@db:5432/ai_learning_db
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}

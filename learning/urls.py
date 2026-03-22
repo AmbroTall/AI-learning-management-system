@@ -11,6 +11,7 @@ urlpatterns = [
     path('module/<int:module_id>/', views.module_detail, name='module_detail'),
     path('challenge/<int:challenge_id>/', views.challenge_view, name='challenge'),
     path('challenge/<int:challenge_id>/submit/', views.submit_challenge, name='submit_challenge'),
+    path('challenge/<int:challenge_id>/stream/', views.submit_challenge_stream, name='submit_challenge_stream'),
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
     path('profile/', views.profile, name='profile'),
     path('profile/change-password/', views.change_password, name='change_password'),
