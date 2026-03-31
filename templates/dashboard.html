@@ -116,6 +116,47 @@
     </div>
     {% endif %}
 
+    <!-- ── FREE INTRO MODULE ──────────────────────────────────────────────── -->
+    {% if intro_module %}
+    <div class="mb-12">
+        <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold">Start Here — Free</h2>
+            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold uppercase tracking-wider">No purchase needed</span>
+        </div>
+        <div class="glass-effect rounded-2xl p-8 border border-green-500/20">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div class="text-5xl flex-shrink-0">{{ intro_module.icon }}</div>
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold mb-1">{{ intro_module.title }}</h3>
+                    <p class="text-gray-400 text-sm mb-3">{{ intro_module.description|truncatewords:25 }}</p>
+                    <!-- Progress -->
+                    {% for progress in user_progress %}
+                        {% if progress.module.id == intro_module.id %}
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">Progress</span>
+                                <span class="text-green-400 font-semibold">{{ progress.challenges_completed }}/{{ intro_module.challenges.count }}</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-1.5">
+                                {% widthratio progress.challenges_completed intro_module.challenges.count 100 as intro_pct %}
+                                <div class="bg-gradient-to-r from-green-400 to-cyan-400 h-1.5 rounded-full" style="width: {{ intro_pct }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs text-gray-500">⏱️ {{ intro_module.duration_hours }} hours · {{ intro_module.challenges.count }} lessons · Free for all registered users</span>
+                    </div>
+                </div>
+                <a href="{% url 'module_detail' intro_module.id %}"
+                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-green-500 to-cyan-500 rounded-xl font-semibold hover-lift whitespace-nowrap">
+                    Start Free →
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- ── PURCHASE BANNER (shown when no purchases yet) ──── -->
     {% if not has_any_purchase and not org_membership and paid_modules %}
     <div class="mb-10 rounded-2xl overflow-hidden">
@@ -222,47 +263,6 @@
             </div>
             {% endif %}
             {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- ── FREE INTRO MODULE ──────────────────────────────────────────────── -->
-    {% if intro_module %}
-    <div class="mb-12">
-        <div class="flex items-center gap-3 mb-4">
-            <h2 class="text-2xl font-bold">Start Here — Free</h2>
-            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold uppercase tracking-wider">No purchase needed</span>
-        </div>
-        <div class="glass-effect rounded-2xl p-8 border border-green-500/20">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                <div class="text-5xl flex-shrink-0">{{ intro_module.icon }}</div>
-                <div class="flex-1">
-                    <h3 class="text-xl font-bold mb-1">{{ intro_module.title }}</h3>
-                    <p class="text-gray-400 text-sm mb-3">{{ intro_module.description|truncatewords:25 }}</p>
-                    <!-- Progress -->
-                    {% for progress in user_progress %}
-                        {% if progress.module.id == intro_module.id %}
-                        <div class="mb-2">
-                            <div class="flex justify-between text-xs mb-1">
-                                <span class="text-gray-400">Progress</span>
-                                <span class="text-green-400 font-semibold">{{ progress.challenges_completed }}/{{ intro_module.challenges.count }}</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-1.5">
-                                {% widthratio progress.challenges_completed intro_module.challenges.count 100 as intro_pct %}
-                                <div class="bg-gradient-to-r from-green-400 to-cyan-400 h-1.5 rounded-full" style="width: {{ intro_pct }}%"></div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                    <div class="flex items-center gap-3 mt-1">
-                        <span class="text-xs text-gray-500">⏱️ {{ intro_module.duration_hours }} hours · {{ intro_module.challenges.count }} lessons · Free for all registered users</span>
-                    </div>
-                </div>
-                <a href="{% url 'module_detail' intro_module.id %}"
-                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-green-500 to-cyan-500 rounded-xl font-semibold hover-lift whitespace-nowrap">
-                    Start Free →
-                </a>
-            </div>
         </div>
     </div>
     {% endif %}
