@@ -136,7 +136,7 @@
     </div>
 
     <div class="space-y-4 mb-16">
-        {% for item in jobs_with_status %}
+        {% for item in page_obj %}
         {% with job=item.job %}
         <div class="job-card glass-effect rounded-2xl p-6 relative overflow-hidden border border-white/8 hover:border-white/15">
 
@@ -251,6 +251,29 @@
         </div>
         {% endfor %}
     </div>
+
+    <!-- ── Pagination ─────────────────────────────────────────────────── -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="flex items-center justify-center gap-2 mb-12">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="px-4 py-2 glass-effect rounded-lg text-sm font-semibold hover-lift">← Prev</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-sm font-bold">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <a href="?page={{ num }}" class="px-4 py-2 glass-effect rounded-lg text-sm hover-lift">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="px-4 py-2 glass-effect rounded-lg text-sm font-semibold hover-lift">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <!-- ── HOW TO APPLY ───────────────────────────────────────────────── -->
     <div class="glass-effect rounded-2xl p-8 mb-16 border border-white/8">

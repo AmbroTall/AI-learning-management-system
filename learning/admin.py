@@ -199,8 +199,8 @@ class OrganisationMembershipAdmin(admin.ModelAdmin):
 
 @admin.register(SubscriptionPlan)
 class SubscriptionPlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'currency', 'duration', 'duration_days', 'is_popular', 'is_active']
-    list_filter = ['duration', 'is_active', 'is_popular']
+    list_display = ['name', 'plan_type', 'module', 'price', 'currency', 'is_popular', 'is_active']
+    list_filter = ['plan_type', 'is_active', 'is_popular']
     search_fields = ['name']
 
 

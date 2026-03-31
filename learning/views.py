@@ -1,5 +1,6 @@
 from datetime import timedelta
 from functools import wraps
+from django.core.paginator import Paginator
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -30,11 +31,9 @@ from .models import (
 # ── Access control helpers ─────────────────────────────────────────────────
 
 def has_platform_access(user):
-    """Returns True if the user can access paid platform content.
+    """Returns True if the user has purchased the full bundle (all modules).
 
-    Superusers and staff always have access. Org members always have access.
-    Everyone else must have an active subscription.
-    Free (intro) modules bypass this check entirely — see _check_module_access().
+    Superusers/staff and org members always have full access.
     """
     if user.is_superuser or user.is_staff:
         return True
@@ -43,22 +42,43 @@ def has_platform_access(user):
     return Subscription.objects.filter(
         user=user,
         status='active',
-        end_date__gt=timezone.now(),
+        plan__plan_type='bundle',
+    ).exists()
+
+
+def has_module_access(user, module):
+    """Returns True if the user can access this specific module.
+
+    Free modules are always accessible. Bundle purchase covers all modules.
+    Individual module purchases cover only the purchased module.
+    """
+    if module.is_free:
+        return True
+    if user.is_superuser or user.is_staff:
+        return True
+    if OrganisationMembership.objects.filter(user=user, is_active=True).exists():
+        return True
+    # Bundle purchase covers everything
+    if Subscription.objects.filter(user=user, status='active', plan__plan_type='bundle').exists():
+        return True
+    # Individual module purchase
+    return Subscription.objects.filter(
+        user=user, status='active', plan__plan_type='module', plan__module=module,
     ).exists()
 
 
 def _check_module_access(request, module):
     """Return a redirect response if the user cannot access this module, else None."""
     if module.is_free:
-        return None  # always accessible to logged-in users
-    if not has_platform_access(request.user):
-        messages.warning(request, 'A subscription is required to access this module.')
+        return None
+    if not has_module_access(request.user, module):
+        messages.warning(request, 'Purchase this module or the full bundle to continue.')
         return redirect('subscription_plans')
     return None
 
 
 def subscription_required(view_func):
-    """Decorator: user must be logged in AND have platform access."""
+    """Decorator: user must be logged in AND have full platform access."""
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -66,7 +86,7 @@ def subscription_required(view_func):
         if not has_platform_access(request.user):
             messages.warning(
                 request,
-                'A subscription is required to access this content.',
+                'Purchase a course or the full bundle to access this content.',
             )
             return redirect('subscription_plans')
         return view_func(request, *args, **kwargs)
@@ -143,28 +163,56 @@ def logout_view(request):
 
 @login_required
 def subscription_plans(request):
-    """Show available subscription plans with localised pricing."""
-    if has_platform_access(request.user):
-        return redirect('dashboard')
-
+    """Show available course plans with localised one-time pricing."""
     from .utils.paystack import detect_currency, localize_price
-    currency, country = detect_currency(request)
+    currency, _ = detect_currency(request)
 
-    plans = SubscriptionPlan.objects.filter(is_active=True)
-    plans_with_prices = []
-    for plan in plans:
+    # Module plans (individual purchases)
+    module_plans = (
+        SubscriptionPlan.objects
+        .filter(is_active=True, plan_type='module')
+        .select_related('module')
+        .order_by('module__order')
+    )
+    # Bundle plan
+    bundle_plan = SubscriptionPlan.objects.filter(is_active=True, plan_type='bundle').first()
+
+    # User's already-purchased plan IDs
+    purchased_plan_ids = set(
+        Subscription.objects.filter(user=request.user, status='active')
+        .values_list('plan_id', flat=True)
+    )
+
+    module_items = []
+    individual_total_usd = 0
+    for plan in module_plans:
         display_price, subunit = localize_price(plan.price, currency)
-        plans_with_prices.append({
+        individual_total_usd += float(plan.price)
+        module_items.append({
             'plan': plan,
             'display_price': display_price,
             'subunit_amount': subunit,
             'currency': currency,
+            'already_purchased': plan.id in purchased_plan_ids,
         })
 
+    bundle_item = None
+    if bundle_plan:
+        b_display, b_subunit = localize_price(bundle_plan.price, currency)
+        bundle_savings_usd = round(individual_total_usd - float(bundle_plan.price), 2)
+        bundle_item = {
+            'plan': bundle_plan,
+            'display_price': b_display,
+            'subunit_amount': b_subunit,
+            'currency': currency,
+            'savings_usd': bundle_savings_usd,
+            'already_purchased': bundle_plan.id in purchased_plan_ids,
+        }
+
     return render(request, 'subscription.html', {
-        'plans_with_prices': plans_with_prices,
+        'module_items': module_items,
+        'bundle_item': bundle_item,
         'currency': currency,
-        'country': country,
         'paystack_public_key': settings.PAYSTACK_PUBLIC_KEY,
     })
 
@@ -238,9 +286,7 @@ def payment_callback(request, company_ref):
     if success:
         subscription.status = 'active'
         subscription.start_date = timezone.now()
-        subscription.end_date = timezone.now() + timedelta(
-            days=subscription.plan.duration_days
-        )
+        subscription.end_date = None  # one-time purchase = lifetime access
         subscription.save()
 
         messages.success(
@@ -292,9 +338,7 @@ def paystack_webhook(request):
             )
             subscription.status = 'active'
             subscription.start_date = timezone.now()
-            subscription.end_date = timezone.now() + timedelta(
-                days=subscription.plan.duration_days
-            )
+            subscription.end_date = None  # one-time purchase = lifetime access
             subscription.save()
 
             # Notify user
@@ -303,8 +347,8 @@ def paystack_webhook(request):
                 notification_type='general',
                 defaults={
                     'message': (
-                        f'✅ Payment confirmed! Your {subscription.plan.name} subscription '
-                        f'is now active until {subscription.end_date.strftime("%d %b %Y")}.'
+                        f'✅ Payment confirmed! Your {subscription.plan.name} is now unlocked. '
+                        f'Lifetime access — enjoy!'
                     ),
                     'link': '/dashboard/',
                 },
@@ -930,8 +974,13 @@ def jobs_page(request):
     total_open = jobs_qs.count()
     total_applications = JobApplication.objects.count()
 
+    # Paginate — 6 jobs per page
+    paginator = Paginator(jobs_with_status, 6)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'jobs.html', {
-        'jobs_with_status': jobs_with_status,
+        'page_obj': page_obj,
         'total_open': total_open,
         'total_applications': total_applications,
     })

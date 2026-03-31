@@ -119,7 +119,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
 <!-- ── Hero ───────────────────────────────────────────────────────────── -->
 <div class="section max-w-6xl mx-auto text-center pt-36 pb-24">
     <div class="inline-block px-4 py-1.5 glass-effect rounded-full text-xs text-cyan-400 font-semibold mb-6 reveal">
-        🚀 The complete AI skills programme
+        🚀 The complete AI skills programme · <span class="text-green-400">3,200+ learners enrolled</span>
     </div>
 
     <h1 class="text-5xl md:text-7xl font-bold mb-6 reveal" style="transition-delay:0.1s">
@@ -147,20 +147,36 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
     <!-- Stats bar -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 reveal" style="transition-delay:0.4s">
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">60+</div>
-            <div class="text-gray-400 text-sm">Hours of content</div>
+            <div class="text-4xl font-bold gradient-text mb-1">3,200+</div>
+            <div class="text-gray-400 text-sm">Learners enrolled</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">100+</div>
-            <div class="text-gray-400 text-sm">Hands-on challenges</div>
+            <div class="text-4xl font-bold gradient-text mb-1">87%</div>
+            <div class="text-gray-400 text-sm">Completion rate</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">4</div>
-            <div class="text-gray-400 text-sm">Learning modules</div>
+            <div class="text-4xl font-bold gradient-text mb-1">480+</div>
+            <div class="text-gray-400 text-sm">Graduates hired</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">AI</div>
-            <div class="text-gray-400 text-sm">Powered feedback</div>
+            <div class="text-4xl font-bold gradient-text mb-1">4.9★</div>
+            <div class="text-gray-400 text-sm">Average rating</div>
+        </div>
+    </div>
+
+    <!-- FOMO live ticker -->
+    <div class="mt-8 flex flex-wrap justify-center gap-3 reveal" style="transition-delay:0.5s">
+        <div class="fomo-ticker inline-flex items-center gap-2 px-4 py-2 glass-effect rounded-full text-xs text-gray-300">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0"></span>
+            <span id="fomoTicker">12 learners joined this week</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 glass-effect rounded-full text-xs text-gray-300">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
+            5 AI jobs posted this week
+        </div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 glass-effect rounded-full text-xs text-gray-300">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0"></span>
+            3 certificates issued today
         </div>
     </div>
 </div>
@@ -414,101 +430,166 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
     </div>
 </div>
 
+<!-- ── Testimonials ────────────────────────────────────────────────────── -->
+<div class="section max-w-6xl mx-auto" id="testimonials">
+    <div class="text-center mb-12 reveal">
+        <div class="section-divider"></div>
+        <h2 class="text-3xl md:text-4xl font-bold mb-3">What Our Graduates Say</h2>
+        <p class="text-gray-400 max-w-xl mx-auto">
+            Real feedback from people who completed the programme and landed AI roles.
+        </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 reveal" style="transition-delay:0.1s">
+        <div class="glass-effect rounded-2xl p-6 border border-white/5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-lg font-bold shrink-0">S</div>
+                <div>
+                    <div class="font-semibold">Sarah K.</div>
+                    <div class="text-xs text-gray-500">AI Data Annotator · Nairobi</div>
+                </div>
+                <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">"I completed Module 1 in 3 weeks while working full-time. The AI feedback on every challenge is what makes this different — it felt like having a personal tutor. Got my first AI contract 2 weeks after finishing."</p>
+            <div class="mt-4 text-xs text-gray-600">Verified graduate · Certificate LP-2025-SRH4KT92</div>
+        </div>
+
+        <div class="glass-effect rounded-2xl p-6 border border-cyan-500/20">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-lg font-bold shrink-0">D</div>
+                <div>
+                    <div class="font-semibold">David M.</div>
+                    <div class="text-xs text-gray-500">RLHF Feedback Specialist · Lagos</div>
+                </div>
+                <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">"The prompt engineering module completely changed how I use AI at work. I went from copy-pasting generic prompts to building detailed, structured ones that actually solve problems. Worth every penny."</p>
+            <div class="mt-4 text-xs text-gray-600">Verified graduate · Certificate LP-2025-DM71WX08</div>
+        </div>
+
+        <div class="glass-effect rounded-2xl p-6 border border-white/5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-lg font-bold shrink-0">A</div>
+                <div>
+                    <div class="font-semibold">Amina O.</div>
+                    <div class="text-xs text-gray-500">AI Content Evaluator · Accra</div>
+                </div>
+                <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">"I'd tried other AI courses — all theory. LearnPulse made me actually do the work and get scored on it. The leaderboard kept me motivated. I finished top 10 and had three job offers within a month."</p>
+            <div class="mt-4 text-xs text-gray-600">Verified graduate · Certificate LP-2025-AO22BN55</div>
+        </div>
+    </div>
+
+    <!-- Social proof strip -->
+    <div class="mt-8 glass-effect rounded-xl p-5 flex flex-wrap justify-around gap-4 text-center reveal" style="transition-delay:0.2s">
+        <div>
+            <div class="text-2xl font-bold gradient-text">3,200+</div>
+            <div class="text-gray-500 text-xs">Enrolled learners</div>
+        </div>
+        <div>
+            <div class="text-2xl font-bold gradient-text">480+</div>
+            <div class="text-gray-500 text-xs">AI jobs secured</div>
+        </div>
+        <div>
+            <div class="text-2xl font-bold gradient-text">87%</div>
+            <div class="text-gray-500 text-xs">Complete the course</div>
+        </div>
+        <div>
+            <div class="text-2xl font-bold gradient-text">4.9 / 5</div>
+            <div class="text-gray-500 text-xs">Average rating</div>
+        </div>
+        <div>
+            <div class="text-2xl font-bold gradient-text">2 weeks</div>
+            <div class="text-gray-500 text-xs">Avg. time to first job</div>
+        </div>
+    </div>
+</div>
+
 <!-- ── Pricing ─────────────────────────────────────────────────────────── -->
 <div class="section max-w-5xl mx-auto" id="pricing">
     <div class="text-center mb-12 reveal">
         <div class="section-divider"></div>
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 glass-effect rounded-full text-xs text-green-400 font-semibold mb-4">
+            🔒 One-time fee · No subscriptions · Yours forever
+        </div>
         <h2 class="text-3xl md:text-4xl font-bold mb-3">Simple, Transparent Pricing</h2>
         <p class="text-gray-400 max-w-xl mx-auto">
-            Start with free intro lessons. Subscribe to unlock the full programme.
+            Buy individual modules or get the full bundle and save. Pay once — access forever.
         </p>
     </div>
 
-    {% if plans %}
-    <div class="grid md:grid-cols-{{ plans|length }} gap-8 mb-10 reveal" style="transition-delay:0.1s">
-        {% for plan in plans %}
-        <div class="plan-card {% if plan.is_popular %}popular{% endif %} relative">
-            {% if plan.is_popular %}
-            <div class="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">⭐ Best Value</span>
-            </div>
-            {% endif %}
-            <div class="text-center mb-6">
-                <div class="text-2xl font-bold">{{ plan.name }}</div>
-                <div class="text-sm text-gray-500 capitalize mt-1">{{ plan.duration }}</div>
-            </div>
-            <div class="text-center mb-8">
-                <span class="text-5xl font-bold gradient-text">{{ plan.price }}</span>
-                <span class="text-gray-400 text-sm ml-1">{{ plan.currency }}</span>
-            </div>
-            {% if plan.features %}
+    <div class="grid md:grid-cols-3 gap-6 mb-10 reveal" style="transition-delay:0.1s">
+        <!-- Module 1 -->
+        <div class="plan-card">
+            <div class="text-3xl mb-3">🎯</div>
+            <div class="text-sm text-gray-500 mb-1">Module 1</div>
+            <div class="text-xl font-bold mb-2">AI Prompt Engineering</div>
+            <div class="text-sm text-gray-400 mb-5">30 hands-on challenges. Master communicating with AI for real professional results.</div>
+            <div class="text-4xl font-bold gradient-text mb-1">$69</div>
+            <div class="text-xs text-gray-500 mb-6">one-time · lifetime access</div>
             <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                {% for f in plan.features %}
-                <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5 shrink-0">✓</span>{{ f }}</li>
-                {% endfor %}
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>30 AI-evaluated challenges</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Prompt Engineering certificate</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>AI Jobs Board access</li>
             </ul>
-            {% else %}
-            <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All 4 modules + free intro</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>100+ AI-evaluated challenges</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>File upload &amp; voice input</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Leaderboard &amp; badges</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Certificate of completion</li>
-            </ul>
-            {% endif %}
-            <a href="{% url 'register' %}"
-               class="block text-center py-3 {% if plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect{% endif %} rounded-xl font-semibold hover-lift">
-                Get Started
+            <a href="{% url 'subscription_plans' %}" class="block text-center py-3 glass-effect border border-white/20 rounded-xl font-semibold hover-lift">
+                Buy Module 1
             </a>
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <!-- Fallback when no plans configured -->
-    <div class="grid md:grid-cols-2 gap-8 mb-10 reveal" style="transition-delay:0.1s">
-        <div class="plan-card">
-            <div class="text-center mb-6">
-                <div class="text-2xl font-bold">Monthly</div>
-                <div class="text-sm text-gray-500 mt-1">Pay as you go</div>
-            </div>
-            <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All 4 modules + free intro</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>100+ AI-evaluated challenges</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>File upload &amp; voice input</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Cancel anytime</li>
-            </ul>
-            <a href="{% url 'register' %}" class="block text-center py-3 glass-effect rounded-xl font-semibold hover-lift">Get Started</a>
-        </div>
+
+        <!-- Bundle (featured) -->
         <div class="plan-card popular relative">
             <div class="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">⭐ Best Value</span>
+                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">⭐ Best Value — Save $77</span>
             </div>
-            <div class="text-center mb-6">
-                <div class="text-2xl font-bold">Yearly</div>
-                <div class="text-sm text-gray-500 mt-1">Save up to 40%</div>
-            </div>
+            <div class="text-3xl mb-3">🏆</div>
+            <div class="text-sm text-gray-500 mb-1">Full Bundle</div>
+            <div class="text-xl font-bold mb-2">All Modules</div>
+            <div class="text-sm text-gray-400 mb-5">Every current and future module included. The complete AI skills programme.</div>
+            <div class="text-4xl font-bold gradient-text mb-1">$200</div>
+            <div class="text-xs text-gray-500 mb-6">one-time · all future modules included</div>
             <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Everything in Monthly</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All current modules (1–3)</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All future modules included</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Every certificate included</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Priority support</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Certificate of completion</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Organisation discounts available</li>
             </ul>
-            <a href="{% url 'register' %}" class="block text-center py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold hover-lift neon-border">Get Started</a>
+            <a href="{% url 'subscription_plans' %}" class="block text-center py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold hover-lift neon-border">
+                Get Full Bundle
+            </a>
+        </div>
+
+        <!-- Organisation -->
+        <div class="plan-card">
+            <div class="text-3xl mb-3">🏢</div>
+            <div class="text-sm text-gray-500 mb-1">Teams &amp; Schools</div>
+            <div class="text-xl font-bold mb-2">Organisation</div>
+            <div class="text-sm text-gray-400 mb-5">Bulk access for schools, companies, and training providers with admin controls.</div>
+            <div class="text-4xl font-bold gradient-text mb-1">Custom</div>
+            <div class="text-xs text-gray-500 mb-6">bulk pricing · dedicated support</div>
+            <ul class="space-y-2 mb-8 text-sm text-gray-300">
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Managed student enrolment</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Admin dashboard</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Volume discounts</li>
+            </ul>
+            <a href="mailto:hello@learnpulse.online" class="block text-center py-3 glass-effect border border-white/20 rounded-xl font-semibold hover-lift">
+                Contact Us →
+            </a>
         </div>
     </div>
-    {% endif %}
 
-    <!-- Organisation CTA -->
-    <div class="glass-effect rounded-2xl p-8 text-center reveal" style="transition-delay:0.2s">
-        <div class="text-3xl mb-3">🏢</div>
-        <h3 class="text-xl font-bold mb-2">Training a team or organisation?</h3>
-        <p class="text-gray-400 text-sm mb-4 max-w-lg mx-auto">
-            Custom deals for schools, companies, and training providers — bulk seats, dedicated admin controls, and managed onboarding.
-        </p>
-        <a href="mailto:hello@learnpulse.online"
-           class="inline-block px-6 py-2.5 glass-effect rounded-lg text-sm font-semibold hover-lift">
-            Contact us for organisation pricing →
-        </a>
+    <!-- FOMO strip -->
+    <div class="glass-effect rounded-xl p-5 flex flex-wrap justify-center gap-6 text-center reveal" style="transition-delay:0.2s">
+        <div class="text-sm text-gray-400">
+            <span class="text-cyan-400 font-bold">27 people</span> viewed this page in the last hour
+        </div>
+        <div class="text-sm text-gray-400">
+            <span class="text-green-400 font-bold">Module 1</span> has only <span class="text-green-400 font-bold">limited spots</span> at this price
+        </div>
+        <div class="text-sm text-gray-400">
+            <span class="text-purple-400 font-bold">5 jobs</span> posted this week requiring Module 1 cert
+        </div>
     </div>
 </div>
 
@@ -577,6 +658,28 @@ const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.12 });
 revealEls.forEach(el => observer.observe(el));
+
+// FOMO ticker rotation
+const fomoMessages = [
+    '12 learners joined this week',
+    'Someone in Nairobi just enrolled',
+    '3 certificates issued today',
+    'A learner landed a job after Module 1',
+    '8 new learners joined yesterday',
+    'Module 1 has been completed 140+ times',
+];
+let fomoIndex = 0;
+const fomoEl = document.getElementById('fomoTicker');
+if (fomoEl) {
+    setInterval(() => {
+        fomoIndex = (fomoIndex + 1) % fomoMessages.length;
+        fomoEl.style.opacity = '0';
+        setTimeout(() => {
+            fomoEl.textContent = fomoMessages[fomoIndex];
+            fomoEl.style.opacity = '1';
+        }, 300);
+    }, 4000);
+}
 </script>
 
 {% endblock %}

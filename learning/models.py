@@ -259,16 +259,21 @@ class OrganisationMembership(models.Model):
 
 
 class SubscriptionPlan(models.Model):
-    DURATION_CHOICES = [
-        ('monthly', 'Monthly'),
-        ('yearly', 'Yearly'),
+    PLAN_TYPE_CHOICES = [
+        ('module', 'Single Module'),
+        ('bundle', 'Full Bundle'),
     ]
 
     name = models.CharField(max_length=100)
+    plan_type = models.CharField(max_length=20, choices=PLAN_TYPE_CHOICES, default='bundle')
+    # Null for bundle plans (covers all modules); set for single-module plans
+    module = models.OneToOneField(
+        'Module', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='plan',
+        help_text='The module this plan unlocks. Leave blank for full-bundle plans.',
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=10, default='USD')
-    duration = models.CharField(max_length=20, choices=DURATION_CHOICES)
-    duration_days = models.PositiveIntegerField(default=365)
     description = models.TextField(blank=True)
     features = models.JSONField(default=list, help_text='List of feature bullet-point strings')
     is_active = models.BooleanField(default=True)
@@ -278,7 +283,9 @@ class SubscriptionPlan(models.Model):
         ordering = ['price']
 
     def __str__(self):
-        return f"{self.name} ({self.duration}) — {self.currency} {self.price}"
+        if self.plan_type == 'bundle':
+            return f"Full Bundle — {self.currency} {self.price}"
+        return f"{self.name} — {self.currency} {self.price}"
 
 
 class Subscription(models.Model):
