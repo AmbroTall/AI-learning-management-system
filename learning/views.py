@@ -458,6 +458,9 @@ def org_remove_student(request, membership_id):
 
 @login_required
 def dashboard(request):
+    # Intro module (free) shown separately for all registered users
+    intro_module = Module.objects.filter(is_active=True, is_free=True).first()
+
     # Only show non-free modules in the main panel
     modules = Module.objects.filter(is_active=True, is_free=False)
     user_progress = UserProgress.objects.filter(user=request.user)
@@ -525,6 +528,7 @@ def dashboard(request):
         'recent_achievements': recent_achievements,
         'top_performers': top_performers,
         'active_purchases': active_purchases,
+        'intro_module': intro_module,
         'org_membership': org_membership,
         'open_jobs_count': open_jobs_count,
         'user_certs': user_certs,
@@ -1173,6 +1177,89 @@ def mark_notifications_read(request):
     if request.method == 'POST':
         Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     return JsonResponse({'success': True})
+
+
+# ── Platform chatbot ─────────────────────────────────────────────────────────
+
+_CHATBOT_SYSTEM_PROMPT = """You are the LearnPulse platform assistant. You help students understand the platform, its modules, pricing, certificates, and jobs board. Be concise, friendly, and accurate.
+
+## About LearnPulse
+LearnPulse (learnpulse.online) is an AI skills learning platform built by IT Certify. Students learn through hands-on challenges evaluated by Claude AI. Contact: hello@learnpulse.online
+
+## Modules & Pricing (one-time fees, no subscriptions)
+- **Free Intro** — Introduction to AI (free for all registered users, ~5 lessons)
+- **Module 1** — AI Prompt Engineering Foundation: $69 (30 challenges)
+- **Module 2** — AI Tools & Platform Features: $79 (24 challenges)
+- **Module 3** — AI Agents & Automation: $89 (22 challenges)
+- **Module 4A** — Capstone: Coding with AI: $99 (15 challenges)
+- **Module 4B** — Capstone: Cybersecurity with AI: $99 (15 challenges)
+- **Full Bundle** — All modules + all future modules: $200 (saves $235 vs buying individually)
+
+Purchases are one-time fees — lifetime access, no renewals. Prices are shown in your local currency based on your location.
+
+## Certificates
+Every completed module awards a verified certificate (format: LP-YYYY-XXXXXXXX). Certificates are publicly verifiable at learnpulse.online/certificate/<number>/ and qualify students for jobs on the platform jobs board.
+
+## Jobs Board
+The LearnPulse Jobs Board (/jobs/) lists AI-related paid remote roles. Students apply using their certificate number. Jobs show applicant count and spots remaining.
+
+## Career Support
+Top-performing graduates receive career support and assistance from IT Certify — this is included in the Full Bundle.
+
+## How challenges work
+Each challenge asks students to write a prompt or complete a task. Their submission is evaluated by Claude AI, which gives a score (0–100) and detailed feedback. Challenges must score above the pass threshold to be marked complete. Students earn points toward the leaderboard and streak badges.
+
+## Access rules
+- Free intro module: accessible to all registered users immediately
+- Paid modules: require individual purchase OR full bundle purchase
+- Organisation members: get full access granted by their org admin
+
+## Payment
+Payments are processed securely via Paystack (supports KES, NGN, USD, GBP, ZAR, GHS, EGP). Purchases are instant — access is granted immediately after payment.
+
+## Platform features
+- Leaderboard: tracks total points, current streak, challenges completed
+- Achievements: badges for milestones (first challenge, module complete, etc.)
+- Notification bell: alerts for job applications, certificates, announcements
+- Profile page: update personal details, change password
+- Organisation accounts: admin can add/remove students, bulk access
+
+## Do not discuss
+- Job interview preparation or cover letters (IT Certify provides this separately)
+- LinkedIn personal branding or career advice beyond what IT Certify offers
+- Competing educational platforms or schools
+
+Keep answers to 2–4 sentences unless more detail is clearly needed. If unsure, direct the user to hello@learnpulse.online."""
+
+
+@login_required
+@csrf_exempt
+def chatbot_message(request):
+    """Handle chatbot messages from authenticated users."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        user_message = body.get('message', '').strip()
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    if not user_message:
+        return JsonResponse({'error': 'Empty message'}, status=400)
+
+    if len(user_message) > 600:
+        return JsonResponse({'error': 'Message too long (max 600 characters)'}, status=400)
+
+    client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+    message = client.messages.create(
+        model='claude-haiku-4-5-20251001',
+        max_tokens=400,
+        system=_CHATBOT_SYSTEM_PROMPT,
+        messages=[{'role': 'user', 'content': user_message}],
+    )
+    reply = message.content[0].text
+    return JsonResponse({'reply': reply})
 
 
 # ── Achievement helper ──────────────────────────────────────────────────────

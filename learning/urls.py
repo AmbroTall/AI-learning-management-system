@@ -37,4 +37,7 @@ urlpatterns = [
     # ── Notifications (API) ────────────────────────────────────────────────
     path('notifications/', views.notifications_json, name='notifications_json'),
     path('notifications/read/', views.mark_notifications_read, name='mark_notifications_read'),
+
+    # ── Chatbot (API) ──────────────────────────────────────────────────────
+    path('chatbot/', views.chatbot_message, name='chatbot_message'),
 ]

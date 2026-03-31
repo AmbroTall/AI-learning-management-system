@@ -591,5 +591,224 @@
 </script>
 
 {% block extra_js %}{% endblock %}
+
+{% if user.is_authenticated %}
+<!-- ══ PLATFORM CHATBOT ════════════════════════════════════════════════ -->
+<style>
+#chatbotBtn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9000;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22d3ee, #3b82f6);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(34,211,238,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#chatbotBtn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(34,211,238,0.5); }
+
+#chatbotWindow {
+    position: fixed;
+    bottom: 96px;
+    right: 28px;
+    z-index: 9001;
+    width: 360px;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(15,23,42,0.97);
+    border: 1px solid rgba(34,211,238,0.25);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    overflow: hidden;
+    transform: translateY(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+#chatbotWindow.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+}
+#chatbotHeader {
+    padding: 14px 16px;
+    background: linear-gradient(90deg, rgba(34,211,238,0.1), rgba(59,130,246,0.1));
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+#chatbotMessages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+#chatbotMessages::-webkit-scrollbar { width: 4px; }
+#chatbotMessages::-webkit-scrollbar-track { background: transparent; }
+#chatbotMessages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+.cb-msg {
+    max-width: 88%;
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+.cb-msg.bot { align-self: flex-start; background: rgba(255,255,255,0.07); color: #e2e8f0; border-radius: 14px 14px 14px 4px; }
+.cb-msg.user { align-self: flex-end; background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(59,130,246,0.2)); color: #e2e8f0; border-radius: 14px 14px 4px 14px; }
+.cb-msg.typing { color: #64748b; font-style: italic; }
+#chatbotForm {
+    display: flex;
+    gap: 8px;
+    padding: 12px 12px 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+}
+#chatbotInput {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 9px 12px;
+    color: #e2e8f0;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.15s;
+}
+#chatbotInput:focus { border-color: rgba(34,211,238,0.4); }
+#chatbotInput::placeholder { color: #475569; }
+#chatbotSend {
+    background: linear-gradient(135deg, #22d3ee, #3b82f6);
+    border: none;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+}
+#chatbotSend:disabled { opacity: 0.45; cursor: default; }
+@media (max-width: 480px) {
+    #chatbotWindow { width: calc(100vw - 24px); right: 12px; bottom: 88px; }
+    #chatbotBtn { bottom: 20px; right: 16px; }
+}
+</style>
+
+<!-- Chatbot toggle button -->
+<button id="chatbotBtn" onclick="toggleChatbot()" aria-label="Open platform assistant" title="Ask me anything about LearnPulse">
+    <span id="chatbotBtnIcon">💬</span>
+</button>
+
+<!-- Chatbot window -->
+<div id="chatbotWindow" role="dialog" aria-label="LearnPulse Assistant">
+    <div id="chatbotHeader">
+        <div class="flex items-center gap-2.5">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,rgba(34,211,238,0.2),rgba(59,130,246,0.2));display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div>
+            <div>
+                <div style="font-weight:700;font-size:0.85rem;color:#e2e8f0;">LearnPulse Assistant</div>
+                <div style="font-size:0.7rem;color:#22d3ee;">Ask me anything about the platform</div>
+            </div>
+        </div>
+        <button onclick="toggleChatbot()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:1.1rem;padding:2px 4px;" aria-label="Close">✕</button>
+    </div>
+
+    <div id="chatbotMessages">
+        <div class="cb-msg bot">Hi {{ user.username|title }}! 👋 I know everything about LearnPulse — modules, pricing, certificates, jobs, and more. How can I help?</div>
+    </div>
+
+    <form id="chatbotForm" onsubmit="sendChatbotMessage(event)">
+        <input id="chatbotInput" type="text" placeholder="Ask about modules, pricing, jobs…" maxlength="600" autocomplete="off" />
+        <button id="chatbotSend" type="submit" aria-label="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </form>
+</div>
+
+<script>
+(function() {
+    const CSRF = () => document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+
+    window.toggleChatbot = function() {
+        const win = document.getElementById('chatbotWindow');
+        const icon = document.getElementById('chatbotBtnIcon');
+        const isOpen = win.classList.toggle('open');
+        icon.textContent = isOpen ? '✕' : '💬';
+        if (isOpen) {
+            setTimeout(() => document.getElementById('chatbotInput')?.focus(), 200);
+        }
+    };
+
+    window.sendChatbotMessage = async function(e) {
+        e.preventDefault();
+        const input  = document.getElementById('chatbotInput');
+        const send   = document.getElementById('chatbotSend');
+        const msgs   = document.getElementById('chatbotMessages');
+        const text   = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        send.disabled = true;
+
+        // User bubble
+        const userBubble = document.createElement('div');
+        userBubble.className = 'cb-msg user';
+        userBubble.textContent = text;
+        msgs.appendChild(userBubble);
+
+        // Typing indicator
+        const typing = document.createElement('div');
+        typing.className = 'cb-msg bot typing';
+        typing.textContent = 'Thinking…';
+        msgs.appendChild(typing);
+        msgs.scrollTop = msgs.scrollHeight;
+
+        try {
+            const res = await fetch('/chatbot/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF() },
+                body: JSON.stringify({ message: text }),
+            });
+            const data = await res.json();
+            typing.remove();
+            const botBubble = document.createElement('div');
+            botBubble.className = 'cb-msg bot';
+            botBubble.textContent = data.reply || data.error || 'Sorry, something went wrong.';
+            msgs.appendChild(botBubble);
+        } catch {
+            typing.remove();
+            const errBubble = document.createElement('div');
+            errBubble.className = 'cb-msg bot typing';
+            errBubble.textContent = 'Could not connect. Please try again.';
+            msgs.appendChild(errBubble);
+        }
+
+        msgs.scrollTop = msgs.scrollHeight;
+        send.disabled = false;
+        input.focus();
+    };
+})();
+</script>
+{% endif %}
+
 </body>
 </html>
