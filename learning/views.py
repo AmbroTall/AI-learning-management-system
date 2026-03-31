@@ -24,7 +24,7 @@ from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
-    Certificate, JobPosting, JobApplication, Notification,
+    Certificate, JobPosting, JobApplication, Notification, ErrorLog,
 )
 
 
@@ -104,6 +104,51 @@ def org_admin_required(view_func):
             return redirect('dashboard')
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+# ── Error handlers ──────────────────────────────────────────────────────────
+
+def _get_client_ip(request):
+    xff = request.META.get('HTTP_X_FORWARDED_FOR')
+    if xff:
+        return xff.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR')
+
+
+def handler404(request, exception=None):
+    """Custom 404 — logs the error to the DB and renders a branded page."""
+    try:
+        ErrorLog.objects.create(
+            status_code=404,
+            url=request.build_absolute_uri(),
+            method=request.method,
+            user=request.user if request.user.is_authenticated else None,
+            ip_address=_get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
+            error_message=str(exception) if exception else '',
+        )
+    except Exception:
+        pass  # Never let logging crash the error page
+    return render(request, '404.html', status=404)
+
+
+def handler500(request):
+    """Custom 500 — logs the error to the DB and renders a branded page."""
+    import traceback as tb
+    trace = tb.format_exc()
+    try:
+        ErrorLog.objects.create(
+            status_code=500,
+            url=request.build_absolute_uri(),
+            method=request.method,
+            user=request.user if request.user.is_authenticated else None,
+            ip_address=_get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
+            traceback=trace,
+        )
+    except Exception:
+        pass
+    return render(request, '500.html', status=500)
 
 
 # ── Public views ────────────────────────────────────────────────────────────

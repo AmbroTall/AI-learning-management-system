@@ -463,3 +463,34 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.message[:60]}"
+
+
+class ErrorLog(models.Model):
+    """Records 404 and 500 errors for debugging."""
+    STATUS_CHOICES = [
+        (404, 'Not Found'),
+        (500, 'Server Error'),
+    ]
+
+    status_code = models.IntegerField(choices=STATUS_CHOICES, db_index=True)
+    url = models.TextField()
+    method = models.CharField(max_length=10, default='GET')
+    # Nullable — unauthenticated users can still trigger 404s
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='error_logs',
+    )
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    error_message = models.TextField(blank=True)
+    traceback = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Error Log'
+        verbose_name_plural = 'Error Logs'
+
+    def __str__(self):
+        who = self.user.username if self.user else 'anonymous'
+        return f"[{self.status_code}] {self.url[:80]} — {who} — {self.created_at:%Y-%m-%d %H:%M}"

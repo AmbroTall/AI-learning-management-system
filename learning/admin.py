@@ -6,7 +6,7 @@ from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
-    Certificate, JobPosting, JobApplication, Notification,
+    Certificate, JobPosting, JobApplication, Notification, ErrorLog,
 )
 
 
@@ -329,6 +329,26 @@ class NotificationAdmin(admin.ModelAdmin):
     def short_message(self, obj):
         return obj.message[:80]
     short_message.short_description = 'Message'
+
+
+@admin.register(ErrorLog)
+class ErrorLogAdmin(admin.ModelAdmin):
+    list_display = ['status_code', 'short_url', 'method', 'user', 'ip_address', 'created_at']
+    list_filter = ['status_code', 'method']
+    search_fields = ['url', 'user__username', 'ip_address', 'error_message']
+    readonly_fields = ['status_code', 'url', 'method', 'user', 'ip_address', 'user_agent', 'error_message', 'traceback', 'created_at']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+
+    def short_url(self, obj):
+        return obj.url[:80]
+    short_url.short_description = 'URL'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 # Make User searchable for autocomplete_fields

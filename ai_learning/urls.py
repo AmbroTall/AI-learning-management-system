@@ -9,6 +9,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from learning.sitemaps import StaticSitemap, ModuleSitemap, JobSitemap, CertificateSitemap
+from learning import views as learning_views
+
+handler404 = learning_views.handler404
+handler500 = learning_views.handler500
 
 sitemaps = {
     'static': StaticSitemap,

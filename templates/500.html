@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Something Went Wrong — LearnPulse{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-24 text-center">
+
+    <div class="text-8xl mb-6 select-none">⚡</div>
+
+    <h1 class="text-6xl font-bold gradient-text mb-4">500</h1>
+    <h2 class="text-2xl font-semibold text-white mb-4">Something Went Wrong</h2>
+    <p class="text-gray-400 text-lg mb-4 max-w-md mx-auto">
+        An unexpected error occurred. Our team has been notified and we're on it.
+    </p>
+    <p class="text-gray-500 text-sm mb-10">
+        Your progress is safe. Please try again in a moment.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}"
+           class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border">
+            ← Back to Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'home' %}"
+           class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border">
+            ← Back to Home
+        </a>
+        {% endif %}
+        <a href="mailto:hello@learnpulse.online"
+           class="px-8 py-3 glass-effect border border-white/15 rounded-xl font-semibold hover-lift">
+            Report Issue
+        </a>
+    </div>
+
+    <p class="mt-12 text-sm text-gray-600">
+        Error reference saved. Contact
+        <a href="mailto:hello@learnpulse.online" class="text-cyan-500 hover:text-cyan-400 underline">hello@learnpulse.online</a>
+        if this keeps happening.
+    </p>
+
+</div>
+{% endblock %}
