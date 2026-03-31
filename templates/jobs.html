@@ -143,13 +143,15 @@
             <!-- Top row -->
             <div class="flex flex-wrap items-start gap-4 mb-4">
                 <!-- Icon -->
-                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl flex-shrink-0">
+                <a href="{% url 'job_detail' job.id %}" class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl flex-shrink-0 hover:bg-cyan-500/20 transition">
                     {{ job.icon_emoji }}
-                </div>
+                </a>
 
                 <!-- Title & org -->
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-xl font-bold text-white leading-tight">{{ job.title }}</h3>
+                    <a href="{% url 'job_detail' job.id %}" class="hover:text-cyan-400 transition">
+                        <h3 class="text-xl font-bold text-white leading-tight">{{ job.title }}</h3>
+                    </a>
                     <p class="text-sm text-gray-500 mt-0.5">{{ job.organisation_name }}</p>
                 </div>
 
@@ -216,29 +218,20 @@
                 </div>
 
                 <!-- CTA button -->
-                {% if user.is_authenticated %}
-                    {% if item.is_qualified %}
-                    <button onclick="openApplyModal({{ job.id }}, '{{ job.title|escapejs }}', '{{ item.qualifying_cert.cert_number|default:'' }}')"
-                            class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-sm hover-lift neon-border flex items-center gap-2 whitespace-nowrap">
-                        Apply Now ✓
-                    </button>
-                    {% else %}
-                        {% if item.required_modules %}
-                        <a href="{% url 'dashboard' %}"
-                           class="px-6 py-2.5 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-xl font-semibold text-sm hover:bg-indigo-500/30 transition whitespace-nowrap">
-                            Get Certified →
-                        </a>
-                        {% else %}
-                        <button onclick="openApplyModal({{ job.id }}, '{{ job.title|escapejs }}', '')"
-                                class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-sm hover-lift neon-border flex items-center gap-2 whitespace-nowrap">
-                            Apply Now
-                        </button>
-                        {% endif %}
-                    {% endif %}
+                {% if item.is_qualified %}
+                <a href="{% url 'job_detail' job.id %}"
+                   class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-sm hover-lift neon-border flex items-center gap-2 whitespace-nowrap">
+                    Apply Now ✓
+                </a>
+                {% elif user.is_authenticated %}
+                <a href="{% url 'job_detail' job.id %}"
+                   class="px-6 py-2.5 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-xl font-semibold text-sm hover:bg-indigo-500/30 transition whitespace-nowrap">
+                    View &amp; Get Certified →
+                </a>
                 {% else %}
-                <a href="{% url 'register' %}"
+                <a href="{% url 'job_detail' job.id %}"
                    class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-sm hover-lift neon-border whitespace-nowrap">
-                    Get Certified to Apply →
+                    View Job →
                 </a>
                 {% endif %}
             </div>

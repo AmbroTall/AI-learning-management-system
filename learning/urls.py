@@ -32,6 +32,7 @@ urlpatterns = [
     # ── Jobs board — hidden for SaaS pivot (learning-only platform) ────────
     # Views/models kept intact for easy restore; routes disabled so /jobs/ 404s.
     # path('jobs/', views.jobs_page, name='jobs'),
+    # path('jobs/<int:job_id>/', views.job_detail, name='job_detail'),
     # path('jobs/<int:job_id>/apply/', views.apply_job, name='apply_job'),
 
     # ── Certifications (public) ────────────────────────────────────────────

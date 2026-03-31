@@ -1024,6 +1024,78 @@ def jobs_page(request):
     })
 
 
+def job_detail(request, job_id):
+    """Detailed job page with full description, requirements, and inline application form."""
+    job = get_object_or_404(JobPosting, id=job_id, is_active=True)
+    now = timezone.now()
+    week_ago = now - timedelta(days=7)
+
+    required_modules = list(job.required_modules.prefetch_related('challenges').all())
+    req_ids = [m.id for m in required_modules]
+
+    certified_module_ids = set()
+    user_cert_map = {}
+    if request.user.is_authenticated:
+        for cert in Certificate.objects.filter(user=request.user, is_valid=True).select_related('module'):
+            certified_module_ids.add(cert.module_id)
+            user_cert_map[cert.module_id] = cert
+
+    if request.user.is_authenticated:
+        if not req_ids:
+            is_qualified = bool(certified_module_ids)
+        else:
+            is_qualified = any(mid in certified_module_ids for mid in req_ids)
+    else:
+        is_qualified = False
+
+    qualifying_cert = None
+    if is_qualified and req_ids:
+        for mid in req_ids:
+            if mid in user_cert_map:
+                qualifying_cert = user_cert_map[mid]
+                break
+    elif is_qualified and user_cert_map:
+        qualifying_cert = next(iter(user_cert_map.values()))
+
+    recent_apps = job.applications.filter(created_at__gte=week_ago).count()
+    spots_left = None
+    if job.spots_available is not None:
+        spots_left = max(0, job.spots_available - job.application_count)
+
+    # Urgency tier for FOMO
+    urgency = None
+    if spots_left is not None:
+        if spots_left <= 2:
+            urgency = 'critical'
+        elif spots_left <= 5:
+            urgency = 'high'
+        elif spots_left <= 10:
+            urgency = 'medium'
+
+    # Other open jobs the user might be interested in (exclude this one)
+    other_jobs = JobPosting.objects.filter(is_active=True).exclude(id=job_id).order_by('order')[:4]
+
+    # For each required module, mark whether user has that cert
+    modules_with_status = []
+    for mod in required_modules:
+        modules_with_status.append({
+            'module': mod,
+            'is_certified': mod.id in certified_module_ids,
+            'cert': user_cert_map.get(mod.id),
+        })
+
+    return render(request, 'job_detail.html', {
+        'job': job,
+        'required_modules': modules_with_status,
+        'is_qualified': is_qualified,
+        'qualifying_cert': qualifying_cert,
+        'recent_apps': recent_apps,
+        'spots_left': spots_left,
+        'urgency': urgency,
+        'other_jobs': other_jobs,
+    })
+
+
 @csrf_exempt
 def apply_job(request, job_id):
     """AJAX endpoint — validate certificate and create a job application."""

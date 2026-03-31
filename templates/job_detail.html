@@ -1,0 +1,473 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} — LearnPulse Jobs{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pill-remote   { background: rgba(99,179,237,0.1);  color: #63b3ed; }
+    .pill-contract { background: rgba(246,173,85,0.1);  color: #f6ad55; }
+    .pill-full_time{ background: rgba(154,117,246,0.1); color: #9a75f6; }
+    .pill-part_time{ background: rgba(74,222,128,0.1);  color: #4ade80; }
+    .pill-hybrid   { background: rgba(251,146,60,0.1);  color: #fb923c; }
+    .pill-onsite   { background: rgba(248,113,113,0.1); color: #f87171; }
+
+    .fomo-pulse {
+        animation: fomo-pulse 2s ease-in-out infinite;
+    }
+    @keyframes fomo-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.8; transform: scale(1.04); }
+    }
+    .urgency-critical { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); }
+    .urgency-high     { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.35); }
+    .urgency-medium   { background: rgba(234,179,8,0.12);  border-color: rgba(234,179,8,0.35); }
+
+    .cert-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 1rem;
+        transition: border-color 0.2s;
+    }
+    .cert-card.locked { border-color: rgba(239,68,68,0.2); }
+    .cert-card.earned { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+
+    .countdown-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #22d3ee, #818cf8);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+
+    <!-- ── BREADCRUMB ──────────────────────────────────────────────────── -->
+    <nav class="flex items-center gap-2 text-sm text-gray-500 py-6">
+        <a href="{% url 'jobs' %}" class="hover:text-cyan-400 transition">AI Jobs</a>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-gray-300 truncate">{{ job.title }}</span>
+    </nav>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+
+        <!-- ── LEFT COLUMN: Job details ──────────────────────────────── -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Job header card -->
+            <div class="glass-effect rounded-2xl p-7 border border-white/8">
+                <!-- Icon + FOMO banner -->
+                <div class="flex items-start gap-5 mb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl flex-shrink-0">
+                        {{ job.icon_emoji }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight mb-1">
+                            {{ job.title }}
+                        </h1>
+                        <p class="text-gray-400 text-sm">{{ job.organisation_name }}</p>
+                    </div>
+                </div>
+
+                <!-- Pills -->
+                <div class="flex flex-wrap gap-2 mb-5">
+                    <span class="pill-{{ job.job_type }} px-3 py-1.5 rounded-full text-xs font-semibold">
+                        {{ job.get_job_type_display }}
+                    </span>
+                    <span class="pill-{{ job.contract_type }} px-3 py-1.5 rounded-full text-xs font-semibold">
+                        {{ job.get_contract_type_display }}
+                    </span>
+                    {% if job.pay_range_display %}
+                    <span class="px-3 py-1.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-semibold">
+                        {{ job.pay_range_display }}{% if job.pay_note %} · {{ job.pay_note }}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- FOMO urgency banner -->
+                {% if urgency == 'critical' %}
+                <div class="urgency-critical border rounded-xl px-4 py-3 mb-5 flex items-center gap-3 fomo-pulse">
+                    <span class="text-xl">🔴</span>
+                    <div>
+                        <p class="text-red-300 font-bold text-sm">Only {{ spots_left }} spot{{ spots_left|pluralize }} remaining — closing very soon!</p>
+                        <p class="text-red-400 text-xs mt-0.5">{{ recent_apps }} people applied in the last 7 days. Don't miss your window.</p>
+                    </div>
+                </div>
+                {% elif urgency == 'high' %}
+                <div class="urgency-high border rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+                    <span class="text-xl">🟠</span>
+                    <div>
+                        <p class="text-orange-300 font-bold text-sm">{{ spots_left }} spots left — filling fast</p>
+                        <p class="text-orange-400 text-xs mt-0.5">{{ recent_apps }} applicants this week. Certified candidates are moving quickly.</p>
+                    </div>
+                </div>
+                {% elif urgency == 'medium' %}
+                <div class="urgency-medium border rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+                    <span class="text-xl">🟡</span>
+                    <div>
+                        <p class="text-yellow-300 font-bold text-sm">{{ spots_left }} of {{ job.spots_available }} spots still open</p>
+                        {% if recent_apps > 0 %}<p class="text-yellow-400 text-xs mt-0.5">🔥 {{ recent_apps }} applied this week — competition is real.</p>{% endif %}
+                    </div>
+                </div>
+                {% elif recent_apps > 3 %}
+                <div class="bg-orange-500/8 border border-orange-500/20 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+                    <span class="text-xl">🔥</span>
+                    <p class="text-orange-300 text-sm font-semibold">{{ recent_apps }} people applied in the last 7 days. This role is trending.</p>
+                </div>
+                {% endif %}
+
+                <!-- Description -->
+                <div class="prose prose-invert prose-sm max-w-none">
+                    <p class="text-gray-300 leading-relaxed text-[15px]">{{ job.description }}</p>
+                </div>
+            </div>
+
+            <!-- What you'll do / responsibilities -->
+            <div class="glass-effect rounded-2xl p-7 border border-white/8">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <span class="text-cyan-400">✦</span> Why This Role Matters Right Now
+                </h2>
+                <div class="space-y-3 text-sm text-gray-400 leading-relaxed">
+                    <p>AI companies are scaling at an unprecedented pace — and they desperately need <strong class="text-white">certified humans</strong> to evaluate, train, and improve these systems.</p>
+                    <p>Unlike traditional jobs that take months to hire, these roles are <strong class="text-white">filled weekly</strong> from a pool of certified candidates. The window is <strong class="text-orange-400">narrow and competitive</strong>.</p>
+                    <p>Candidates who hold a <strong class="text-cyan-400">LearnPulse certification</strong> are given priority — you've already demonstrated the skills, you just need to apply before the slots close.</p>
+                </div>
+
+                <!-- Skill tags -->
+                {% if job.tags %}
+                <div class="mt-5 pt-5 border-t border-white/8">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mb-3 font-semibold">Skills you'll use</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in job.tags %}
+                        <span class="px-3 py-1.5 bg-cyan-500/8 text-cyan-300 border border-cyan-500/15 rounded-lg text-xs font-medium">
+                            {{ tag }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Required Certifications -->
+            {% if required_modules %}
+            <div class="glass-effect rounded-2xl p-7 border border-white/8">
+                <h2 class="text-lg font-bold mb-2 flex items-center gap-2">
+                    <span class="text-indigo-400">🏆</span> Required Certifications
+                </h2>
+                <p class="text-sm text-gray-500 mb-5">You must hold a valid LearnPulse certificate in the following module(s) to apply.</p>
+
+                <div class="space-y-4">
+                    {% for item in required_modules %}
+                    <div class="cert-card p-5 {% if item.is_certified %}earned{% else %}locked{% endif %}">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl {% if item.is_certified %}bg-green-500/15{% else %}bg-indigo-500/10{% endif %} flex items-center justify-center text-xl flex-shrink-0">
+                                {{ item.module.icon }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap mb-1">
+                                    <h3 class="font-bold text-white text-sm">{{ item.module.title }}</h3>
+                                    {% if item.is_certified %}
+                                    <span class="px-2 py-0.5 bg-green-500/15 text-green-400 border border-green-500/25 rounded-full text-xs font-semibold">✓ Certified</span>
+                                    {% else %}
+                                    <span class="px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full text-xs font-semibold">Not yet earned</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-gray-500 text-xs leading-relaxed">{{ item.module.description|truncatechars:120 }}</p>
+
+                                {% if item.is_certified %}
+                                <p class="text-green-400 text-xs mt-2 font-mono">Cert #{{ item.cert.cert_number }}</p>
+                                {% else %}
+                                <div class="mt-3 flex items-center gap-3">
+                                    <a href="{% url 'dashboard' %}"
+                                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-lg text-xs font-semibold hover:bg-indigo-500/30 transition">
+                                        Start Module →
+                                    </a>
+                                    <span class="text-gray-600 text-xs">~{{ item.module.duration_hours }}h to complete</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- FOMO nudge for uncertified users -->
+                {% if not is_qualified %}
+                <div class="mt-5 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 border border-indigo-500/20 rounded-xl p-5">
+                    <p class="text-sm text-white font-semibold mb-1">Don't let this opportunity pass you by</p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-3">
+                        Every week, spots fill up with certified graduates. Companies stop accepting applications once all positions are filled — and they don't reopen.
+                        <strong class="text-cyan-400">The certification is the unlock key. Start today.</strong>
+                    </p>
+                    <a href="{% url 'dashboard' %}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl font-bold text-sm text-white hover:opacity-90 transition">
+                        Enrol in Course Now
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Other jobs you may like -->
+            {% if other_jobs %}
+            <div class="glass-effect rounded-2xl p-7 border border-white/8">
+                <h2 class="text-lg font-bold mb-5">Other Open Positions</h2>
+                <div class="space-y-3">
+                    {% for other in other_jobs %}
+                    <a href="{% url 'job_detail' other.id %}"
+                       class="flex items-center gap-4 p-4 bg-white/3 hover:bg-white/6 border border-white/6 hover:border-white/12 rounded-xl transition group">
+                        <span class="text-xl flex-shrink-0">{{ other.icon_emoji }}</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-white text-sm group-hover:text-cyan-400 transition truncate">{{ other.title }}</p>
+                            <p class="text-xs text-gray-500">{{ other.pay_range_display }}</p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-cyan-400 flex-shrink-0 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- ── RIGHT COLUMN: Sticky Application panel ─────────────────── -->
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-5">
+
+                <!-- Application card -->
+                <div class="glass-effect rounded-2xl border border-white/10 overflow-hidden">
+                    <div class="bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 px-6 py-4 border-b border-white/8">
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-0.5">Apply for this role</p>
+                        <p class="text-white font-bold text-sm leading-tight">{{ job.title }}</p>
+                    </div>
+
+                    {% if is_qualified %}
+                    <!-- ── Qualified: show form ─────────────────────── -->
+                    <div class="p-6" id="applyFormArea">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">First Name *</label>
+                                <input type="text" id="applyFirstName"
+                                       class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 transition"
+                                       placeholder="Jane"
+                                       value="{{ user.first_name }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">Last Name *</label>
+                                <input type="text" id="applyLastName"
+                                       class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 transition"
+                                       placeholder="Smith"
+                                       value="{{ user.last_name }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">Email *</label>
+                            <input type="email" id="applyEmail"
+                                   class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 transition"
+                                   placeholder="jane@example.com"
+                                   value="{{ user.email }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">Phone (optional)</label>
+                            <input type="tel" id="applyPhone"
+                                   class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 transition"
+                                   placeholder="+44 7700 000000">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">Certificate Number *</label>
+                            <input type="text" id="applyCertNumber"
+                                   class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono focus:outline-none focus:border-cyan-500 transition uppercase"
+                                   placeholder="LP-2026-XXXXXXXX"
+                                   oninput="this.value = this.value.toUpperCase()"
+                                   value="{{ qualifying_cert.cert_number|default:'' }}">
+                            <p class="text-xs text-gray-600 mt-1">
+                                <a href="{% url 'my_certificates' %}" class="text-cyan-400 hover:underline" target="_blank">View my certificates →</a>
+                            </p>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="block text-xs text-gray-500 uppercase tracking-wide mb-1 font-semibold">Short message (optional)</label>
+                            <textarea id="applyCoverNote" rows="2"
+                                      class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500 transition resize-none"
+                                      placeholder="Why this role?"></textarea>
+                        </div>
+
+                        <div id="applyError" class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-xs"></div>
+                        <div id="applySuccess" class="hidden mb-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                            <div class="flex items-start gap-2">
+                                <span class="text-xl">✅</span>
+                                <div>
+                                    <p class="text-green-300 font-bold text-sm">Application Submitted!</p>
+                                    <p id="applySuccessMsg" class="text-xs text-green-400 mt-0.5"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="applySubmitBtn" onclick="submitApplication()"
+                                class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold text-white text-sm hover:opacity-90 transition neon-border">
+                            Submit Application ✓
+                        </button>
+                        <p class="text-xs text-gray-600 text-center mt-2">Reviewed within 5 business days</p>
+                    </div>
+
+                    {% elif user.is_authenticated %}
+                    <!-- ── Logged in but not certified ─────────────── -->
+                    <div class="p-6 text-center">
+                        <div class="text-4xl mb-3">🔒</div>
+                        <h3 class="font-bold text-white mb-2 text-sm">Certification Required</h3>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-4">
+                            You need a valid LearnPulse certificate to apply for this role.
+                            Complete the required module — it could unlock this job and many others.
+                        </p>
+
+                        {% if spots_left is not None %}
+                        <div class="mb-4 text-center">
+                            <p class="text-xs text-gray-500 mb-1">Spots remaining</p>
+                            <p class="text-2xl font-extrabold {% if spots_left <= 3 %}text-red-400{% elif spots_left <= 7 %}text-orange-400{% else %}text-yellow-400{% endif %}">
+                                {{ spots_left }} / {{ job.spots_available }}
+                            </p>
+                            {% if spots_left > 0 %}
+                            <div class="mt-2 w-full bg-white/5 rounded-full overflow-hidden h-1.5">
+                                <div class="countdown-bar h-full" style="width: {{ spots_left|floatformat:0 }}%"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <a href="{% url 'dashboard' %}"
+                           class="block w-full py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl font-bold text-sm text-white hover:opacity-90 transition mb-2">
+                            Get Certified →
+                        </a>
+                        <p class="text-xs text-gray-600">Start a module today, earn your cert, come back to apply</p>
+                    </div>
+
+                    {% else %}
+                    <!-- ── Not logged in ───────────────────────────── -->
+                    <div class="p-6 text-center">
+                        <div class="text-4xl mb-3">🚀</div>
+                        <h3 class="font-bold text-white mb-2 text-sm">Create a Free Account</h3>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-4">
+                            Join LearnPulse, complete a certification module, and come back to apply — all free to start.
+                        </p>
+                        {% if spots_left is not None and spots_left <= 10 %}
+                        <p class="text-orange-400 text-xs font-semibold mb-4 fomo-pulse">
+                            ⚡ Only {{ spots_left }} spot{{ spots_left|pluralize }} left — don't wait
+                        </p>
+                        {% endif %}
+                        <a href="{% url 'register' %}"
+                           class="block w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold text-sm text-white hover:opacity-90 transition mb-3 neon-border">
+                            Start Free →
+                        </a>
+                        <a href="{% url 'login' %}"
+                           class="block w-full py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/8 transition">
+                            Sign In
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick FOMO stats sidebar -->
+                <div class="glass-effect rounded-2xl border border-white/8 p-5 space-y-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Applications this week</span>
+                        <span class="font-bold text-orange-400">{{ recent_apps }}{% if recent_apps > 0 %} 🔥{% endif %}</span>
+                    </div>
+                    {% if spots_left is not None %}
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Spots remaining</span>
+                        <span class="font-bold {% if spots_left <= 3 %}text-red-400{% elif spots_left <= 7 %}text-orange-400{% else %}text-white{% endif %}">
+                            {{ spots_left }} of {{ job.spots_available }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Work type</span>
+                        <span class="font-semibold text-cyan-400">{{ job.get_job_type_display }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Pay</span>
+                        <span class="font-bold text-green-400">{{ job.pay_range_display }}</span>
+                    </div>
+                    <div class="pt-3 border-t border-white/8 text-xs text-gray-600 text-center leading-relaxed">
+                        Jobs updated weekly · New positions posted every Monday
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const JOB_ID = {{ job.id }};
+
+    function submitApplication() {
+        const btn    = document.getElementById('applySubmitBtn');
+        const errBox = document.getElementById('applyError');
+        const sucBox = document.getElementById('applySuccess');
+        if (!btn) return;
+
+        const payload = {
+            first_name  : (document.getElementById('applyFirstName')?.value || '').trim(),
+            last_name   : (document.getElementById('applyLastName')?.value  || '').trim(),
+            email       : (document.getElementById('applyEmail')?.value      || '').trim(),
+            phone       : (document.getElementById('applyPhone')?.value      || '').trim(),
+            cert_number : (document.getElementById('applyCertNumber')?.value || '').trim().toUpperCase(),
+            cover_note  : (document.getElementById('applyCoverNote')?.value  || '').trim(),
+        };
+
+        if (!payload.first_name || !payload.last_name || !payload.email || !payload.cert_number) {
+            errBox.textContent = 'Please fill in all required fields.';
+            errBox.classList.remove('hidden');
+            return;
+        }
+
+        errBox.classList.add('hidden');
+        btn.disabled = true;
+        btn.textContent = 'Submitting…';
+
+        const csrfToken = document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1] || '';
+
+        fetch(`/jobs/${JOB_ID}/apply/`, {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body   : JSON.stringify(payload),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('applySuccessMsg').textContent = data.message;
+                sucBox.classList.remove('hidden');
+                btn.classList.add('hidden');
+            } else {
+                errBox.textContent = data.error || 'Something went wrong. Please try again.';
+                errBox.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Submit Application ✓';
+            }
+        })
+        .catch(() => {
+            errBox.textContent = 'Network error. Please check your connection and try again.';
+            errBox.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = 'Submit Application ✓';
+        });
+    }
+</script>
+{% endblock %}
