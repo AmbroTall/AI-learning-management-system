@@ -403,6 +403,9 @@
                         </a>
                         {% endif %}
                         {% if user.is_superuser or user.is_staff %}
+                        <a href="{% url 'marketing_templates' %}">
+                            <span>📣</span> Marketing
+                        </a>
                         <a href="{% url 'admin:index' %}">
                             <span>⚡</span> Admin Panel
                         </a>

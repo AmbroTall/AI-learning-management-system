@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+
+{% block title %}Marketing Templates — LearnPulse{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<style>
+.tpl-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+}
+.tpl-card:hover { border-color: rgba(34,211,238,0.25); }
+.tpl-body {
+    background: rgba(0,0,0,0.35);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: #e2e8f0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: inherit;
+    border: 1px solid rgba(255,255,255,0.06);
+    user-select: text;
+}
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgba(34,211,238,0.3);
+    background: rgba(34,211,238,0.08);
+    color: #22d3ee;
+    transition: background 0.15s, color 0.15s;
+}
+.copy-btn:hover { background: rgba(34,211,238,0.18); }
+.copy-btn.copied { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: #4ade80; }
+.platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.badge-twitter  { background: rgba(29,161,242,0.15); color: #60a5fa; }
+.badge-linkedin { background: rgba(10,102,194,0.2);  color: #93c5fd; }
+.badge-instagram{ background: rgba(225,48,108,0.15); color: #f9a8d4; }
+.badge-facebook { background: rgba(24,119,242,0.15); color: #93c5fd; }
+.badge-whatsapp { background: rgba(37,211,102,0.15); color: #4ade80; }
+.badge-tiktok   { background: rgba(255,0,80,0.12);   color: #fca5a5; }
+.badge-job      { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.stat-chip {
+    display: inline-block;
+    background: rgba(34,211,238,0.1);
+    border: 1px solid rgba(34,211,238,0.2);
+    color: #22d3ee;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Header -->
+    <div class="mb-10">
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-4xl font-bold gradient-text">📣 Marketing Templates</h1>
+            <span class="px-3 py-1 bg-yellow-500/15 text-yellow-400 rounded-full text-xs font-semibold">Staff only</span>
+        </div>
+        <p class="text-gray-400">Click <strong class="text-white">Copy</strong> on any template, then paste directly into your social media comment, reply, or post.</p>
+
+        <!-- Live stats -->
+        <div class="flex flex-wrap gap-3 mt-4">
+            <span class="stat-chip">{{ stat_learners }}+ learners</span>
+            <span class="stat-chip">{{ stat_hired }}+ hired</span>
+            <span class="stat-chip">{{ stat_completion }}% completion</span>
+            <span class="text-xs text-gray-600 self-center">· updated by <code>tick_platform</code> daily</span>
+        </div>
+    </div>
+
+    <!-- ── SECTION: Learning Adverts ───────────────────────────────── -->
+    <h2 class="text-xl font-bold mb-5 text-gray-200">🎓 Learning Adverts</h2>
+    <div class="grid gap-5 mb-12">
+
+        <!-- Twitter/X short -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-twitter">𝕏 Twitter / X</span>
+                    <span class="text-xs text-gray-500">Short · punchy</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">🔥 {{ stat_learners }}+ people are learning AI right now.
+
+You could be next.
+
+✅ Hands-on challenges
+✅ Scored by Claude AI
+✅ Verified certificate
+✅ Real AI job board
+
+Start FREE today 👇
+learnpulse.online</pre>
+        </div>
+
+        <!-- LinkedIn professional -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-linkedin">in LinkedIn</span>
+                    <span class="text-xs text-gray-500">Professional · long-form</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">AI isn't the future. It's the present — and the people who know how to use it are getting hired.
+
+{{ stat_hired }}+ LearnPulse graduates have already landed AI roles.
+
+Here's what sets them apart:
+→ They learned by doing (30 real challenges per module)
+→ Their work was scored by Claude AI, not a multiple-choice quiz
+→ They have a verified certificate to prove it
+
+Module 1 starts at $69. One-time. Yours forever.
+
+The leaderboard is live. Will your name be on it? 👇
+learnpulse.online
+
+#AI #PromptEngineering #OnlineLearning #AIJobs #LearnPulse</pre>
+        </div>
+
+        <!-- Instagram / Facebook -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-instagram">📸 Instagram</span>
+                    <span class="platform-badge badge-facebook">Facebook</span>
+                    <span class="text-xs text-gray-500">Caption / post</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">{{ stat_learners }}+ learners. {{ stat_hired }}+ hired. One platform.
+
+If you're not learning AI right now, someone else is.
+
+🎓 Earn a verified AI certificate
+💼 Apply to real paid AI jobs
+🔥 Compete on the global leaderboard
+
+Start FREE — no card needed.
+learnpulse.online
+
+#AISkills #LearnAI #PromptEngineering #LearnPulse #AIJobs</pre>
+        </div>
+
+        <!-- TikTok -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-tiktok">♪ TikTok</span>
+                    <span class="text-xs text-gray-500">Caption / bio link</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">POV: you just got your first AI certificate 🎓
+
+{{ stat_learners }}+ people are already on LearnPulse.
+Start free. Earn certs. Land AI jobs.
+
+Link in bio → learnpulse.online
+
+#LearnAI #AIcertificate #PromptEngineering #AIJobs #LearnPulse</pre>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-whatsapp">💬 WhatsApp</span>
+                    <span class="text-xs text-gray-500">Message / broadcast</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">Hey 👋 — have you heard of LearnPulse?
+
+{{ stat_learners }}+ people are learning AI right now. Real challenges, scored by Claude AI, verified certificates, and an actual jobs board with paid AI roles.
+
+Start free: learnpulse.online 🔥</pre>
+        </div>
+
+        <!-- Reply / comment snippet -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-twitter">𝕏 Reply</span>
+                    <span class="platform-badge badge-instagram">Comment</span>
+                    <span class="text-xs text-gray-500">Short reply to "how do I learn AI?" threads</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">LearnPulse 🔥 — hands-on AI challenges scored by Claude AI in real time. Start free, earn a verified certificate, and apply to AI jobs directly on the platform.
+
+{{ stat_learners }}+ learners and growing. learnpulse.online</pre>
+        </div>
+
+    </div>
+
+    <!-- ── SECTION: Job Adverts ─────────────────────────────────────── -->
+    <h2 class="text-xl font-bold mb-5 text-gray-200">💼 Job / Opportunity Adverts</h2>
+    <div class="grid gap-5 mb-12">
+
+        <!-- Twitter/X job -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-twitter">𝕏 Twitter / X</span>
+                    <span class="platform-badge badge-job">Job Advert</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">⚡ AI jobs are live on LearnPulse.
+
+Remote. Paid. Real.
+
+Only certified graduates can apply — which means less competition for you.
+
+Earn your cert → apply today 👇
+learnpulse.online/jobs/
+
+#AIJobs #RemoteWork #PromptEngineering</pre>
+        </div>
+
+        <!-- LinkedIn job -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-linkedin">in LinkedIn</span>
+                    <span class="platform-badge badge-job">Job Advert</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">Hiring is open on the LearnPulse Jobs Board.
+
+These aren't hypothetical roles. They're real paid AI positions — and they're reserved for certified graduates of LearnPulse modules.
+
+What that means for you:
+✅ Less competition (only certified applicants can apply)
+✅ Employers trust the certificate because AI scored your work
+✅ 100% remote
+
+See open roles → learnpulse.online/jobs/
+
+Already have your certificate? Apply now before spots fill.
+
+#AIJobs #RemoteWork #PromptEngineering #LearnPulse</pre>
+        </div>
+
+        <!-- WhatsApp job -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-whatsapp">💬 WhatsApp</span>
+                    <span class="platform-badge badge-job">Job Advert</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">AI jobs just dropped on LearnPulse 💼
+
+Remote, paid roles — only certified graduates can apply, so competition is low.
+
+Get your cert first → learnpulse.online
+Then apply → learnpulse.online/jobs/</pre>
+        </div>
+
+        <!-- Comment reply job -->
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-twitter">𝕏 Reply</span>
+                    <span class="platform-badge badge-facebook">Comment</span>
+                    <span class="text-xs text-gray-500">Short reply to "where can I find AI jobs?" threads</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">LearnPulse has a live AI jobs board 💼 — remote, paid roles exclusively for certified graduates. Less competition, verified credentials. learnpulse.online/jobs/</pre>
+        </div>
+
+    </div>
+
+    <!-- ── SECTION: FOMO / Urgency ──────────────────────────────────── -->
+    <h2 class="text-xl font-bold mb-5 text-gray-200">⏱️ FOMO / Urgency Replies</h2>
+    <div class="grid gap-5 mb-12">
+
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-twitter">𝕏 Reply</span>
+                    <span class="platform-badge badge-instagram">Comment</span>
+                    <span class="text-xs text-gray-500">Reply to "should I learn AI?" posts</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">{{ stat_learners }}+ people already started. Every day you wait is a day they're ahead.
+
+LearnPulse — start free, no card needed. learnpulse.online 🔥</pre>
+        </div>
+
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-whatsapp">💬 WhatsApp</span>
+                    <span class="platform-badge badge-facebook">Facebook group</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">Quick question — are you using AI in your work yet?
+
+{{ stat_learners }}+ people on LearnPulse already are. They're earning certificates, applying to jobs, and building skills that pay.
+
+The intro module is completely free 👉 learnpulse.online</pre>
+        </div>
+
+        <div class="tpl-card">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="platform-badge badge-linkedin">in LinkedIn</span>
+                    <span class="text-xs text-gray-500">Comment on AI trend posts</span>
+                </div>
+                <button class="copy-btn" onclick="copyTemplate(this)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <pre class="tpl-body">This is exactly why we built LearnPulse — hands-on AI training with real Claude AI feedback on every submission. {{ stat_learners }}+ learners, {{ stat_hired }}+ already hired.
+
+Start free: learnpulse.online</pre>
+        </div>
+
+    </div>
+
+    <div class="glass-effect rounded-2xl p-6 text-center border border-white/5">
+        <p class="text-gray-500 text-sm">Numbers update automatically each time <code class="text-cyan-400">tick_platform</code> runs (daily via cron). Refresh this page to see the latest.</p>
+        <a href="{% url 'dashboard' %}" class="inline-block mt-4 text-sm text-cyan-400 hover:underline">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+{% block extra_js %}
+<script>
+function copyTemplate(btn) {
+    const pre = btn.closest('.tpl-card').querySelector('.tpl-body');
+    const text = pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy`;
+        }, 2200);
+    }).catch(() => {
+        // Fallback for older browsers
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2200);
+    });
+}
+</script>
+{% endblock %}
+
+{% endblock %}

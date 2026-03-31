@@ -40,4 +40,7 @@ urlpatterns = [
 
     # ── Chatbot (API) ──────────────────────────────────────────────────────
     path('chatbot/', views.chatbot_message, name='chatbot_message'),
+
+    # ── Marketing (staff only) ─────────────────────────────────────────────
+    path('marketing/', views.marketing_templates, name='marketing_templates'),
 ]

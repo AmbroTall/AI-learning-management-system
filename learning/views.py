@@ -1241,6 +1241,21 @@ def mark_notifications_read(request):
     return JsonResponse({'success': True})
 
 
+# ── Marketing templates (staff only) ────────────────────────────────────────
+
+@login_required
+def marketing_templates(request):
+    """Staff-only page: copy-ready social media post templates."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('dashboard')
+    stat = PlatformStat.get()
+    return render(request, 'marketing_templates.html', {
+        'stat_learners': stat.learner_count,
+        'stat_hired': stat.graduates_hired,
+        'stat_completion': stat.completion_rate,
+    })
+
+
 # ── Platform chatbot ─────────────────────────────────────────────────────────
 
 _CHATBOT_SYSTEM_PROMPT = """You are the LearnPulse platform assistant. Help students with questions about the platform. Be concise, friendly, and direct. Never use internal monologue, reasoning steps, or "thinking" text — reply only with your final answer.
