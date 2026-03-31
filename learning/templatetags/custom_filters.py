@@ -2,6 +2,15 @@ from django import template
 
 register = template.Library()
 
+
+@register.filter
+def unread_notifications(user):
+    """Return unread notification count for a user (0 if unauthenticated)."""
+    if not user or not user.is_authenticated:
+        return 0
+    from learning.models import Notification
+    return Notification.objects.filter(user=user, is_read=False).count()
+
 @register.filter
 def get_item(dictionary, key):
     """Get item from dictionary by key"""

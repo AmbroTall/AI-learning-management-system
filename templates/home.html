@@ -1,6 +1,38 @@
 {% extends 'base.html' %}
 
-{% block title %}Ambrose AI — Master AI Skills & Transform Your Career{% endblock %}
+{% block title %}LearnPulse — Master AI Skills & Transform Your Career{% endblock %}
+{% block meta_description %}Learn AI prompt engineering, tools, automation, and cybersecurity. 60+ hours of hands-on challenges evaluated by Claude AI. Start free today.{% endblock %}
+{% block og_title %}LearnPulse — Master AI Skills & Transform Your Career{% endblock %}
+{% block og_description %}60+ hours of hands-on AI training across 4 modules. Real-time Claude AI feedback on every challenge. Start with free intro lessons.{% endblock %}
+{% block twitter_title %}LearnPulse — Master AI Skills & Transform Your Career{% endblock %}
+{% block twitter_description %}60+ hours of hands-on AI training. Prompt engineering, AI tools, automation & cybersecurity. AI-evaluated challenges. Start free.{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "LearnPulse",
+      "url": "{{ request.scheme }}://{{ request.get_host }}/",
+      "description": "Gamified AI skills learning platform with real-time Claude AI feedback"
+    },
+    {
+      "@type": "EducationalOrganization",
+      "name": "LearnPulse",
+      "url": "{{ request.scheme }}://{{ request.get_host }}/",
+      "description": "Online AI training platform offering hands-on courses in prompt engineering, AI tools, automation, and cybersecurity.",
+      "courseMode": "online",
+      "offers": {
+        "@type": "Offer",
+        "category": "AI Skills Training",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -473,7 +505,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
         <p class="text-gray-400 text-sm mb-4 max-w-lg mx-auto">
             Custom deals for schools, companies, and training providers — bulk seats, dedicated admin controls, and managed onboarding.
         </p>
-        <a href="mailto:hello@ambroseai.com"
+        <a href="mailto:hello@learnpulse.online"
            class="inline-block px-6 py-2.5 glass-effect rounded-lg text-sm font-semibold hover-lift">
             Contact us for organisation pricing →
         </a>

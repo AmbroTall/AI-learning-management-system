@@ -98,6 +98,50 @@
         </div>
     </div>
     
+    <!-- Certificates Section -->
+    <div class="mb-12">
+        <div class="glass-effect rounded-2xl p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">🎓 My Certificates</h2>
+                <a href="{% url 'jobs' %}" class="text-sm text-cyan-400 hover:text-cyan-300 transition font-medium">
+                    Browse Jobs →
+                </a>
+            </div>
+            {% if certificates %}
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for cert in certificates %}
+                <div class="relative bg-gradient-to-br from-cyan-900/30 to-blue-900/30 border border-cyan-500/30 rounded-xl p-5 hover-lift">
+                    <div class="text-3xl mb-3">{{ cert.module.icon }}</div>
+                    <div class="font-bold text-white mb-1">{{ cert.module.title }}</div>
+                    <div class="text-xs font-mono text-cyan-400 mb-2">{{ cert.cert_number }}</div>
+                    <div class="text-xs text-gray-500">Issued {{ cert.issued_at|date:"d M Y" }}</div>
+                    <div class="mt-3 flex gap-2">
+                        <a href="{% url 'verify_certificate' cert.cert_number %}"
+                           class="flex-1 text-center px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold rounded-lg hover:bg-cyan-500/20 transition">
+                            View
+                        </a>
+                        <a href="{% url 'jobs' %}"
+                           class="flex-1 text-center px-3 py-1.5 bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-semibold rounded-lg hover:bg-green-500/20 transition">
+                            Apply
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-10">
+                <div class="text-6xl mb-4">🎓</div>
+                <p class="text-gray-300 font-semibold mb-2">No certificates yet</p>
+                <p class="text-gray-500 text-sm mb-6">Complete all challenges in a module to earn your certificate and unlock job opportunities.</p>
+                <a href="{% url 'dashboard' %}"
+                   class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold hover-lift inline-block">
+                    Start Learning →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Two Column Layout -->
     <div class="grid md:grid-cols-2 gap-8">
         <!-- Module Progress -->

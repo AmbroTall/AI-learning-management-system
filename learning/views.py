@@ -15,10 +15,15 @@ from django.conf import settings
 import json
 import re
 
+from django.core.mail import send_mail
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError as DjangoValidationError
+
 from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
+    Certificate, JobPosting, JobApplication, Notification,
 )
 
 
@@ -138,72 +143,84 @@ def logout_view(request):
 
 @login_required
 def subscription_plans(request):
-    """Show available subscription plans."""
-    # If user already has access, send them to dashboard
+    """Show available subscription plans with localised pricing."""
     if has_platform_access(request.user):
         return redirect('dashboard')
 
+    from .utils.paystack import detect_currency, localize_price
+    currency, country = detect_currency(request)
+
     plans = SubscriptionPlan.objects.filter(is_active=True)
-    pending = Subscription.objects.filter(
-        user=request.user, status='pending'
-    ).first()
+    plans_with_prices = []
+    for plan in plans:
+        display_price, subunit = localize_price(plan.price, currency)
+        plans_with_prices.append({
+            'plan': plan,
+            'display_price': display_price,
+            'subunit_amount': subunit,
+            'currency': currency,
+        })
 
     return render(request, 'subscription.html', {
-        'plans': plans,
-        'pending_subscription': pending,
+        'plans_with_prices': plans_with_prices,
+        'currency': currency,
+        'country': country,
+        'paystack_public_key': settings.PAYSTACK_PUBLIC_KEY,
     })
 
 
 @login_required
 def initiate_payment(request, plan_id):
-    """Create a Network Global transaction token and redirect to payment page."""
+    """
+    AJAX endpoint called by Paystack inline JS.
+    Creates a pending Subscription and returns Paystack config as JSON.
+    """
     if request.method != 'POST':
-        return redirect('subscription_plans')
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
     plan = get_object_or_404(SubscriptionPlan, id=plan_id, is_active=True)
 
-    # Create a pending subscription record
+    try:
+        body = json.loads(request.body)
+        currency = body.get('currency', 'KES').upper()
+        localized_amount = float(body.get('localized_amount', 0) or 0)
+        subunit = int(round(localized_amount * 100))
+    except (json.JSONDecodeError, ValueError, TypeError):
+        currency = 'KES'
+        subunit = 0
+
+    if subunit <= 0:
+        from .utils.paystack import localize_price
+        _, subunit = localize_price(plan.price, currency)
+
     subscription = Subscription.objects.create(
         user=request.user,
         plan=plan,
         status='pending',
     )
 
-    try:
-        from .utils.network_global import get_network_global_client
-        client = get_network_global_client()
+    # Use company_ref (UUID without dashes) as the Paystack transaction reference
+    reference = str(subscription.company_ref).replace('-', '')
+    subscription.transaction_token = reference
+    subscription.save()
 
-        trans_token = client.create_transaction_token({
-            'amount': str(plan.price),
-            'currency': plan.currency,
-            'id': str(subscription.company_ref),
-            'endpoint': str(subscription.company_ref),
-            'url': request.build_absolute_uri('/subscribe/'),
-            'services': [
-                {
-                    'name': '3854',  # Network Global service type code
-                    'description': f'{plan.name} — AI Learning Platform Subscription',
-                }
-            ],
-        })
+    email = request.user.email or f'{request.user.username}@learnpulse.online'
 
-        subscription.transaction_token = trans_token
-        subscription.save()
-
-        payment_url = client.generate_network_payment_url(trans_token)
-        return redirect(payment_url)
-
-    except Exception as e:
-        subscription.status = 'failed'
-        subscription.save()
-        messages.error(request, f'Payment initiation failed: {e}')
-        return redirect('subscription_plans')
+    return JsonResponse({
+        'reference': reference,
+        'company_ref': str(subscription.company_ref),
+        'public_key': settings.PAYSTACK_PUBLIC_KEY,
+        'email': email,
+        'amount': subunit,
+        'currency': currency,
+        'plan_name': plan.name,
+    })
 
 
 def payment_callback(request, company_ref):
     """
-    Network Global redirects here after the user completes (or abandons) payment.
-    We verify the token and activate the subscription if payment succeeded.
+    Paystack redirects here after payment (inline popup onSuccess callback).
+    Verifies the transaction server-side and activates the subscription.
     """
     subscription = get_object_or_404(Subscription, company_ref=company_ref)
 
@@ -212,15 +229,13 @@ def payment_callback(request, company_ref):
         return redirect('dashboard')
 
     if not subscription.transaction_token:
-        messages.error(request, 'No transaction found for this reference.')
+        messages.error(request, 'No transaction reference found.')
         return redirect('subscription_plans')
 
-    try:
-        from .utils.network_global import get_network_global_client
-        client = get_network_global_client()
-        client.verify_transaction_token(subscription.transaction_token)
+    from .utils.paystack import verify_payment
+    success, result = verify_payment(subscription.transaction_token)
 
-        # Payment confirmed — activate subscription
+    if success:
         subscription.status = 'active'
         subscription.start_date = timezone.now()
         subscription.end_date = timezone.now() + timedelta(
@@ -230,21 +245,74 @@ def payment_callback(request, company_ref):
 
         messages.success(
             request,
-            f'Payment confirmed! Your {subscription.plan.name} subscription is now active.'
+            f'Payment confirmed! Your {subscription.plan.name} subscription is now active.',
         )
         return render(request, 'payment_callback.html', {
             'subscription': subscription,
             'success': True,
         })
-
-    except Exception as e:
+    else:
         subscription.status = 'failed'
         subscription.save()
         return render(request, 'payment_callback.html', {
             'subscription': subscription,
             'success': False,
-            'error': str(e),
+            'error': str(result),
         })
+
+
+@csrf_exempt
+def paystack_webhook(request):
+    """
+    Paystack webhook endpoint.
+    Verifies the HMAC-SHA512 signature and activates subscriptions on charge.success.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    from .utils.paystack import verify_webhook_signature
+    signature = request.META.get('HTTP_X_PAYSTACK_SIGNATURE', '')
+    if not verify_webhook_signature(request.body, signature):
+        return JsonResponse({'error': 'Invalid signature'}, status=400)
+
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    event = payload.get('event')
+    data = payload.get('data', {})
+
+    if event == 'charge.success':
+        reference = data.get('reference', '')
+        try:
+            subscription = Subscription.objects.get(
+                transaction_token=reference,
+                status='pending',
+            )
+            subscription.status = 'active'
+            subscription.start_date = timezone.now()
+            subscription.end_date = timezone.now() + timedelta(
+                days=subscription.plan.duration_days
+            )
+            subscription.save()
+
+            # Notify user
+            Notification.objects.get_or_create(
+                user=subscription.user,
+                notification_type='general',
+                defaults={
+                    'message': (
+                        f'✅ Payment confirmed! Your {subscription.plan.name} subscription '
+                        f'is now active until {subscription.end_date.strftime("%d %b %Y")}.'
+                    ),
+                    'link': '/dashboard/',
+                },
+            )
+        except Subscription.DoesNotExist:
+            pass  # Already activated or unknown reference
+
+    return JsonResponse({'status': 'ok'})
 
 
 # ── Organisation admin views ────────────────────────────────────────────────
@@ -276,7 +344,7 @@ def org_add_student(request):
             messages.error(
                 request,
                 f'Member limit reached ({org.max_members}). '
-                f'Contact Ambrose AI to increase your quota.'
+                f'Contact LearnPulse support to increase your quota.'
             )
             return redirect('org_dashboard')
 
@@ -346,11 +414,14 @@ def org_remove_student(request, membership_id):
 
 @login_required
 def dashboard(request):
-    modules = Module.objects.filter(is_active=True)
+    # Only show non-free modules in the main panel
+    modules = Module.objects.filter(is_active=True, is_free=False)
     user_progress = UserProgress.objects.filter(user=request.user)
     leaderboard, _ = Leaderboard.objects.get_or_create(user=request.user)
 
-    total_challenges = Challenge.objects.filter(module__is_active=True).count()
+    total_challenges = Challenge.objects.filter(
+        module__is_active=True, module__is_free=False
+    ).count()
     completed_challenges = ChallengeAttempt.objects.filter(
         user=request.user, passed=True
     ).values('challenge').distinct().count()
@@ -370,9 +441,7 @@ def dashboard(request):
         for m in modules
     ]
 
-    # Separate free intro modules from paid modules
-    intro_modules = [m for m in modules if m.module_type == 'intro']
-    paid_modules = [m for m in modules if m.module_type != 'intro']
+    paid_modules = list(modules)
     user_has_access = has_platform_access(request.user)
 
     # Subscription info for banner
@@ -388,9 +457,20 @@ def dashboard(request):
     except OrganisationMembership.DoesNotExist:
         org_membership = None
 
+    # Jobs FOMO — how many open jobs & user certificates
+    open_jobs_count = JobPosting.objects.filter(is_active=True).count()
+    user_certs = Certificate.objects.filter(user=request.user, is_valid=True).select_related('module')
+    certified_module_ids = set(user_certs.values_list('module_id', flat=True))
+
+    # Jobs the user qualifies for right now
+    qualified_jobs = 0
+    for job in JobPosting.objects.filter(is_active=True).prefetch_related('required_modules'):
+        req = list(job.required_modules.values_list('id', flat=True))
+        if not req or any(mid in certified_module_ids for mid in req):
+            qualified_jobs += 1
+
     context = {
         'modules': modules,
-        'intro_modules': intro_modules,
         'paid_modules': paid_modules,
         'user_has_access': user_has_access,
         'modules_with_status': modules_with_status,
@@ -403,6 +483,9 @@ def dashboard(request):
         'top_performers': top_performers,
         'active_subscription': active_sub,
         'org_membership': org_membership,
+        'open_jobs_count': open_jobs_count,
+        'user_certs': user_certs,
+        'qualified_jobs': qualified_jobs,
     }
     return render(request, 'dashboard.html', context)
 
@@ -753,11 +836,15 @@ def profile(request):
     recent_attempts = ChallengeAttempt.objects.filter(
         user=request.user
     ).order_by('-created_at')[:10]
+    certificates = Certificate.objects.filter(
+        user=request.user, is_valid=True
+    ).select_related('module')
     return render(request, 'profile.html', {
         'leaderboard': leaderboard,
         'achievements': achievements,
         'module_progress': module_progress,
         'recent_attempts': recent_attempts,
+        'certificates': certificates,
     })
 
 
@@ -784,6 +871,269 @@ def change_password(request):
     return redirect('profile')
 
 
+# ── Jobs & Certification views ───────────────────────────────────────────────
+
+def jobs_page(request):
+    """Public jobs board — lists all active job postings."""
+    jobs_qs = JobPosting.objects.filter(is_active=True).prefetch_related('required_modules')
+
+    # Build per-job context for the template
+    now = timezone.now()
+    week_ago = now - timedelta(days=7)
+
+    certified_module_ids = set()
+    user_cert_map = {}  # module_id -> cert
+
+    if request.user.is_authenticated:
+        for cert in Certificate.objects.filter(user=request.user, is_valid=True).select_related('module'):
+            certified_module_ids.add(cert.module_id)
+            user_cert_map[cert.module_id] = cert
+
+    jobs_with_status = []
+    for job in jobs_qs:
+        required = list(job.required_modules.all())
+        req_ids = [m.id for m in required]
+
+        # Is the logged-in user qualified?
+        if request.user.is_authenticated:
+            if not req_ids:
+                is_qualified = bool(certified_module_ids)
+            else:
+                is_qualified = any(mid in certified_module_ids for mid in req_ids)
+        else:
+            is_qualified = False
+
+        # Which cert satisfies this job (for the apply modal pre-fill)
+        qualifying_cert = None
+        if is_qualified and req_ids:
+            for mid in req_ids:
+                if mid in user_cert_map:
+                    qualifying_cert = user_cert_map[mid]
+                    break
+        elif is_qualified and user_cert_map:
+            qualifying_cert = next(iter(user_cert_map.values()))
+
+        recent_apps = job.applications.filter(created_at__gte=week_ago).count()
+        spots_left = None
+        if job.spots_available is not None:
+            spots_left = max(0, job.spots_available - job.application_count)
+
+        jobs_with_status.append({
+            'job': job,
+            'required_modules': required,
+            'is_qualified': is_qualified,
+            'qualifying_cert': qualifying_cert,
+            'recent_apps': recent_apps,
+            'spots_left': spots_left,
+        })
+
+    total_open = jobs_qs.count()
+    total_applications = JobApplication.objects.count()
+
+    return render(request, 'jobs.html', {
+        'jobs_with_status': jobs_with_status,
+        'total_open': total_open,
+        'total_applications': total_applications,
+    })
+
+
+@csrf_exempt
+def apply_job(request, job_id):
+    """AJAX endpoint — validate certificate and create a job application."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    job = get_object_or_404(JobPosting, id=job_id, is_active=True)
+
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid request data.'}, status=400)
+
+    first_name = data.get('first_name', '').strip()
+    last_name = data.get('last_name', '').strip()
+    email = data.get('email', '').strip().lower()
+    phone = data.get('phone', '').strip()
+    cert_number = data.get('cert_number', '').strip().upper()
+    cover_note = data.get('cover_note', '').strip()
+
+    if not all([first_name, last_name, email, cert_number]):
+        return JsonResponse(
+            {'error': 'First name, last name, email and certificate number are required.'},
+            status=400,
+        )
+
+    try:
+        validate_email(email)
+    except DjangoValidationError:
+        return JsonResponse({'error': 'Please enter a valid email address.'}, status=400)
+
+    # Validate certificate
+    try:
+        cert = Certificate.objects.select_related('user', 'module').get(
+            cert_number=cert_number, is_valid=True
+        )
+    except Certificate.DoesNotExist:
+        return JsonResponse({
+            'error': (
+                'Certificate number not found or is no longer valid. '
+                'Check your exact certificate number on your Profile page.'
+            )
+        }, status=400)
+
+    # Check certificate matches job requirements
+    required_modules = list(job.required_modules.all())
+    if required_modules and cert.module not in required_modules:
+        names = ' or '.join(m.title for m in required_modules)
+        return JsonResponse({
+            'error': (
+                f'Your certificate is for "{cert.module.title}", but this role requires: {names}. '
+                f'Complete the required module to qualify.'
+            )
+        }, status=400)
+
+    # Check spots
+    if job.spots_available is not None and job.application_count >= job.spots_available:
+        return JsonResponse(
+            {'error': 'This position is no longer accepting applications.'},
+            status=400,
+        )
+
+    # Prevent duplicate applications (same email + same job)
+    if JobApplication.objects.filter(email=email, job=job).exists():
+        return JsonResponse(
+            {'error': 'An application for this position already exists with this email address.'},
+            status=400,
+        )
+
+    applicant = request.user if request.user.is_authenticated else None
+
+    application = JobApplication.objects.create(
+        job=job,
+        applicant=applicant,
+        certificate=cert,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone=phone,
+        cover_note=cover_note,
+        status='received',
+    )
+
+    # In-app notification for logged-in users
+    if applicant:
+        Notification.objects.create(
+            user=applicant,
+            message=(
+                f'✅ Your application for "{job.title}" has been received '
+                f'and is currently under review. We\'ll be in touch within 5 business days.'
+            ),
+            notification_type='job_application',
+            link='/jobs/',
+        )
+        application.notification_sent = True
+        application.save()
+
+    # Email confirmation (console backend in dev)
+    try:
+        send_mail(
+            subject=f'Application Received — {job.title}',
+            message=(
+                f'Hi {first_name},\n\n'
+                f'Thank you for applying for the {job.title} position at {job.organisation_name}.\n\n'
+                f'Your application has been received and is currently under review. '
+                f'We will be in touch within 5 business days.\n\n'
+                f'Application summary:\n'
+                f'  Position : {job.title}\n'
+                f'  Certificate : {cert_number}\n'
+                f'  Status : Under Review\n\n'
+                f'Best regards,\nThe LearnPulse Team\nhello@learnpulse.online'
+            ),
+            from_email='LearnPulse Jobs <noreply@learnpulse.online>',
+            recipient_list=[email],
+            fail_silently=True,
+        )
+    except Exception:
+        pass
+
+    return JsonResponse({
+        'success': True,
+        'message': (
+            f'Your application for "{job.title}" has been submitted successfully! '
+            f'A confirmation has been sent to {email}. '
+            f'We review all applications within 5 business days.'
+        ),
+    })
+
+
+def verify_certificate(request, cert_number):
+    """Public certificate verification page."""
+    cert_number = cert_number.upper()
+    try:
+        cert = Certificate.objects.select_related('user', 'module').get(cert_number=cert_number)
+    except Certificate.DoesNotExist:
+        cert = None
+    return render(request, 'certificate.html', {
+        'cert': cert,
+        'cert_number': cert_number,
+    })
+
+
+@login_required
+def my_certificates(request):
+    """Show all certificates earned by the logged-in user."""
+    certificates = Certificate.objects.filter(
+        user=request.user, is_valid=True
+    ).select_related('module')
+
+    # Mark notifications related to certificates as read
+    Notification.objects.filter(
+        user=request.user,
+        notification_type='certificate_issued',
+        is_read=False,
+    ).update(is_read=True)
+
+    # Jobs the user qualifies for
+    certified_module_ids = set(certificates.values_list('module_id', flat=True))
+    qualified_jobs = []
+    for job in JobPosting.objects.filter(is_active=True).prefetch_related('required_modules'):
+        req = list(job.required_modules.values_list('id', flat=True))
+        if not req or any(mid in certified_module_ids for mid in req):
+            qualified_jobs.append(job)
+
+    return render(request, 'my_certificates.html', {
+        'certificates': certificates,
+        'qualified_jobs': qualified_jobs,
+    })
+
+
+@login_required
+def notifications_json(request):
+    """Return unread notification count + recent notifications as JSON."""
+    notifs = Notification.objects.filter(user=request.user).order_by('-created_at')[:10]
+    unread_count = notifs.filter(is_read=False).count()
+    data = [
+        {
+            'id': n.id,
+            'message': n.message,
+            'type': n.notification_type,
+            'is_read': n.is_read,
+            'link': n.link,
+            'created_at': n.created_at.strftime('%b %d, %Y'),
+        }
+        for n in notifs
+    ]
+    return JsonResponse({'unread_count': unread_count, 'notifications': data})
+
+
+@login_required
+def mark_notifications_read(request):
+    """Mark all notifications as read."""
+    if request.method == 'POST':
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'success': True})
+
+
 # ── Achievement helper ──────────────────────────────────────────────────────
 
 def check_achievements(user, challenge):
@@ -801,8 +1151,8 @@ def check_achievements(user, challenge):
         UserAchievement.objects.get_or_create(user=user, achievement=achievement)
 
     user_progress = UserProgress.objects.get(user=user, module=challenge.module)
-    total_challenges = challenge.module.challenges.count()
-    if user_progress.challenges_completed == total_challenges:
+    total_challenges = challenge.module.challenges.filter(is_active=True).count()
+    if total_challenges > 0 and user_progress.challenges_completed >= total_challenges:
         achievement, _ = Achievement.objects.get_or_create(
             achievement_type='module_complete',
             defaults={
@@ -814,3 +1164,19 @@ def check_achievements(user, challenge):
         UserAchievement.objects.get_or_create(user=user, achievement=achievement)
         leaderboard.modules_completed += 1
         leaderboard.save()
+
+        # Issue certificate on first module completion
+        cert, cert_created = Certificate.objects.get_or_create(
+            user=user, module=challenge.module
+        )
+        if cert_created:
+            Notification.objects.create(
+                user=user,
+                message=(
+                    f'🎓 Certificate issued for "{challenge.module.title}"! '
+                    f'Your certificate number is {cert.cert_number}. '
+                    f'You can now apply for AI jobs on the Jobs board.'
+                ),
+                notification_type='certificate_issued',
+                link='/my-certificates/',
+            )

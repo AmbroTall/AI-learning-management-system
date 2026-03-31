@@ -6,6 +6,7 @@ from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
+    Certificate, JobPosting, JobApplication, Notification,
 )
 
 
@@ -212,6 +213,122 @@ class SubscriptionAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'company_ref', 'transaction_token']
     readonly_fields = ['company_ref', 'transaction_token', 'created_at']
     date_hierarchy = 'created_at'
+
+
+# ── Jobs & Certification admins ────────────────────────────────────────────
+
+
+@admin.register(Certificate)
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ['cert_number', 'user', 'module', 'issued_at', 'is_valid']
+    list_filter = ['module', 'is_valid']
+    search_fields = ['cert_number', 'user__username', 'user__email']
+    readonly_fields = ['cert_number', 'issued_at']
+    date_hierarchy = 'issued_at'
+    ordering = ['-issued_at']
+
+    def has_add_permission(self, request):
+        # Certificates are auto-generated; prevent manual creation to avoid cert_number issues
+        return request.user.is_superuser
+
+
+class RequiredModuleInline(admin.TabularInline):
+    model = JobPosting.required_modules.through
+    extra = 1
+    verbose_name = 'Required Module'
+    verbose_name_plural = 'Required Modules'
+
+
+@admin.register(JobPosting)
+class JobPostingAdmin(admin.ModelAdmin):
+    list_display = [
+        'title', 'organisation_name', 'job_type', 'contract_type',
+        'pay_range_display', 'application_count', 'spots_available', 'order', 'is_active',
+    ]
+    list_filter = ['job_type', 'contract_type', 'is_active']
+    search_fields = ['title', 'description', 'organisation_name']
+    filter_horizontal = ['required_modules']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', '-created_at']
+    readonly_fields = ['application_count', 'created_at']
+
+    fieldsets = (
+        ('Job Details', {
+            'fields': ('title', 'icon_emoji', 'organisation_name', 'description', 'tags'),
+        }),
+        ('Type & Pay', {
+            'fields': ('job_type', 'contract_type', 'pay_min', 'pay_max', 'pay_period', 'pay_note'),
+        }),
+        ('Requirements', {
+            'fields': ('required_modules',),
+        }),
+        ('Availability', {
+            'fields': ('spots_available', 'order', 'is_active'),
+        }),
+        ('Stats', {
+            'fields': ('application_count', 'created_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+    def pay_range_display(self, obj):
+        return obj.pay_range_display
+    pay_range_display.short_description = 'Pay Range'
+
+    def application_count(self, obj):
+        count = obj.application_count
+        url = f'/admin/learning/jobapplication/?job__id__exact={obj.id}'
+        return format_html('<a href="{}">{} applications</a>', url, count)
+    application_count.short_description = 'Applications'
+
+
+@admin.register(JobApplication)
+class JobApplicationAdmin(admin.ModelAdmin):
+    list_display = [
+        'first_name', 'last_name', 'email', 'job', 'cert_display',
+        'status', 'notification_sent', 'created_at',
+    ]
+    list_filter = ['status', 'job', 'notification_sent']
+    search_fields = [
+        'first_name', 'last_name', 'email',
+        'certificate__cert_number', 'job__title',
+    ]
+    readonly_fields = ['certificate', 'applicant', 'created_at']
+    list_editable = ['status']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+
+    fieldsets = (
+        ('Applicant', {
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'applicant'),
+        }),
+        ('Application', {
+            'fields': ('job', 'certificate', 'cover_note', 'status', 'notification_sent'),
+        }),
+        ('Meta', {
+            'fields': ('created_at',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    def cert_display(self, obj):
+        if obj.certificate:
+            return obj.certificate.cert_number
+        return '—'
+    cert_display.short_description = 'Certificate'
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'short_message', 'notification_type', 'is_read', 'created_at']
+    list_filter = ['notification_type', 'is_read']
+    search_fields = ['user__username', 'message']
+    readonly_fields = ['created_at']
+    date_hierarchy = 'created_at'
+
+    def short_message(self, obj):
+        return obj.message[:80]
+    short_message.short_description = 'Message'
 
 
 # Make User searchable for autocomplete_fields

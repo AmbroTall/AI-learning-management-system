@@ -32,7 +32,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid md:grid-cols-4 gap-6 mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
         <div class="glass-effect rounded-xl p-6 hover-lift">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-gray-400">Total Points</span>
@@ -57,72 +57,56 @@
             <div class="text-4xl font-bold text-orange-400">{{ leaderboard.current_streak }}</div>
         </div>
 
-        <div class="glass-effect rounded-xl p-6 hover-lift">
+        <a href="{% url 'my_certificates' %}" class="glass-effect rounded-xl p-6 hover-lift block border border-transparent hover:border-cyan-500/30 transition-colors">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-gray-400">Progress</span>
-                <span class="text-3xl">📊</span>
+                <span class="text-gray-400">Certificates</span>
+                <span class="text-3xl">🎓</span>
             </div>
-            <div class="text-4xl font-bold text-green-400">{{ progress_percentage }}%</div>
-        </div>
+            <div class="text-4xl font-bold text-green-400">{{ user_certs.count }}</div>
+            {% if user_certs.count > 0 %}
+            <div class="text-xs text-cyan-400 mt-1">View →</div>
+            {% else %}
+            <div class="text-xs text-gray-500 mt-1">Complete a module</div>
+            {% endif %}
+        </a>
     </div>
 
-    <!-- ── FREE INTRO SECTION ─────────────────────────────────────── -->
-    {% if intro_modules %}
-    <div class="mb-12">
-        <div class="flex items-center gap-3 mb-6">
-            <h2 class="text-3xl font-bold">Introduction to AI</h2>
-            <span class="px-3 py-1 bg-cyan-500/15 text-cyan-400 rounded-full text-xs font-semibold uppercase tracking-wider">Free</span>
-        </div>
-        <p class="text-gray-400 mb-6">Start here — free reading lessons to get you grounded in AI before the hands-on modules.</p>
-
-        <div class="grid md:grid-cols-{% if intro_modules|length == 1 %}1{% else %}2{% endif %} gap-6">
-            {% for module in intro_modules %}
-            {% with progress=user_progress %}
-            <div class="glass-effect rounded-2xl p-8 hover-lift border border-cyan-500/20 relative overflow-hidden">
-                <!-- Subtle glow accent -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-2xl"></div>
-
-                <div class="flex items-start gap-4 mb-4">
-                    <span class="text-5xl">{{ module.icon }}</span>
-                    <div>
-                        <h3 class="text-2xl font-bold mb-1">{{ module.title }}</h3>
-                        <p class="text-gray-400 text-sm">{{ module.description|truncatewords:20 }}</p>
-                    </div>
+    <!-- ── JOBS FOMO BANNER ───────────────────────────────────────── -->
+    {% if open_jobs_count > 0 %}
+    <div class="mb-10">
+        {% if qualified_jobs > 0 %}
+        <div class="rounded-2xl overflow-hidden border border-cyan-500/30">
+            <div class="bg-gradient-to-r from-cyan-900/40 to-blue-900/40 p-6 flex flex-col sm:flex-row items-center gap-5">
+                <div class="text-5xl">🎯</div>
+                <div class="flex-1 text-center sm:text-left">
+                    <h3 class="text-xl font-bold text-white mb-1">
+                        You qualify for {{ qualified_jobs }} AI job{% if qualified_jobs != 1 %}s{% endif %}!
+                    </h3>
+                    <p class="text-gray-300 text-sm">Your certificates unlock real paid opportunities on the LearnPulse Jobs board.</p>
                 </div>
-
-                <!-- Progress bar -->
-                <div class="mb-5">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-400">Progress</span>
-                        <span class="text-cyan-400 font-semibold">
-                            {% for prog in user_progress %}
-                                {% if prog.module.id == module.id %}
-                                    {{ prog.challenges_completed }}/{{ module.challenges.count }}
-                                {% endif %}
-                            {% endfor %}
-                        </span>
-                    </div>
-                    <div class="w-full bg-white/10 rounded-full h-2">
-                        {% for prog in user_progress %}
-                            {% if prog.module.id == module.id %}
-                                {% widthratio prog.challenges_completed module.challenges.count 100 as pct %}
-                                <div class="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-400">⏱️ {{ module.duration_hours }} hours &nbsp;·&nbsp; {{ module.challenges.count }} lessons</span>
-                    <a href="{% url 'module_detail' module.id %}"
-                       class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle">
-                        Start Reading →
-                    </a>
-                </div>
+                <a href="{% url 'jobs' %}"
+                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border whitespace-nowrap">
+                    View Jobs →
+                </a>
             </div>
-            {% endwith %}
-            {% endfor %}
         </div>
+        {% else %}
+        <div class="rounded-2xl overflow-hidden border border-yellow-500/20">
+            <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-6 flex flex-col sm:flex-row items-center gap-5">
+                <div class="text-5xl">💼</div>
+                <div class="flex-1 text-center sm:text-left">
+                    <h3 class="text-xl font-bold text-white mb-1">
+                        {{ open_jobs_count }} AI job{% if open_jobs_count != 1 %}s{% endif %} waiting for certified graduates
+                    </h3>
+                    <p class="text-gray-300 text-sm">Complete your modules, earn your certificates, and unlock paid AI training roles — 100% remote.</p>
+                </div>
+                <a href="{% url 'jobs' %}"
+                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl font-bold hover-lift whitespace-nowrap">
+                    See Opportunities →
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 

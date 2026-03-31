@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Choose Your Plan — Ambrose AI{% endblock %}
+{% block title %}Choose Your Plan — LearnPulse{% endblock %}
+{% block meta_description %}Subscribe to LearnPulse and unlock all AI learning modules, 100+ challenges, AI-powered feedback, and a verified certificate. Plans from KES 1,300/month.{% endblock %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 py-16">
 
     <div class="text-center mb-12">
         <div class="text-5xl mb-4">🎯</div>
-        <h1 class="text-4xl font-bold gradient-text mb-3">
-            Unlock Your AI Potential
-        </h1>
+        <h1 class="text-4xl font-bold gradient-text mb-3">Unlock Your AI Potential</h1>
         <p class="text-gray-400 text-lg max-w-xl mx-auto">
-            Choose a plan and get instant access to all modules, 100+ challenges, and your personal AI learning tutor.
+            Get instant access to all modules, 100+ AI-evaluated challenges, and your verified certificate.
         </p>
 
         {% if user.is_authenticated %}
@@ -19,6 +18,13 @@
             Signed in as <span class="text-cyan-400">{{ user.username }}</span>
         </p>
         {% endif %}
+
+        <!-- Currency indicator -->
+        <div class="inline-flex items-center gap-2 mt-4 px-3 py-1.5 glass-effect rounded-full text-xs text-gray-400">
+            <span>🌍</span>
+            Showing prices in <span class="text-cyan-400 font-semibold ml-1">{{ currency }}</span>
+            <span class="text-gray-600">· based on your location</span>
+        </div>
     </div>
 
     {% if messages %}
@@ -33,11 +39,14 @@
     </div>
     {% endif %}
 
-    {% if plans %}
-    <div class="grid md:grid-cols-{{ plans|length }} gap-8 mb-12">
-        {% for plan in plans %}
-        <div class="glass-effect rounded-2xl p-8 border {% if plan.is_popular %}border-cyan-500/60{% else %}border-white/10{% endif %} relative transition hover:-translate-y-1">
-            {% if plan.is_popular %}
+    <!-- Error / loading banners -->
+    <div id="payError" class="hidden mb-6 p-4 bg-red-500/10 border border-red-500/30 text-red-300 rounded-xl text-sm"></div>
+
+    {% if plans_with_prices %}
+    <div class="grid md:grid-cols-{{ plans_with_prices|length }} gap-8 mb-12">
+        {% for item in plans_with_prices %}
+        <div class="glass-effect rounded-2xl p-8 border {% if item.plan.is_popular %}border-cyan-500/60{% else %}border-white/10{% endif %} relative transition hover:-translate-y-1">
+            {% if item.plan.is_popular %}
             <div class="absolute -top-4 left-1/2 -translate-x-1/2">
                 <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">
                     ⭐ Most Popular
@@ -46,49 +55,49 @@
             {% endif %}
 
             <div class="text-center mb-6">
-                <div class="text-2xl font-bold mb-1">{{ plan.name }}</div>
-                <div class="text-sm text-gray-500 capitalize">{{ plan.duration }}</div>
+                <div class="text-2xl font-bold mb-1">{{ item.plan.name }}</div>
+                <div class="text-sm text-gray-500 capitalize">{{ item.plan.duration }}</div>
             </div>
 
             <div class="text-center mb-8">
-                <span class="text-6xl font-bold gradient-text">{{ plan.price }}</span>
-                <span class="text-gray-400 ml-2">{{ plan.currency }}</span>
+                <span class="text-6xl font-bold gradient-text">
+                    {{ item.display_price|floatformat:0 }}
+                </span>
+                <span class="text-gray-400 ml-2 text-sm">{{ item.currency }}</span>
                 <div class="text-gray-500 text-sm mt-1">
-                    {% if plan.duration == 'yearly' %}billed once a year{% else %}billed monthly{% endif %}
+                    {% if item.plan.duration == 'yearly' %}billed once a year{% else %}billed monthly{% endif %}
                 </div>
             </div>
 
-            {% if plan.features %}
+            {% if item.plan.features %}
             <ul class="space-y-3 mb-8">
-                {% for feature in plan.features %}
+                {% for feature in item.plan.features %}
                 <li class="flex items-start gap-3 text-gray-300 text-sm">
-                    <span class="text-green-400 mt-0.5 shrink-0">✓</span>
-                    {{ feature }}
+                    <span class="text-green-400 mt-0.5 shrink-0">✓</span>{{ feature }}
                 </li>
                 {% endfor %}
             </ul>
             {% else %}
             <ul class="space-y-3 mb-8">
-                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> All 4 learning modules</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> All learning modules</li>
                 <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> 100+ interactive challenges</li>
                 <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> AI-powered feedback on every answer</li>
-                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> File upload &amp; voice input</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Verified certificate of completion</li>
+                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Access to the AI Jobs board</li>
                 <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Leaderboard &amp; achievement badges</li>
-                <li class="flex items-start gap-3 text-gray-300 text-sm"><span class="text-green-400">✓</span> Certificate of completion</li>
             </ul>
             {% endif %}
 
             {% if user.is_authenticated %}
-            <form method="post" action="{% url 'initiate_payment' plan.id %}">
-                {% csrf_token %}
-                <button type="submit"
-                        class="w-full py-4 {% if plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect{% endif %} rounded-xl font-bold text-lg hover-lift transition">
-                    Subscribe Now →
-                </button>
-            </form>
+            <button
+                onclick="subscribeWithPaystack({{ item.plan.id }}, {{ item.subunit_amount }}, '{{ item.currency }}', this)"
+                data-plan-id="{{ item.plan.id }}"
+                class="w-full py-4 {% if item.plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect border border-white/20{% endif %} rounded-xl font-bold text-lg hover-lift transition">
+                Subscribe Now →
+            </button>
             {% else %}
             <a href="{% url 'register' %}"
-               class="block w-full py-4 text-center {% if plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect{% endif %} rounded-xl font-bold text-lg hover-lift">
+               class="block w-full py-4 text-center {% if item.plan.is_popular %}bg-gradient-to-r from-cyan-500 to-blue-500 neon-border{% else %}glass-effect border border-white/20{% endif %} rounded-xl font-bold text-lg hover-lift">
                 Create Account →
             </a>
             {% endif %}
@@ -97,14 +106,11 @@
     </div>
 
     {% else %}
-    <!-- No plans configured yet -->
     <div class="glass-effect rounded-2xl p-12 text-center mb-12">
         <div class="text-5xl mb-4">⚙️</div>
         <h2 class="text-2xl font-bold mb-3">Plans Coming Soon</h2>
-        <p class="text-gray-400 mb-6">
-            We're configuring subscription plans. In the meantime, contact us to get started.
-        </p>
-        <a href="mailto:hello@ambroseai.com"
+        <p class="text-gray-400 mb-6">We're configuring subscription plans. In the meantime, contact us to get started.</p>
+        <a href="mailto:hello@learnpulse.online"
            class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift">
             Contact Us →
         </a>
@@ -116,10 +122,10 @@
         <div class="text-3xl mb-3">🏢</div>
         <h3 class="text-xl font-bold mb-2">Training a team or organisation?</h3>
         <p class="text-gray-400 text-sm mb-4 max-w-lg mx-auto">
-            We offer custom deals for schools, companies, and training providers —
+            Custom deals for schools, companies, and training providers —
             bulk seats, admin controls, and dedicated support.
         </p>
-        <a href="mailto:hello@ambroseai.com"
+        <a href="mailto:hello@learnpulse.online"
            class="inline-block px-6 py-2 glass-effect rounded-lg text-sm font-semibold hover-lift">
             Get Organisation Pricing →
         </a>
@@ -131,4 +137,69 @@
         <a href="{% url 'login' %}" class="text-cyan-400 hover:underline">Already have a subscription? Sign in</a>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Paystack inline JS -->
+<script src="https://js.paystack.co/v2/inline.js"></script>
+
+<script>
+    async function subscribeWithPaystack(planId, subunitAmount, currency, btn) {
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Initialising…';
+
+        const errBox = document.getElementById('payError');
+        errBox.classList.add('hidden');
+
+        const csrf = document.cookie.split('; ')
+            .find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+
+        let data;
+        try {
+            const resp = await fetch(`/subscribe/initiate/${planId}/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({
+                    currency: currency,
+                    localized_amount: subunitAmount / 100,
+                }),
+            });
+            data = await resp.json();
+        } catch (err) {
+            errBox.textContent = 'Network error. Please check your connection and try again.';
+            errBox.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
+        }
+
+        if (!data.reference || !data.public_key) {
+            errBox.textContent = data.error || 'Payment initialisation failed. Please try again.';
+            errBox.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
+        }
+
+        const handler = PaystackPop.setup({
+            key: data.public_key,
+            email: data.email,
+            amount: data.amount,
+            currency: data.currency,
+            ref: data.reference,
+            metadata: { plan: data.plan_name },
+            onSuccess: function (transaction) {
+                btn.textContent = 'Verifying payment…';
+                window.location.href = `/payments/${data.company_ref}/`;
+            },
+            onCancel: function () {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            },
+        });
+
+        handler.openIframe();
+    }
+</script>
 {% endblock %}

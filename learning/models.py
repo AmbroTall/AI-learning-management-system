@@ -1,9 +1,19 @@
 import uuid
+import random
+import string
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.text import slugify
+
+
+def _generate_cert_number():
+    """Generate a unique certificate number like LP-2026-AB12CD34."""
+    year = timezone.now().year
+    chars = string.ascii_uppercase + string.digits
+    suffix = ''.join(random.choices(chars, k=8))
+    return f"LP-{year}-{suffix}"
 
 class Module(models.Model):
     """Learning modules in the curriculum"""
@@ -303,3 +313,146 @@ class Subscription(models.Model):
             self.status == 'active'
             and (self.end_date is None or self.end_date > timezone.now())
         )
+
+
+# ── Jobs & Certification models ─────────────────────────────────────────────
+
+
+class Certificate(models.Model):
+    """Issued automatically when a user completes all challenges in a module."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='certificates')
+    cert_number = models.CharField(max_length=30, unique=True, blank=True)
+    issued_at = models.DateTimeField(auto_now_add=True)
+    is_valid = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ['user', 'module']
+        ordering = ['-issued_at']
+
+    def __str__(self):
+        return f"{self.cert_number} — {self.user.username} / {self.module.title}"
+
+    def save(self, *args, **kwargs):
+        if not self.cert_number:
+            # Retry until we get a unique number (collision is astronomically rare)
+            for _ in range(10):
+                candidate = _generate_cert_number()
+                if not Certificate.objects.filter(cert_number=candidate).exists():
+                    self.cert_number = candidate
+                    break
+        super().save(*args, **kwargs)
+
+
+class JobPosting(models.Model):
+    JOB_TYPE_CHOICES = [
+        ('remote', 'Remote'),
+        ('hybrid', 'Hybrid'),
+        ('onsite', 'On-site'),
+    ]
+    CONTRACT_CHOICES = [
+        ('contract', 'Contract'),
+        ('full_time', 'Full-time'),
+        ('part_time', 'Part-time'),
+    ]
+    PAY_PERIOD_CHOICES = [
+        ('hour', '/hr'),
+        ('month', '/month'),
+        ('year', '/year'),
+    ]
+
+    title = models.CharField(max_length=200)
+    icon_emoji = models.CharField(max_length=10, default='💼')
+    organisation_name = models.CharField(max_length=200, default='LearnPulse · AI Training Division')
+    description = models.TextField()
+    job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES, default='remote')
+    contract_type = models.CharField(max_length=20, choices=CONTRACT_CHOICES, default='contract')
+    pay_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pay_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pay_period = models.CharField(max_length=10, choices=PAY_PERIOD_CHOICES, default='hour')
+    pay_note = models.CharField(max_length=100, blank=True, help_text='e.g. "Flexible hours"')
+    tags = models.JSONField(default=list, help_text='List of skill tag strings')
+    required_modules = models.ManyToManyField(
+        Module, blank=True, related_name='required_for_jobs',
+        help_text='Modules a student must have a certificate for to apply',
+    )
+    spots_available = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text='Leave blank for unlimited. Used for FOMO display.',
+    )
+    order = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def application_count(self):
+        return self.applications.count()
+
+    @property
+    def pay_range_display(self):
+        period = self.get_pay_period_display()
+        if self.pay_min and self.pay_max:
+            return f"${int(self.pay_min)} – ${int(self.pay_max)}{period}"
+        if self.pay_min:
+            return f"From ${int(self.pay_min)}{period}"
+        return "Competitive"
+
+
+class JobApplication(models.Model):
+    STATUS_CHOICES = [
+        ('received', 'Received'),
+        ('under_review', 'Under Review'),
+        ('shortlisted', 'Shortlisted'),
+        ('rejected', 'Rejected'),
+    ]
+
+    job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
+    applicant = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='job_applications',
+    )
+    certificate = models.ForeignKey(
+        Certificate, on_delete=models.SET_NULL, null=True,
+        related_name='applications',
+    )
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    cover_note = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='received')
+    notification_sent = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} → {self.job.title} ({self.status})"
+
+
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ('job_application', 'Job Application'),
+        ('certificate_issued', 'Certificate Issued'),
+        ('general', 'General'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    notification_type = models.CharField(max_length=30, choices=TYPE_CHOICES, default='general')
+    is_read = models.BooleanField(default=False)
+    link = models.CharField(max_length=500, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message[:60]}"

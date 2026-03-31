@@ -19,7 +19,7 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['learnpulse.online', 'www.learnpulse.online']
+ALLOWED_HOSTS = ['learnpulse.online', 'www.learnpulse.online', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'learning',
 ]
 
@@ -124,10 +125,21 @@ ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
 if not DEBUG and not ANTHROPIC_API_KEY:
     raise Exception('ANTHROPIC_API_KEY environment variable is not set')
 
-# Network Global Payment Gateway
-NETWORK_GLOBAL_ENDPOINT = os.getenv('NETWORK_GLOBAL_ENDPOINT', '')
-NETWORK_GLOBAL_COMPANY_TOKEN = os.getenv('NETWORK_GLOBAL_COMPANY_TOKEN', '')
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:8000')
+# ── Paystack Payment Gateway ───────────────────────────────────────────────
+PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY', '')
+PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY', '')
+
+# Site URL (used in SEO / absolute URLs)
+SITE_URL = os.getenv('SITE_URL', 'https://learnpulse.online')
+
+# Email — console backend for development; override EMAIL_* env vars in production
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'LearnPulse <noreply@learnpulse.online>')
 
 # Session settings
 SESSION_COOKIE_AGE = 86400  # 24 hours
