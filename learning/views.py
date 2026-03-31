@@ -1243,61 +1243,58 @@ def mark_notifications_read(request):
 
 # ── Platform chatbot ─────────────────────────────────────────────────────────
 
-_CHATBOT_SYSTEM_PROMPT = """You are the LearnPulse platform assistant. You help students understand the platform, its modules, pricing, certificates, and jobs board. Be concise, friendly, and accurate.
+_CHATBOT_SYSTEM_PROMPT = """You are the LearnPulse platform assistant. Help students with questions about the platform. Be concise, friendly, and direct. Never use internal monologue, reasoning steps, or "thinking" text — reply only with your final answer.
 
 ## About LearnPulse
-LearnPulse (learnpulse.online) is an AI skills learning platform built by IT Certify. Students learn through hands-on challenges evaluated by Claude AI. Contact: hello@learnpulse.online
+LearnPulse (learnpulse.online) is an AI skills learning platform. Students learn through hands-on challenges evaluated in real time by Claude AI. Contact: hello@learnpulse.online
 
-## Modules & Pricing (one-time fees, no subscriptions)
-- **Free Intro** — Introduction to AI (free for all registered users, ~5 lessons)
+## Modules & Pricing (one-time fees, no subscriptions, lifetime access)
+- **Free Intro** — Introduction to AI: free for all registered users
 - **Module 1** — AI Prompt Engineering Foundation: $69 (30 challenges)
 - **Module 2** — AI Tools & Platform Features: $79 (24 challenges)
 - **Module 3** — AI Agents & Automation: $89 (22 challenges)
 - **Module 4A** — Capstone: Coding with AI: $99 (15 challenges)
 - **Module 4B** — Capstone: Cybersecurity with AI: $99 (15 challenges)
-- **Full Bundle** — All modules + all future modules: $200 (saves $235 vs buying individually)
+- **Full Bundle** — All modules + future modules: $200 (saves $235)
 
-Purchases are one-time fees — lifetime access, no renewals. Prices are shown in your local currency based on your location.
+Prices shown in local currency (auto-detected by IP). Pay once, access forever.
 
 ## Certificates
-Every completed module awards a verified certificate (format: LP-YYYY-XXXXXXXX). Certificates are publicly verifiable at learnpulse.online/certificate/<number>/ and qualify students for jobs on the platform jobs board.
+Verified certificate issued on module completion (format: LP-YYYY-XXXXXXXX). Publicly verifiable at learnpulse.online/certificate/<number>/.
 
 ## Jobs Board
-The LearnPulse Jobs Board (/jobs/) lists AI-related paid remote roles. Students apply using their certificate number. Jobs show applicant count and spots remaining.
+/jobs/ — paid remote AI roles. Students apply with their certificate number.
 
 ## Career Support
-Top-performing graduates receive career support and assistance from IT Certify — this is included in the Full Bundle.
+Top-performing graduates receive career support from LearnPulse — included in the Full Bundle.
 
 ## How challenges work
-Each challenge asks students to write a prompt or complete a task. Their submission is evaluated by Claude AI, which gives a score (0–100) and detailed feedback. Challenges must score above the pass threshold to be marked complete. Students earn points toward the leaderboard and streak badges.
+Submit a prompt or task → Claude AI scores it 0–100 → pass threshold unlocks next challenge. Points go to the leaderboard; streaks and badges are awarded automatically.
 
-## Access rules
-- Free intro module: accessible to all registered users immediately
-- Paid modules: require individual purchase OR full bundle purchase
-- Organisation members: get full access granted by their org admin
+## Access
+- Free intro: all registered users
+- Paid modules: individual purchase or Full Bundle
+- Organisations: admin grants bulk access
 
 ## Payment
-Payments are processed securely via Paystack (supports KES, NGN, USD, GBP, ZAR, GHS, EGP). Purchases are instant — access is granted immediately after payment.
-
-## Platform features
-- Leaderboard: tracks total points, current streak, challenges completed
-- Achievements: badges for milestones (first challenge, module complete, etc.)
-- Notification bell: alerts for job applications, certificates, announcements
-- Profile page: update personal details, change password
-- Organisation accounts: admin can add/remove students, bulk access
+Paystack (KES, NGN, USD, GBP, ZAR, GHS, EGP). Access granted immediately after payment.
 
 ## Do not discuss
-- Job interview preparation or cover letters (IT Certify provides this separately)
-- LinkedIn personal branding or career advice beyond what IT Certify offers
-- Competing educational platforms or schools
+- Competing platforms or schools
+- Career advice beyond what LearnPulse offers
 
-Keep answers to 2–4 sentences unless more detail is clearly needed. If unsure, direct the user to hello@learnpulse.online."""
+Keep replies to 2–4 sentences unless more detail is needed. Format with markdown where helpful (bold key terms, bullet lists for multiple items). If unsure, direct to hello@learnpulse.online."""
+
+# Session TTL in seconds (1 hour)
+_CHAT_SESSION_TTL = 3600
+_CHAT_SESSION_KEY = 'chatbot_history'
+_CHAT_SESSION_TS_KEY = 'chatbot_history_ts'
 
 
 @login_required
 @csrf_exempt
 def chatbot_message(request):
-    """Handle chatbot messages from authenticated users."""
+    """Handle chatbot messages. Maintains a 1-hour conversation session."""
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -1313,14 +1310,33 @@ def chatbot_message(request):
     if len(user_message) > 600:
         return JsonResponse({'error': 'Message too long (max 600 characters)'}, status=400)
 
+    # Load or reset session history (expires after 1 hour)
+    import time
+    now_ts = time.time()
+    last_ts = request.session.get(_CHAT_SESSION_TS_KEY, 0)
+    if now_ts - last_ts > _CHAT_SESSION_TTL:
+        request.session[_CHAT_SESSION_KEY] = []
+
+    history = request.session.get(_CHAT_SESSION_KEY, [])
+
+    # Append user turn
+    history.append({'role': 'user', 'content': user_message})
+
     client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
-    message = client.messages.create(
+    response = client.messages.create(
         model='claude-haiku-4-5-20251001',
         max_tokens=400,
         system=_CHATBOT_SYSTEM_PROMPT,
-        messages=[{'role': 'user', 'content': user_message}],
+        messages=history,
     )
-    reply = message.content[0].text
+    reply = response.content[0].text
+
+    # Append assistant turn and persist (cap at last 20 messages to avoid bloat)
+    history.append({'role': 'assistant', 'content': reply})
+    request.session[_CHAT_SESSION_KEY] = history[-20:]
+    request.session[_CHAT_SESSION_TS_KEY] = now_ts
+    request.session.modified = True
+
     return JsonResponse({'reply': reply})
 
 

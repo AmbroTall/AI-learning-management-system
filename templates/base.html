@@ -672,12 +672,19 @@
     padding: 9px 13px;
     border-radius: 14px;
     font-size: 0.82rem;
-    line-height: 1.5;
-    white-space: pre-wrap;
+    line-height: 1.6;
 }
 .cb-msg.bot { align-self: flex-start; background: rgba(255,255,255,0.07); color: #e2e8f0; border-radius: 14px 14px 14px 4px; }
-.cb-msg.user { align-self: flex-end; background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(59,130,246,0.2)); color: #e2e8f0; border-radius: 14px 14px 4px 14px; }
-.cb-msg.typing { color: #64748b; font-style: italic; }
+.cb-msg.user { align-self: flex-end; background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(59,130,246,0.2)); color: #e2e8f0; border-radius: 14px 14px 4px 14px; white-space: pre-wrap; }
+.cb-msg.typing { color: #64748b; font-style: italic; align-self: flex-start; }
+/* Markdown inside bot bubbles */
+.cb-msg.bot strong { color: #22d3ee; font-weight: 600; }
+.cb-msg.bot em { color: #a5b4fc; font-style: italic; }
+.cb-msg.bot ul, .cb-msg.bot ol { margin: 6px 0 4px 16px; }
+.cb-msg.bot li { margin: 2px 0; }
+.cb-msg.bot p { margin: 4px 0; }
+.cb-msg.bot code { background: rgba(255,255,255,0.1); border-radius: 4px; padding: 1px 5px; font-size: 0.78rem; font-family: 'Fira Code', monospace; }
+.cb-msg.bot a { color: #22d3ee; text-decoration: underline; }
 #chatbotForm {
     display: flex;
     gap: 8px;
@@ -751,9 +758,23 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 (function() {
     const CSRF = () => document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+
+    // Configure marked: safe, no syntax highlighting needed here
+    if (window.marked) {
+        marked.setOptions({ breaks: true, gfm: true });
+    }
+
+    function renderMarkdown(text) {
+        if (window.marked) {
+            return marked.parse(text);
+        }
+        // Fallback: escape HTML and preserve line breaks
+        return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    }
 
     window.toggleChatbot = function() {
         const win = document.getElementById('chatbotWindow');
@@ -767,16 +788,16 @@
 
     window.sendChatbotMessage = async function(e) {
         e.preventDefault();
-        const input  = document.getElementById('chatbotInput');
-        const send   = document.getElementById('chatbotSend');
-        const msgs   = document.getElementById('chatbotMessages');
-        const text   = input.value.trim();
+        const input = document.getElementById('chatbotInput');
+        const send  = document.getElementById('chatbotSend');
+        const msgs  = document.getElementById('chatbotMessages');
+        const text  = input.value.trim();
         if (!text) return;
 
         input.value = '';
         send.disabled = true;
 
-        // User bubble
+        // User bubble (plain text)
         const userBubble = document.createElement('div');
         userBubble.className = 'cb-msg user';
         userBubble.textContent = text;
@@ -784,8 +805,8 @@
 
         // Typing indicator
         const typing = document.createElement('div');
-        typing.className = 'cb-msg bot typing';
-        typing.textContent = 'Thinking…';
+        typing.className = 'cb-msg typing';
+        typing.textContent = '●  ●  ●';
         msgs.appendChild(typing);
         msgs.scrollTop = msgs.scrollHeight;
 
@@ -797,9 +818,11 @@
             });
             const data = await res.json();
             typing.remove();
+
             const botBubble = document.createElement('div');
             botBubble.className = 'cb-msg bot';
-            botBubble.textContent = data.reply || data.error || 'Sorry, something went wrong.';
+            const replyText = data.reply || data.error || 'Sorry, something went wrong.';
+            botBubble.innerHTML = renderMarkdown(replyText);
             msgs.appendChild(botBubble);
         } catch {
             typing.remove();
