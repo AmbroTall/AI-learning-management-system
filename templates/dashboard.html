@@ -19,13 +19,19 @@
             <span class="px-4 py-1.5 bg-purple-500/15 text-purple-300 rounded-full text-sm font-semibold">
                 🏢 {{ org_membership.organisation.name }} — Organisation Member
             </span>
-            {% elif active_subscription %}
+            {% elif has_bundle %}
             <span class="px-4 py-1.5 bg-green-500/15 text-green-400 rounded-full text-sm font-semibold">
-                ✅ Active Subscription — expires {{ active_subscription.end_date|date:"d M Y" }}
+                🏆 Full Bundle — Lifetime Access
             </span>
+            {% elif has_any_purchase %}
+            {% for sub in active_purchases %}
+            <span class="px-4 py-1.5 bg-cyan-500/15 text-cyan-400 rounded-full text-sm font-semibold">
+                ✅ {{ sub.plan.name }}
+            </span>
+            {% endfor %}
             {% else %}
             <span class="px-4 py-1.5 bg-orange-500/15 text-orange-400 rounded-full text-sm font-semibold">
-                🔓 Free Account
+                🔓 No modules purchased yet
             </span>
             {% endif %}
         </div>
@@ -110,24 +116,24 @@
     </div>
     {% endif %}
 
-    <!-- ── SUBSCRIPTION GATE BANNER (shown only when no access) ──── -->
-    {% if not user_has_access and paid_modules %}
+    <!-- ── PURCHASE BANNER (shown when no purchases yet) ──── -->
+    {% if not has_any_purchase and not org_membership and paid_modules %}
     <div class="mb-10 rounded-2xl overflow-hidden">
         <div class="bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/30 p-8 flex flex-col md:flex-row items-center gap-6">
             <div class="flex-1">
-                <h3 class="text-2xl font-bold mb-2">Unlock the Full Programme</h3>
+                <h3 class="text-2xl font-bold mb-2">Unlock Your First Module</h3>
                 <p class="text-gray-300 mb-1">
-                    Subscribe to access all hands-on AI modules — prompt engineering, automation,
-                    coding with AI, cybersecurity, and more.
+                    Purchase any module individually or get the full bundle at $200.
+                    One-time fee — yours forever.
                 </p>
-                <p class="text-sm text-gray-400">Already have an account with an organisation? Ask your admin to add you.</p>
+                <p class="text-sm text-gray-400">Already part of an organisation? Ask your admin to add you.</p>
             </div>
             <div class="flex-shrink-0 flex flex-col items-center gap-3">
                 <a href="{% url 'subscription_plans' %}"
                    class="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl font-bold text-lg hover-lift neon-border">
-                    View Plans →
+                    See Pricing →
                 </a>
-                <span class="text-xs text-gray-500">Cancel any time</span>
+                <span class="text-xs text-gray-500">No subscriptions · Pay once</span>
             </div>
         </div>
     </div>
@@ -138,10 +144,12 @@
     <div class="mb-12">
         <div class="flex items-center gap-3 mb-6">
             <h2 class="text-3xl font-bold">Learning Modules</h2>
-            {% if user_has_access %}
-            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold uppercase tracking-wider">Unlocked</span>
+            {% if has_bundle %}
+            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold uppercase tracking-wider">Full Bundle</span>
+            {% elif has_any_purchase %}
+            <span class="px-3 py-1 bg-cyan-500/15 text-cyan-400 rounded-full text-xs font-semibold uppercase tracking-wider">Purchased modules unlocked</span>
             {% else %}
-            <span class="px-3 py-1 bg-orange-500/15 text-orange-400 rounded-full text-xs font-semibold uppercase tracking-wider">Subscription Required</span>
+            <span class="px-3 py-1 bg-orange-500/15 text-orange-400 rounded-full text-xs font-semibold uppercase tracking-wider">Purchase to unlock</span>
             {% endif %}
         </div>
 
@@ -149,16 +157,12 @@
             {% for item in modules_with_status %}
             {% if item.module.module_type != 'intro' %}
             <div class="glass-effect rounded-2xl p-8 hover-lift neon-border relative
-                {% if not user_has_access or not item.is_unlocked %}opacity-60{% endif %}">
+                {% if not item.is_purchased %}opacity-60{% endif %}">
 
                 <!-- Lock overlay badges -->
-                {% if not user_has_access %}
+                {% if not item.is_purchased %}
                 <div class="absolute top-4 right-4 bg-indigo-500/20 text-indigo-400 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1">
-                    💳 Subscribe to Unlock
-                </div>
-                {% elif not item.is_unlocked %}
-                <div class="absolute top-4 right-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1">
-                    🔒 Locked
+                    💳 Purchase to Unlock
                 </div>
                 {% endif %}
 
@@ -170,11 +174,11 @@
                     </div>
                 </div>
 
-                <!-- Prerequisite notice (only meaningful if subscribed but still locked) -->
-                {% if user_has_access and not item.is_unlocked and item.module.prerequisite %}
-                <div class="mb-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-                    <p class="text-sm text-orange-400">
-                        🎯 Complete "<strong>{{ item.module.prerequisite.title }}</strong>" to unlock
+                <!-- Not purchased notice -->
+                {% if not item.is_purchased %}
+                <div class="mb-4 p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-lg">
+                    <p class="text-sm text-indigo-400">
+                        💳 <a href="{% url 'subscription_plans' %}" class="underline hover:text-indigo-300">Purchase this module</a> or the <a href="{% url 'subscription_plans' %}" class="underline hover:text-indigo-300">full bundle</a> to get access.
                     </p>
                 </div>
                 {% endif %}
@@ -203,20 +207,15 @@
 
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-400">⏱️ {{ item.module.duration_hours }} hours</span>
-                    {% if user_has_access and item.is_unlocked %}
+                    {% if item.is_purchased %}
                     <a href="{% url 'module_detail' item.module.id %}"
                        class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold hover-lift sparkle">
                         Start Learning →
                     </a>
-                    {% elif user_has_access and not item.is_unlocked %}
-                    <button disabled
-                       class="px-6 py-2 bg-gray-500/20 rounded-lg font-semibold cursor-not-allowed text-gray-500">
-                        🔒 Locked
-                    </button>
                     {% else %}
                     <a href="{% url 'subscription_plans' %}"
                        class="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg font-semibold hover-lift">
-                        Subscribe →
+                        Buy Now →
                     </a>
                     {% endif %}
                 </div>

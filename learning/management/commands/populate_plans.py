@@ -30,6 +30,62 @@ MODULE_PLANS = [
         ],
         'is_popular': False,
     },
+    {
+        'module_title_contains': 'AI Tools & Platform',
+        'name': 'Module 2 — AI Tools & Platform Features',
+        'price': 79,
+        'description': 'Master the full AI tool ecosystem — ChatGPT, Claude, Gemini, automation platforms and more.',
+        'features': [
+            '24 AI-evaluated challenges',
+            'AI Tools certificate',
+            'Platform comparison skills',
+            'Access to AI Jobs Board',
+            'Leaderboard & achievement badges',
+        ],
+        'is_popular': False,
+    },
+    {
+        'module_title_contains': 'Agents & Automation',
+        'name': 'Module 3 — AI Agents & Automation',
+        'price': 89,
+        'description': 'Move from using AI to deploying AI. Build agents, automate workflows, and design pipelines.',
+        'features': [
+            '22 AI-evaluated challenges',
+            'Automation & Agents certificate',
+            'Zapier, Make & n8n skills',
+            'Access to AI Jobs Board',
+            'Leaderboard & achievement badges',
+        ],
+        'is_popular': False,
+    },
+    {
+        'module_title_contains': 'Coding with AI',
+        'name': 'Module 4A — Capstone: Coding with AI',
+        'price': 99,
+        'description': 'Build a real AI-powered Python application from scratch. No prior coding experience required.',
+        'features': [
+            '15 project-based challenges',
+            'Coding with AI certificate',
+            'Working portfolio application',
+            'Access to AI Jobs Board',
+            'Leaderboard & achievement badges',
+        ],
+        'is_popular': False,
+    },
+    {
+        'module_title_contains': 'Cybersecurity with AI',
+        'name': 'Module 4B — Capstone: Cybersecurity with AI',
+        'price': 99,
+        'description': 'Complete a defensive security assessment portfolio using AI as your analysis tool.',
+        'features': [
+            '15 case-study-based challenges',
+            'Cybersecurity with AI certificate',
+            'Security assessment portfolio',
+            'Access to AI Jobs Board',
+            'Leaderboard & achievement badges',
+        ],
+        'is_popular': False,
+    },
 ]
 
 BUNDLE_PLAN = {

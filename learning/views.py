@@ -481,20 +481,18 @@ def dashboard(request):
     top_performers = Leaderboard.objects.all()[:10]
 
     modules_with_status = [
-        {'module': m, 'is_unlocked': m.is_unlocked_for_user(request.user)}
+        {'module': m, 'is_purchased': has_module_access(request.user, m)}
         for m in modules
     ]
 
     paid_modules = list(modules)
-    user_has_access = has_platform_access(request.user)
+    has_bundle = has_platform_access(request.user)  # bundle purchase
+    has_any_purchase = has_bundle or any(item['is_purchased'] for item in modules_with_status)
 
-    # Subscription info for banner
-    try:
-        active_sub = Subscription.objects.filter(
-            user=request.user, status='active'
-        ).latest('created_at')
-    except Subscription.DoesNotExist:
-        active_sub = None
+    # Purchase info for banner
+    active_purchases = Subscription.objects.filter(
+        user=request.user, status='active'
+    ).select_related('plan')
 
     try:
         org_membership = request.user.org_membership
@@ -516,7 +514,8 @@ def dashboard(request):
     context = {
         'modules': modules,
         'paid_modules': paid_modules,
-        'user_has_access': user_has_access,
+        'has_bundle': has_bundle,
+        'has_any_purchase': has_any_purchase,
         'modules_with_status': modules_with_status,
         'user_progress': user_progress,
         'leaderboard': leaderboard,
@@ -525,7 +524,7 @@ def dashboard(request):
         'total_challenges': total_challenges,
         'recent_achievements': recent_achievements,
         'top_performers': top_performers,
-        'active_subscription': active_sub,
+        'active_purchases': active_purchases,
         'org_membership': org_membership,
         'open_jobs_count': open_jobs_count,
         'user_certs': user_certs,
@@ -541,13 +540,6 @@ def module_detail(request, module_id):
     denied = _check_module_access(request, module)
     if denied:
         return denied
-
-    if not module.is_unlocked_for_user(request.user):
-        messages.error(
-            request,
-            f'You must complete "{module.prerequisite.title}" before accessing this module.'
-        )
-        return redirect('dashboard')
 
     challenges = Challenge.objects.filter(module=module, is_active=True)
     user_progress, _ = UserProgress.objects.get_or_create(
