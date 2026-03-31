@@ -6,7 +6,7 @@ from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
-    Certificate, JobPosting, JobApplication, Notification, ErrorLog,
+    Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
 )
 
 
@@ -329,6 +329,18 @@ class NotificationAdmin(admin.ModelAdmin):
     def short_message(self, obj):
         return obj.message[:80]
     short_message.short_description = 'Message'
+
+
+@admin.register(PlatformStat)
+class PlatformStatAdmin(admin.ModelAdmin):
+    list_display = ['learner_count', 'graduates_hired', 'completion_rate', 'updated_at']
+    fields = ['learner_count', 'graduates_hired', 'completion_rate']
+
+    def has_add_permission(self, request):
+        return not PlatformStat.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(ErrorLog)

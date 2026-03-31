@@ -191,12 +191,38 @@ class Leaderboard(models.Model):
     current_streak = models.IntegerField(default=0)
     longest_streak = models.IntegerField(default=0)
     last_activity_date = models.DateField(default=timezone.now)
-    
+    # Simulated/seeded entries used to populate the leaderboard before real users fill it
+    is_simulated = models.BooleanField(default=False, db_index=True)
+
     class Meta:
         ordering = ['-total_points', '-challenges_completed']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.total_points} points"
+
+
+class PlatformStat(models.Model):
+    """Singleton that stores platform-wide display statistics.
+    Updated daily by the tick_platform management command.
+    """
+    learner_count = models.IntegerField(
+        default=3200, help_text='Displayed learner count (real users + offset)'
+    )
+    graduates_hired = models.IntegerField(default=480)
+    completion_rate = models.IntegerField(default=87, help_text='Percentage 0-100')
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Platform Statistics'
+        verbose_name_plural = 'Platform Statistics'
+
+    def __str__(self):
+        return f"PlatformStat (learners={self.learner_count}, hired={self.graduates_hired})"
+
+    @classmethod
+    def get(cls):
+        stat, _ = cls.objects.get_or_create(id=1)
+        return stat
 
 
 # ── SaaS models ────────────────────────────────────────────────────────────

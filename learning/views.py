@@ -24,7 +24,7 @@ from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
-    Certificate, JobPosting, JobApplication, Notification, ErrorLog,
+    Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
 )
 
 
@@ -158,7 +158,13 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     plans = SubscriptionPlan.objects.filter(is_active=True)
-    return render(request, 'home.html', {'plans': plans})
+    stat = PlatformStat.get()
+    return render(request, 'home.html', {
+        'plans': plans,
+        'stat_learners': stat.learner_count,
+        'stat_hired': stat.graduates_hired,
+        'stat_completion': stat.completion_rate,
+    })
 
 
 def register(request):
@@ -608,11 +614,19 @@ def module_detail(request, module_id):
             'is_unlocked': challenge.is_unlocked_for_user(request.user),
         }
 
+    # FOMO data for the free intro module: show first paid module as the next step
+    next_paid_module = None
+    if module.is_free:
+        next_paid_module = Module.objects.filter(
+            is_active=True, is_free=False
+        ).order_by('order').first()
+
     context = {
         'module': module,
         'challenges': challenges,
         'user_progress': user_progress,
         'user_attempts': user_attempts,
+        'next_paid_module': next_paid_module,
     }
     return render(request, 'module_detail.html', context)
 
@@ -901,15 +915,18 @@ def submit_challenge(request, challenge_id):
 
 @login_required
 def leaderboard_view(request):
-    top_users = Leaderboard.objects.all()[:50]
-    user_leaderboard = Leaderboard.objects.get(user=request.user)
+    top_users = Leaderboard.objects.order_by('-total_points', '-challenges_completed')[:50]
+    user_leaderboard, _ = Leaderboard.objects.get_or_create(user=request.user)
     user_rank = Leaderboard.objects.filter(
         total_points__gt=user_leaderboard.total_points
     ).count() + 1
+    stat = PlatformStat.get()
     return render(request, 'leaderboard.html', {
         'top_users': top_users,
         'user_leaderboard': user_leaderboard,
         'user_rank': user_rank,
+        'total_participants': Leaderboard.objects.count(),
+        'stat_learners': stat.learner_count,
     })
 
 

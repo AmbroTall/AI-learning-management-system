@@ -119,7 +119,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
 <!-- ── Hero ───────────────────────────────────────────────────────────── -->
 <div class="section max-w-6xl mx-auto text-center pt-36 pb-24">
     <div class="inline-block px-4 py-1.5 glass-effect rounded-full text-xs text-cyan-400 font-semibold mb-6 reveal">
-        🚀 The complete AI skills programme · <span class="text-green-400">3,200+ learners enrolled</span>
+        🚀 The complete AI skills programme · <span class="text-green-400">{{ stat_learners|floatformat:0 }}+ learners enrolled</span>
     </div>
 
     <h1 class="text-5xl md:text-7xl font-bold mb-6 reveal" style="transition-delay:0.1s">
@@ -147,15 +147,15 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
     <!-- Stats bar -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 reveal" style="transition-delay:0.4s">
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">3,200+</div>
+            <div class="text-4xl font-bold gradient-text mb-1">{{ stat_learners }}+</div>
             <div class="text-gray-400 text-sm">Learners enrolled</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">87%</div>
+            <div class="text-4xl font-bold gradient-text mb-1">{{ stat_completion }}%</div>
             <div class="text-gray-400 text-sm">Completion rate</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
-            <div class="text-4xl font-bold gradient-text mb-1">480+</div>
+            <div class="text-4xl font-bold gradient-text mb-1">{{ stat_hired }}+</div>
             <div class="text-gray-400 text-sm">Graduates hired</div>
         </div>
         <div class="glass-effect rounded-2xl p-6">
@@ -484,15 +484,15 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
     <!-- Social proof strip -->
     <div class="mt-8 glass-effect rounded-xl p-5 flex flex-wrap justify-around gap-4 text-center reveal" style="transition-delay:0.2s">
         <div>
-            <div class="text-2xl font-bold gradient-text">3,200+</div>
+            <div class="text-2xl font-bold gradient-text">{{ stat_learners }}+</div>
             <div class="text-gray-500 text-xs">Enrolled learners</div>
         </div>
         <div>
-            <div class="text-2xl font-bold gradient-text">480+</div>
+            <div class="text-2xl font-bold gradient-text">{{ stat_hired }}+</div>
             <div class="text-gray-500 text-xs">AI jobs secured</div>
         </div>
         <div>
-            <div class="text-2xl font-bold gradient-text">87%</div>
+            <div class="text-2xl font-bold gradient-text">{{ stat_completion }}%</div>
             <div class="text-gray-500 text-xs">Complete the course</div>
         </div>
         <div>

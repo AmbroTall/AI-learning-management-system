@@ -1,77 +1,188 @@
 {% extends 'base.html' %}
 
-{% block title %}Leaderboard - AI Learning Platform{% endblock %}
+{% block title %}Leaderboard — LearnPulse{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<style>
+.rank-row { transition: background 0.15s; }
+.rank-row:hover { background: rgba(255,255,255,0.04); }
+.avatar-circle {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(129,140,248,0.2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #e2e8f0; flex-shrink: 0;
+}
+.medal-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e1b0e; }
+.medal-2 { background: linear-gradient(135deg, #9ca3af, #6b7280); color: #0f172a; }
+.medal-3 { background: linear-gradient(135deg, #f97316, #ea580c); color: #1e0a00; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="mb-12 text-center">
-        <h1 class="text-5xl font-bold mb-4 gradient-text">🏆 Leaderboard</h1>
-        <p class="text-xl text-gray-400">Top performers on the platform</p>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 glass-effect rounded-full text-xs text-yellow-400 font-semibold mb-4">
+            <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+            {{ total_participants }} learners competing · {{ stat_learners }}+ enrolled globally
+        </div>
+        <h1 class="text-5xl font-bold gradient-text mb-2">🏆 Leaderboard</h1>
+        <p class="text-gray-400">Top performers earn career support and recognition. Where do you rank?</p>
     </div>
-    
+
     <!-- Your Rank Card -->
-    <div class="glass-effect rounded-2xl p-8 mb-12 neon-border">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-sm text-gray-400 mb-1">Your Rank</div>
-                <div class="text-5xl font-bold gradient-text">#{{ user_rank }}</div>
+    <div class="glass-effect rounded-2xl p-6 mb-8 border border-cyan-500/20">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            <div class="avatar-circle text-2xl" style="width:56px;height:56px;">
+                {{ user.username|slice:":1"|upper }}
             </div>
-            <div class="text-right">
-                <div class="text-3xl font-bold text-cyan-400 mb-2">{{ user_leaderboard.total_points }}</div>
-                <div class="text-gray-400">{{ user_leaderboard.challenges_completed }} challenges completed</div>
+            <div class="flex-1 text-center sm:text-left">
+                <div class="text-xs text-gray-500 mb-0.5">Your position</div>
+                <div class="text-3xl font-bold gradient-text">#{{ user_rank }}</div>
+                <div class="text-sm text-gray-400 mt-1">{{ user.username }}</div>
+            </div>
+            <div class="grid grid-cols-3 gap-6 text-center">
+                <div>
+                    <div class="text-2xl font-bold text-cyan-400">{{ user_leaderboard.total_points }}</div>
+                    <div class="text-xs text-gray-500">Points</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-purple-400">{{ user_leaderboard.challenges_completed }}</div>
+                    <div class="text-xs text-gray-500">Challenges</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-orange-400">🔥{{ user_leaderboard.current_streak }}</div>
+                    <div class="text-xs text-gray-500">Streak</div>
+                </div>
             </div>
         </div>
+        {% if user_rank > 10 %}
+        <div class="mt-4 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-sm text-indigo-300 text-center">
+            💡 Complete more challenges to crack the top 10 — top finishers get career support from IT Certify.
+        </div>
+        {% elif user_rank <= 3 %}
+        <div class="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-sm text-yellow-300 text-center">
+            🌟 You're in the top 3! Keep going — you're qualifying for career support from IT Certify.
+        </div>
+        {% else %}
+        <div class="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-sm text-green-300 text-center">
+            🎯 Top 10! You're on track for career support. Push for the top 3 to stand out.
+        </div>
+        {% endif %}
     </div>
-    
-    <!-- Leaderboard Table -->
-    <div class="glass-effect rounded-2xl p-8">
+
+    <!-- Top 3 Podium -->
+    {% if top_users|length >= 3 %}
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <!-- 2nd place -->
+        {% with top_users.1 as p %}
+        <div class="glass-effect rounded-2xl p-5 text-center border border-white/10 mt-6">
+            <div class="text-3xl mb-2">🥈</div>
+            <div class="avatar-circle medal-2 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold text-sm truncate">{{ p.user.username }}</div>
+            <div class="text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+        </div>
+        {% endwith %}
+        <!-- 1st place -->
+        {% with top_users.0 as p %}
+        <div class="glass-effect rounded-2xl p-5 text-center border border-yellow-500/30 relative">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span class="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full text-xs font-bold text-black whitespace-nowrap">👑 #1</span>
+            </div>
+            <div class="text-3xl mb-2 mt-2">🥇</div>
+            <div class="avatar-circle medal-1 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold truncate">{{ p.user.username }}</div>
+            <div class="text-2xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+        </div>
+        {% endwith %}
+        <!-- 3rd place -->
+        {% with top_users.2 as p %}
+        <div class="glass-effect rounded-2xl p-5 text-center border border-white/10 mt-6">
+            <div class="text-3xl mb-2">🥉</div>
+            <div class="avatar-circle medal-3 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold text-sm truncate">{{ p.user.username }}</div>
+            <div class="text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+        </div>
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    <!-- Full Rankings Table -->
+    <div class="glass-effect rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-white/8 flex items-center justify-between">
+            <h2 class="font-bold text-lg">Full Rankings</h2>
+            <span class="text-xs text-gray-500">Top {{ top_users|length }} of {{ total_participants }}</span>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
-                    <tr class="border-b border-white/10">
-                        <th class="text-left py-4 px-4 text-gray-400 font-semibold">Rank</th>
-                        <th class="text-left py-4 px-4 text-gray-400 font-semibold">Username</th>
-                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Points</th>
-                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Challenges</th>
-                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Modules</th>
-                        <th class="text-center py-4 px-4 text-gray-400 font-semibold">Streak</th>
+                    <tr class="border-b border-white/8 text-xs text-gray-500 uppercase tracking-wider">
+                        <th class="text-left py-3 px-4 w-12">Rank</th>
+                        <th class="text-left py-3 px-4">Learner</th>
+                        <th class="text-center py-3 px-4">Points</th>
+                        <th class="text-center py-3 px-4 hidden sm:table-cell">Challenges</th>
+                        <th class="text-center py-3 px-4 hidden md:table-cell">Modules</th>
+                        <th class="text-center py-3 px-4 hidden sm:table-cell">Streak</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for performer in top_users %}
-                    <tr class="border-b border-white/5 hover:bg-white/5 transition {% if performer.user == user %}bg-cyan-500/10{% endif %}">
-                        <td class="py-4 px-4">
-                            <span class="text-2xl font-bold 
-                                {% if forloop.counter == 1 %}text-yellow-400
-                                {% elif forloop.counter == 2 %}text-gray-300
-                                {% elif forloop.counter == 3 %}text-orange-400
-                                {% else %}text-gray-500{% endif %}">
-                                #{{ forloop.counter }}
+                    {% for entry in top_users %}
+                    <tr class="rank-row border-b border-white/5
+                        {% if entry.user == user %}bg-cyan-500/8 border-cyan-500/20{% endif %}">
+                        <td class="py-3 px-4">
+                            {% if forloop.counter == 1 %}
+                            <span class="text-xl">🥇</span>
+                            {% elif forloop.counter == 2 %}
+                            <span class="text-xl">🥈</span>
+                            {% elif forloop.counter == 3 %}
+                            <span class="text-xl">🥉</span>
+                            {% else %}
+                            <span class="text-sm font-bold text-gray-500">#{{ forloop.counter }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex items-center gap-3">
+                                <div class="avatar-circle
+                                    {% if forloop.counter == 1 %}medal-1
+                                    {% elif forloop.counter == 2 %}medal-2
+                                    {% elif forloop.counter == 3 %}medal-3{% endif %}">
+                                    {{ entry.user.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-sm {% if entry.user == user %}text-cyan-400{% endif %}">
+                                        {{ entry.user.username }}
+                                        {% if entry.user == user %}<span class="text-xs text-cyan-500 ml-1">← you</span>{% endif %}
+                                    </div>
+                                    {% if entry.modules_completed > 0 %}
+                                    <div class="text-xs text-gray-600">{{ entry.modules_completed }} module{{ entry.modules_completed|pluralize }} completed</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="font-bold gradient-text">{{ entry.total_points }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center hidden sm:table-cell">
+                            <span class="text-cyan-400">{{ entry.challenges_completed }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center hidden md:table-cell">
+                            <span class="text-purple-400">{{ entry.modules_completed }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center hidden sm:table-cell">
+                            <span class="{% if entry.current_streak > 0 %}text-orange-400{% else %}text-gray-600{% endif %}">
+                                🔥 {{ entry.current_streak }}
                             </span>
                         </td>
-                        <td class="py-4 px-4">
-                            <div class="font-semibold text-lg {% if performer.user == user %}text-cyan-400{% endif %}">
-                                {{ performer.user.username }}
-                                {% if performer.user == user %}
-                                <span class="text-xs text-cyan-400">(You)</span>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="text-xl font-bold gradient-text">{{ performer.total_points }}</div>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="text-lg text-cyan-400">{{ performer.challenges_completed }}</div>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="text-lg text-purple-400">{{ performer.modules_completed }}</div>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="text-lg">
-                                <span class="{% if performer.current_streak > 0 %}text-orange-400{% else %}text-gray-500{% endif %}">
-                                    🔥 {{ performer.current_streak }}
-                                </span>
-                            </div>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-12 text-center text-gray-500">
+                            No entries yet — be the first!
                         </td>
                     </tr>
                     {% endfor %}
@@ -79,5 +190,17 @@
             </table>
         </div>
     </div>
+
+    <!-- Bottom FOMO CTA -->
+    <div class="mt-8 glass-effect rounded-2xl p-6 text-center border border-indigo-500/20">
+        <p class="text-gray-300 mb-3">
+            🚀 <strong>{{ stat_learners }}+ learners</strong> are actively competing. Top 3 finishers receive career support from IT Certify.
+        </p>
+        <a href="{% url 'dashboard' %}"
+           class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border">
+            Go Earn Points →
+        </a>
+    </div>
+
 </div>
 {% endblock %}
