@@ -69,18 +69,6 @@
             </button>
         </div>
 
-        <!-- Tips panel (shown while processing) -->
-        <div id="tipsPanel" class="hidden glass-effect rounded-2xl p-5 border border-cyan-500/20">
-            <div class="flex items-start gap-3">
-                <span class="text-2xl flex-shrink-0" id="tipIcon">💡</span>
-                <div>
-                    <div class="text-xs text-cyan-400 font-semibold uppercase tracking-wider mb-1">Did you know?</div>
-                    <div id="tipText" class="text-gray-300 text-sm leading-relaxed"></div>
-                </div>
-            </div>
-            <div class="mt-3 flex gap-1" id="tipDots"></div>
-        </div>
-        
         <!-- AI Response -->
         <div id="responseSection" class="glass-effect rounded-2xl p-4 sm:p-8 hidden">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
@@ -141,60 +129,7 @@ const scoreValue = document.getElementById('scoreValue');
 const scoreBar = document.getElementById('scoreBar');
 const feedbackText = document.getElementById('feedbackText');
 const passStatus = document.getElementById('passStatus');
-const tipsPanel = document.getElementById('tipsPanel');
-const tipText = document.getElementById('tipText');
-const tipIcon = document.getElementById('tipIcon');
-const tipDots = document.getElementById('tipDots');
 const streamingIndicator = document.getElementById('streamingIndicator');
-
-// ── Tips ────────────────────────────────────────────────────────────────────
-const TIPS = [
-    { icon: '🎯', text: 'Be specific about the format you want — ask for bullet points, numbered lists, or a table to get structured answers.' },
-    { icon: '🧠', text: 'Front-load your context. The more relevant background you give AI upfront, the less back-and-forth you need.' },
-    { icon: '📏', text: 'Set a word limit in your prompt to keep AI responses tight and focused — "in 150 words or fewer" works wonders.' },
-    { icon: '🎭', text: 'Assign a role: "Act as a senior software engineer with 10 years of Python experience" unlocks much richer responses.' },
-    { icon: '🔗', text: 'Break complex tasks into steps. Ask AI to think step-by-step to improve accuracy on multi-part problems.' },
-    { icon: '✏️', text: 'Tell AI what to avoid. "No jargon", "no passive voice", or "don\'t use the word innovative" sharpens the output.' },
-    { icon: '🔄', text: 'Iterate, don\'t start over. Build on AI\'s last response with "Now make it shorter" or "Add a section on X".' },
-    { icon: '📐', text: 'Use constraints creatively — a word limit, a forbidden phrase, or a required opening line forces more original output.' },
-    { icon: '🌍', text: 'Real-world context beats abstract requests. Share who your audience is and what action you want them to take.' },
-    { icon: '⚡', text: 'Ctrl + Enter submits your prompt quickly — no need to reach for the mouse.' },
-];
-
-let tipIndex = 0;
-let tipInterval = null;
-
-function buildDots(total, active) {
-    tipDots.innerHTML = '';
-    for (let i = 0; i < total; i++) {
-        const d = document.createElement('span');
-        d.className = `inline-block w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === active ? 'bg-cyan-400 w-3' : 'bg-white/20'}`;
-        tipDots.appendChild(d);
-    }
-}
-
-function showTip(index) {
-    const tip = TIPS[index];
-    tipIcon.textContent = tip.icon;
-    tipText.textContent = tip.text;
-    buildDots(TIPS.length, index);
-}
-
-function startTips() {
-    tipIndex = Math.floor(Math.random() * TIPS.length);
-    showTip(tipIndex);
-    tipsPanel.classList.remove('hidden');
-    tipInterval = setInterval(() => {
-        tipIndex = (tipIndex + 1) % TIPS.length;
-        showTip(tipIndex);
-    }, 4000);
-}
-
-function stopTips() {
-    clearInterval(tipInterval);
-    tipInterval = null;
-    tipsPanel.classList.add('hidden');
-}
 
 // ── Streaming submit ─────────────────────────────────────────────────────────
 submitBtn.addEventListener('click', async function () {
@@ -208,7 +143,6 @@ submitBtn.addEventListener('click', async function () {
     responseSection.classList.add('hidden');
     evaluationSection.classList.add('hidden');
     aiResponseEl.innerHTML = '';
-    startTips();
 
     let rawText = '';  // accumulate plain text for final markdown render
 
@@ -296,7 +230,6 @@ submitBtn.addEventListener('click', async function () {
         submitBtn.disabled = false;
         btnText.classList.remove('hidden');
         btnLoading.classList.add('hidden');
-        stopTips();
     }
 });
 

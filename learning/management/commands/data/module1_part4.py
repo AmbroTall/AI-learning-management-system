@@ -122,86 +122,85 @@ Get AI to help you create a **mini business plan** for a side hustle or small bu
 - At the end, give me a GO/NO-GO assessment: is this idea worth pursuing given my situation?''',
     },
     {
-        'title': 'Question 26: The Technical Communication Toolkit',
-        'description': 'Communicate a technical project consistently across five different professional formats',
+        'title': 'Question 26: The Professional Communication Toolkit',
+        'description': 'Communicate a project or initiative consistently across five different professional formats',
         'difficulty': 'advanced',
         'order': 26,
         'points': 40,
-        'instructions': '''In IT and tech, the ability to communicate the same solution clearly to completely different audiences is a critical professional skill. This challenge puts that to the test.
+        'instructions': '''The ability to communicate the same information clearly to completely different audiences is one of the most valuable skills you can develop. This challenge puts that to the test.
 
 **What You'll Learn:**
 - How to use AI to create consistent messaging across multiple formats
-- Adapting the same core technical content for completely different readers
-- Building a professional communication package for a real project
+- Adapting the same core information for completely different readers
+- Building a complete communication package around a single project or event
 
 **The Challenge:**
-You have a technical project, solution, or IT system. Create a **complete communication package** — the same core information presented in 5 completely different formats for 5 different audiences.
+You have a project, event, or idea. Create a **complete communication package** — the same core information presented in 5 completely different formats for 5 different audiences.
 
 **You'll create ALL of these in a single, well-structured prompt:**
-1. **Technical overview** (for your development team or technical colleagues)
-2. **Executive briefing** (for management who need to make a decision)
-3. **Client-facing proposal section** (for a potential client or end user)
-4. **Training module introduction** (for learners who need to understand and use it)
-5. **Professional social media post** (for a company or organisation page)
+1. **Organiser's briefing** (for the people helping you make it happen)
+2. **Decision-maker summary** (for someone whose approval or support you need)
+3. **Participant invitation** (for the people you want to attend or get involved)
+4. **How-it-works explainer** (for someone who knows nothing about it)
+5. **Social media post** (to build interest and awareness publicly)
 
 **The key constraint: CONSISTENCY.** All 5 must clearly be about the same project with the same core message — just adapted for the format and reader.
 
 **Your prompt must include:**
-- Your project or solution details (what it is, what problem it solves, how it works)
-- What makes it effective or valuable
-- Your target reader for each piece and what they care about
-- Specific format constraints for each piece
+- What the project or event is (what it is, what it's for, why it matters)
+- Who each piece is for and what they care about
+- Specific format and length constraints for each piece
 
-**Use a real IT project you've worked on, or a realistic fictional one.** These are the types of communications you'll produce in professional settings.''',
-        'example_prompt': '''Create a complete communication package for my IT project. All 5 pieces should clearly be about the same solution, adapted for each specific audience.
+**Use something real from your life, or a realistic fictional idea.** It could be a community event, a family celebration, a fundraiser, a club or group activity — anything you'd actually need to communicate about.''',
+        'example_prompt': '''Create a complete communication package for a community charity fundraiser. All 5 pieces should clearly be about the same event, adapted for each specific audience.
 
-**ABOUT THE PROJECT:**
-- What it is: A web-based IT helpdesk ticketing system I built for a small business (50 employees)
-- The problem it solves: Staff were reporting IT issues by walking over, calling, or emailing the IT person directly — there was no tracking, no prioritisation, and issues were constantly getting lost
-- How it works: Staff submit tickets through a simple web form, IT staff see a prioritised dashboard with status updates, automated emails keep users informed, and monthly reports show resolution times
-- Built with: Python (Django), SQLite database, deployed on a local server
-- Results: Average response time improved from "whenever IT gets to it" to 2.3 hours for standard issues; no reported lost tickets since launch
+**ABOUT THE EVENT:**
+- What it is: A sponsored 5km walk through the local park to raise money for a local food bank
+- Why it exists: The food bank supported over 800 local families last year but is running low on funding — they need new donations to stay open through winter
+- How it works: Participants sign up, collect sponsorship from friends and family, complete the walk together on a Sunday morning, and all funds raised go directly to the food bank
+- Details: Sunday 14th September, 9am start, local park, free to enter, all fitness levels welcome, family-friendly
+- Target: Raise £3,000 and get at least 80 participants
 
 **CREATE THESE 5 PIECES:**
 
-**1. Technical Overview (for IT colleagues or a development team)**
+**1. Volunteer Organiser Briefing (for the 8 people helping run the event)**
 - Length: 200-250 words
-- Audience: People who understand technical terminology
-- Focus: Architecture, tech stack, how it works under the hood
-- Include: Database structure overview, key technical features, deployment approach
-- Tone: Precise, technically accurate, professional peer-to-peer
+- Audience: Friends and community members who've agreed to help on the day
+- Focus: Their specific roles, what happens when, and what to do if things go wrong
+- Include: A simple timeline for the morning (7:30am setup → 9am walkers arrive → 10:30am finish → 11am pack up)
+- Tone: Friendly, clear, practical — these are volunteers, not employees
 
-**2. Executive Briefing (for a non-technical manager or director)**
+**2. Sponsorship Request (for local businesses being asked to donate prizes or funding)**
 - Length: 120-150 words
-- Audience: Decision-maker who doesn't want technical details
-- Focus: The problem, the solution, and the measurable business impact
-- Must include: A clear before/after comparison and what it means for the business
-- Tone: Clear, business-focused, no jargon
+- Audience: Local business owners who receive dozens of requests like this
+- Focus: The cause, the community impact, what's in it for them (logo on materials, goodwill, local visibility)
+- Must include: One specific, compelling fact about the food bank's impact
+- Tone: Respectful, grateful, concise — they're busy
 
-**3. Client-Facing Proposal Section (for a potential client considering this solution)**
-- Length: 150-200 words
-- Audience: A business owner or IT manager at a similar-sized company
-- Focus: Benefits, reliability, and ease of adoption
-- Must include: A specific outcome they can expect
-- Tone: Professional, benefit-focused, confidence-building
+**3. Participant Invitation (for local residents being invited to sign up and walk)**
+- Length: 150-180 words
+- Audience: People who might want to take part but aren't sure if it's for them
+- Focus: Making it feel easy, inclusive, and worth their Sunday morning
+- Must include: A clear answer to "but I'm not very fit — can I still do it?"
+- Tone: Warm, encouraging, community-spirited
 
-**4. Training Module Introduction (for employees who will use the system)**
+**4. How-It-Works Explainer (for someone who's heard about it but doesn't know the details)**
 - Length: 100-130 words
-- Audience: Non-technical office workers
-- Focus: What they need to do, why it's easy, and how it helps them get IT issues resolved faster
-- Must include: Simple steps for what to do when they have an IT problem
-- Tone: Friendly, reassuring, clear
+- Audience: Someone who's asked "so how does a sponsored walk actually work?"
+- Focus: Simple, clear explanation — registration, sponsorship, the walk itself, where the money goes
+- Must include: What happens if someone can't get any sponsors
+- Tone: Friendly, clear, no assumptions about what they already know
 
-**5. Professional Social Media Post (for a company or organisation page)**
-- Length: 120-150 words
-- Audience: Professional network — other IT professionals and businesses
-- Focus: The problem solved and the approach taken
-- Must include: Something that sparks interest or useful discussion
-- Tone: Confident, professional, slightly conversational
+**5. Social Media Post (for the local community's public page)**
+- Length: 100-130 words
+- Audience: Local residents scrolling past — you have 3 seconds to catch their attention
+- Focus: Hook, key details, call to action
+- Must include: One detail that makes this feel urgent or personally meaningful
+- Tone: Upbeat, community-focused, direct
 
-**CRITICAL:** All 5 must feel like they're about the same project. The core message — "we replaced IT chaos with a clean, trackable, faster system" — must come through in each piece, just framed for that specific reader. Read them side by side: is the project identity consistent? Does the value come through in every version?
+**CRITICAL:** All 5 must feel like they're about the same event. The core message — "a friendly, inclusive walk that raises real money for a cause the local community genuinely needs" — must come through in every piece. Read them side by side: does the event feel consistent? Does the emotional hook land in every version?
 
-After all 5, write a brief note (2-3 sentences) explaining how you adjusted the technical detail and focus for each audience.''',
+After all 5, write 2-3 sentences explaining how you adjusted the tone and focus for each reader.''',
     },
     {
         'title': 'Question 27: Event Planning Pro',
@@ -523,11 +522,11 @@ Every technique you've learned across all 29 lessons:
 Choose a real scenario from YOUR life — something you actually need help with — and demonstrate mastery by writing a **series of 3-4 connected prompts** that build on each other.
 
 **Pick your own scenario, or use one of these:**
-- Planning and launching a personal IT project (app, tool, or portfolio piece)
-- Preparing for a major certification or assessment (study plan → practice → review → execute)
-- Launching a side hustle or creative project (idea → plan → marketing → first steps)
-- Solving a real problem in your community or organisation (diagnose → analyse → plan → communicate)
-- Creating a personal development plan for a specific skill (assess → plan → track → adjust)
+- Planning a major family celebration or milestone event (concept → logistics → coordinate → execute)
+- Organising a home renovation or significant personal project (assess → plan → manage → complete)
+- Planning an extended trip or adventure (research → prepare → organise → go)
+- Making a meaningful personal change — health, fitness, or a new habit (assess → plan → track → adjust)
+- Starting a creative personal project like writing, gardening, or a community initiative (idea → plan → develop → share)
 
 **YOUR SERIES OF PROMPTS MUST DEMONSTRATE:**
 
@@ -563,102 +562,94 @@ Choose a real scenario from YOUR life — something you actually need help with 
 - Would someone else find this impressive and practical?
 
 **This is YOUR moment. Show what you've learned. Make it real, make it useful, and make it yours.**''',
-        'example_prompt': '''I'm using all my prompt engineering skills to tackle a real challenge: I'm planning to build and launch a personal IT portfolio project over the next 10 weeks. Here's my full series:
+        'example_prompt': '''I'm using everything I've learned about prompt engineering to plan something I've been putting off for years: a 6-week family road trip through Europe this summer. Four adults, one car, a rough idea of where we want to go — and no real plan yet. Here's my full series of connected prompts:
 
 ---
 
-**PROMPT 1 — ANALYSIS & RESEARCH**
+**PROMPT 1 — RESEARCH & ROUTE OPTIONS**
 
-Act as a senior software developer who mentors students building their first portfolio projects. You've seen hundreds of student projects — you know exactly what makes them impressive and what makes them forgettable.
+Act as an experienced travel planner who specialises in road trips across Europe. You've planned dozens of these — you know the routes that look great on paper but are exhausting in reality, and the hidden gems that make a trip genuinely memorable.
 
-**My Context:**
-- I'm an IT student with 8 months of learning behind me (HTML, CSS, basic Python, intro to databases)
-- My goal: Build one solid portfolio project that demonstrates real skills and solves a genuine problem
-- Available time: 10-12 hours per week for the next 10 weeks
-- Tools I have: VS Code, GitHub (basic), Python, SQLite, basic knowledge of Flask
-- What I want to avoid: Building something nobody would actually use, or copying a tutorial without understanding it
-- End goal: Have something I'm proud to show and talk about in detail
+**Our Situation:**
+- Who's going: Me and my partner (both mid-30s), and two friends who'll join for the first 3 weeks. The four of us travel well together but have different priorities — my partner wants slow, relaxed stops; our friends want to cover more ground and see big landmarks.
+- Duration: 6 weeks total, leaving late June
+- Starting and ending point: UK (driving through the Channel Tunnel)
+- Rough wish list: France, Spain, and either Portugal or Italy — we can't do everything
+- Budget: Around £4,500 for all four people for the full trip (excluding the car, which we own)
+- Non-negotiables: At least one week somewhere coastal with good swimming; good food throughout; no more than 4 hours driving on any single day
+- What I want to avoid: Over-scheduling. Previous holidays have been ruined by trying to fit too much in.
 
-Based on your experience, give me:
-1. The 5 most common mistakes students make when building portfolio projects (so I can avoid them)
-2. The qualities that make a portfolio project genuinely impressive vs. forgettable
-3. 5 project ideas well-suited to my skill level that solve a real problem (not just another to-do app)
-4. A framework for the 10 weeks: Plan → Build → Test → Document → Present
+Give me:
+1. The honest trade-offs of each route option — France/Spain/Portugal vs France/Spain/Italy. What do we gain and lose with each?
+2. A recommended route with a rough week-by-week structure that balances both travel styles
+3. The 5 decisions we need to make before we can book anything
+4. A planning framework: Research → Book → Prepare → Pack → Go
 
-Be honest — I want something I'm actually capable of building well, not something impressive on paper that I can't explain.
+Be direct. If our budget or timeline is unrealistic for what we want, say so.
 
 ---
 
-**PROMPT 2 — CHOOSE AND PLAN**
+**PROMPT 2 — BUILD THE ITINERARY**
 
-Based on your suggestions, I've chosen to build a **personal expense tracker web app** — a simple tool where users can log expenses, set monthly budgets, and see simple visual summaries of their spending.
+Based on your advice, we've chosen France → Spain → Portugal. The rough shape: 10 days in France, 10 days in Spain, 10 days in Portugal, with 2 days of driving buffer built in.
 
-Now let's build a detailed development plan for the first 4 weeks (the foundation phase).
+Now build me a detailed week-by-week itinerary.
 
-For each week, create:
-- **Main goal** (what I should have working by Sunday)
-- **Daily tasks** (specific, achievable tasks for 1.5-2 hours each evening)
-- **One technical concept to learn** (link to what I'm building that week)
-- **Weekly checkpoint** (how I know the week was successful — a specific, testable outcome)
-- **Common mistake to avoid** (one thing that trips students up at this stage)
+For each week, give me:
+- **Where we are** (specific region or cities, not just countries)
+- **Daily structure** (what type of day: driving day, base-camp day, or exploration day)
+- **2-3 highlights** (specific places, experiences, or food worth going out of our way for)
+- **One thing to watch out for** (a common mistake travellers make in this area)
+- **Accommodation type** (hotel, gîte, Airbnb, campsite — what makes sense here and why)
 
 **Constraints:**
-- Each daily task must be completable in 1.5-2 hours
-- I shouldn't skip ahead — each week must build on the previous one
-- Include time for research, not just coding
-- Keep it realistic (I have coursework too)
+- No more than 4 hours driving on any day
+- At least 3 nights in each major stopping point — no one-night stays
+- The coastal week must be in the itinerary by week 4
+- Keep it realistic for people who also want to sit in a café for 2 hours doing nothing
 
-Also: create a "Project Setup Checklist" — everything I need to do before writing a single line of code.
+Also: flag any weeks where the budget will be under the most pressure, and suggest where we could save without ruining the experience.
 
 ---
 
-**PROMPT 3 — DOCUMENTATION PLAN**
+**PROMPT 3 — THE PRACTICAL DETAILS**
 
-Now help me think about how to document and present this project professionally.
+The itinerary is taking shape. Now help me get the practical side sorted — the stuff that falls apart if you don't think about it in advance.
 
 Create:
 
-1. **README Structure:**
-   A template for my GitHub README that:
-   - Explains what the project does and who it's for (in plain English)
-   - Shows how to install and run it (step-by-step)
-   - Includes a screenshot section placeholder
-   - Explains the technical choices I made (and why)
-   - Shows what I learned from building it
+1. **The Booking Order:**
+   What to book first, second, and third — and how far in advance. Flag anything that will sell out or get significantly more expensive if we leave it too late.
 
-2. **Project Writeup (for a portfolio or presentation):**
-   A 250-word narrative explaining the project as if presenting it to someone who hasn't seen it:
-   - The problem it solves
-   - How I approached building it
-   - The biggest technical challenge and how I solved it
-   - What I'd improve if I had more time
+2. **The Car Packing Strategy:**
+   We're four adults in one car for 6 weeks. Help us think through what to bring and what to leave behind:
+   - The essentials most people forget
+   - The things people always overpack
+   - How to organise the boot so we're not unpacking everything every night
+   - What to buy when we arrive rather than bringing from home
 
-3. **5 Questions I Should Be Able to Answer:**
-   The questions someone knowledgeable would ask when reviewing this project — with guidance on how to prepare strong answers for each one.
-
-Keep it professional but authentic — this should sound like a student who genuinely built something, not a marketing brochure.
+3. **The "What If" Plan:**
+   Five things that could genuinely go wrong on a trip like this — and for each, the practical steps to handle it quickly so it doesn't derail the whole trip.
 
 ---
 
-**PROMPT 4 — THE PITCH VERSION**
+**PROMPT 4 — COMMUNICATE IT**
 
-Final piece: I want to be able to talk about this project confidently in different situations.
+Before we go, I need to get a few things sorted with the people around us.
 
-Create 3 versions of how I'd describe it:
+Write me these three real pieces of communication:
 
-1. **The 60-second verbal explanation** (for when someone asks "what did you build?"):
-   Engaging, clear, avoids jargon — makes the listener understand the value immediately
+1. **The message to our friends confirming the plan:**
+   We need to give them enough detail to book their time off and feel genuinely excited — without overwhelming them with logistics they don't need yet. Warm, clear, and specific about the dates, the rough route, and what they need to sort on their end. 150-200 words.
 
-2. **The technical deep-dive (2-3 minutes):**
-   For a technical audience — covers the architecture, key decisions, and challenges overcome
+2. **The house and pet checklist message (for the neighbour who's helping while we're away):**
+   Clear, practical, and not too long. Covers: key handover, post, bins, the one plant that needs watering, and how to reach us in an emergency.
 
-3. **The one-sentence version:**
-   For a social media post, profile bio, or casual introduction — punchy and memorable
-
-For each: write the actual words, not just a description. Make them feel natural and confident.
+3. **The one-paragraph trip summary:**
+   Something I can share with family who'll ask "so where are you going?" — engaging enough that they actually understand what we're doing, short enough that I'm not explaining it for 10 minutes.
 
 ---
 
-This is my actual plan. Make it genuinely useful — I'll be following this for the next 10 weeks.''',
+This is my actual plan. Make every part genuinely useful — we're booking this in the next few weeks.''',
     },
 ]

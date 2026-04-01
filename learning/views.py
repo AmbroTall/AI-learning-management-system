@@ -285,92 +285,87 @@ def submit_challenge(request, challenge_id):
         
         # Otherwise, evaluate the response
 
-        # Hard deterministic fail check — runs before Claude evaluation.
-        # If the instructions contain a STRICT REQUIREMENT block, verify the user's
-        # prompt satisfies it structurally before spending an API call.
-        # Currently enforces Q14's two-section requirement (Section 1 + Section 2).
+        # Check multi-part requirements — used AFTER evaluation to override passed if needed
+        missing_sections = False
+        missing_sections_msg = ''
         if '**STRICT REQUIREMENT' in challenge.instructions:
-            has_section1 = bool(re.search(r'(section|part)\s*(1|one)\b', user_prompt, re.IGNORECASE))
-            has_section2 = bool(re.search(r'(section|part)\s*(2|two)\b', user_prompt, re.IGNORECASE))
+            # Q14: requires Section 1 and Section 2
+            has_section1 = bool(re.search(r'\bsection\s*1\s*[:\-\u2013\u2014]', user_prompt, re.IGNORECASE))
+            has_section2 = bool(re.search(r'\bsection\s*2\s*[:\-\u2013\u2014]', user_prompt, re.IGNORECASE))
             if not (has_section1 and has_section2):
-                evaluation = {
-                    'score': 0,
-                    'feedback': (
-                        'Your submission must contain BOTH a clearly labelled Section 1 '
-                        '(learning profile) AND a Section 2 (learning request that references '
-                        'your profile). A learning profile alone is an incomplete submission. '
-                        'Please reread the instructions and try again.'
-                    ),
-                    'passed': False,
-                }
-                attempt_count = ChallengeAttempt.objects.filter(
-                    user=request.user, challenge=challenge
-                ).count() + 1
-                ChallengeAttempt.objects.create(
-                    user=request.user,
-                    challenge=challenge,
-                    user_prompt=user_prompt,
-                    ai_response=ai_response,
-                    score=evaluation['score'],
-                    feedback=evaluation['feedback'],
-                    passed=evaluation['passed'],
-                    attempt_number=attempt_count,
+                missing_sections = True
+                missing_sections_msg = (
+                    ' Note: this challenge requires BOTH a Section 1 (learning profile) AND a '
+                    'Section 2 (learning request). Please include both clearly labelled sections to pass.'
                 )
-                return JsonResponse({
-                    'success': True,
-                    'ai_response': ai_response,
-                    'score': evaluation['score'],
-                    'feedback': evaluation['feedback'],
-                    'passed': evaluation['passed'],
-                    'attempt_number': attempt_count,
-                })
+        if challenge.order == 30:
+            # Q30: requires at least Prompt 1, Prompt 2, and Prompt 3
+            has_prompt1 = bool(re.search(r'\bprompt\s*1\b', user_prompt, re.IGNORECASE))
+            has_prompt2 = bool(re.search(r'\bprompt\s*2\b', user_prompt, re.IGNORECASE))
+            has_prompt3 = bool(re.search(r'\bprompt\s*3\b', user_prompt, re.IGNORECASE))
+            if not (has_prompt1 and has_prompt2 and has_prompt3):
+                missing_sections = True
+                missing_sections_msg = (
+                    ' Note: this challenge requires at least 3 connected prompts (Prompt 1, Prompt 2, '
+                    'and Prompt 3). Please include all three clearly labelled prompts to pass.'
+                )
 
-        evaluation_prompt = f"""
-        Challenge: {challenge.title}
-        Instructions: {challenge.instructions}
-        User's Prompt: {user_prompt}
-        AI Response: {ai_response}
+        instr_snippet = challenge.instructions
+        prompt_snippet = user_prompt
+        response_snippet = ai_response
 
-        Evaluate this attempt on a scale of 0-100 based on:
-        1. Did the user craft an effective prompt?
-        2. Did the AI response meet the challenge requirements?
-        3. Quality and clarity of the result
+        evaluation_prompt = (
+            f"Challenge: {challenge.title}\n"
+            f"Instructions (summary): {instr_snippet}\n"
+            f"User's Prompt: {prompt_snippet}\n"
+            f"AI Response: {response_snippet}\n\n"
+            "Evaluate this attempt (0-100). Consider: quality of the prompt, whether the AI "
+            "response met the challenge requirements, and clarity of the result.\n\n"
+            "Reply with ONLY this JSON, no other text:\n"
+            '{"score": <0-100>, "feedback": "<2-3 sentence feedback>", "passed": <true or false>}'
+        )
 
-        Respond in JSON format:
-        {{
-            "score": <0-100>,
-            "feedback": "<specific feedback>",
-            "passed": <true/false (score >= 70)>
-        }}
-        """
-        
         eval_message = call_with_retry(lambda: client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=500,
+            max_tokens=3072,
             messages=[
                 {"role": "user", "content": evaluation_prompt}
             ]
         ))
-        
-        # Parse evaluation
-        eval_text = eval_message.content[0].text
-        # Extract JSON from response
-        json_match = re.search(r'\{[\s\S]*?\}', eval_text)
-        if json_match:
-            evaluation = json.loads(json_match.group())
-        else:
+
+        # Parse evaluation — try direct parse first, then extract from text
+        eval_text = eval_message.content[0].text.strip()
+        evaluation = None
+        try:
+            evaluation = json.loads(eval_text)
+        except json.JSONDecodeError:
+            # Find the last {...} block — most likely to be the JSON object
+            matches = list(re.finditer(r'\{[^{}]*\}', eval_text))
+            for m in reversed(matches):
+                try:
+                    evaluation = json.loads(m.group())
+                    break
+                except json.JSONDecodeError:
+                    continue
+        if evaluation is None:
             evaluation = {
                 'score': 50,
                 'feedback': 'Could not parse evaluation',
                 'passed': False
             }
         
+        # If multi-part requirement wasn't met, force not-passing regardless of score
+        if missing_sections:
+            evaluation['passed'] = False
+            evaluation['score'] = min(evaluation.get('score', 0), 69)
+            evaluation['feedback'] = evaluation['feedback'] + missing_sections_msg
+
         # Count attempts
         attempt_count = ChallengeAttempt.objects.filter(
             user=request.user,
             challenge=challenge
         ).count() + 1
-        
+
         # Create attempt record
         attempt = ChallengeAttempt.objects.create(
             user=request.user,
@@ -451,34 +446,31 @@ def submit_challenge_stream(request, challenge_id):
     def generate():
         client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
 
-        # Hard deterministic fail check (same logic as submit_challenge)
-        if request_type == 'submit' and '**STRICT REQUIREMENT' in challenge.instructions:
-            has_section1 = bool(re.search(r'(section|part)\s*(1|one)\b', user_prompt, re.IGNORECASE))
-            has_section2 = bool(re.search(r'(section|part)\s*(2|two)\b', user_prompt, re.IGNORECASE))
-            if not (has_section1 and has_section2):
-                feedback_msg = (
-                    'Your submission must contain BOTH a clearly labelled Section 1 '
-                    '(learning profile) AND a Section 2 (learning request that references '
-                    'your profile). A learning profile alone is an incomplete submission. '
-                    'Please reread the instructions and try again.'
-                )
-                attempt_count = ChallengeAttempt.objects.filter(
-                    user=user, challenge=challenge
-                ).count() + 1
-                ChallengeAttempt.objects.create(
-                    user=user,
-                    challenge=challenge,
-                    user_prompt=user_prompt,
-                    ai_response=feedback_msg,
-                    score=0,
-                    feedback=feedback_msg,
-                    passed=False,
-                    attempt_number=attempt_count,
-                )
-                yield f'data: {json.dumps({"type": "chunk", "text": feedback_msg})}\n\n'
-                yield f'data: {json.dumps({"type": "evaluation", "score": 0, "feedback": feedback_msg, "passed": False, "attempt_number": attempt_count})}\n\n'
-                yield f'data: {json.dumps({"type": "done"})}\n\n'
-                return
+        # Check multi-part requirements — used AFTER evaluation to override passed if needed
+        missing_sections = False
+        missing_sections_msg = ''
+        if request_type == 'submit':
+            if '**STRICT REQUIREMENT' in challenge.instructions:
+                # Q14: requires Section 1 and Section 2
+                has_section1 = bool(re.search(r'(section|part)\s*(1|one)\b', user_prompt, re.IGNORECASE))
+                has_section2 = bool(re.search(r'(section|part)\s*(2|two)\b', user_prompt, re.IGNORECASE))
+                if not (has_section1 and has_section2):
+                    missing_sections = True
+                    missing_sections_msg = (
+                        ' Note: this challenge requires BOTH a Section 1 (learning profile) AND a '
+                        'Section 2 (learning request). Please include both clearly labelled sections to pass.'
+                    )
+            if challenge.order == 30:
+                # Q30: requires at least Prompt 1, Prompt 2, and Prompt 3
+                has_prompt1 = bool(re.search(r'\bprompt\s*1\b', user_prompt, re.IGNORECASE))
+                has_prompt2 = bool(re.search(r'\bprompt\s*2\b', user_prompt, re.IGNORECASE))
+                has_prompt3 = bool(re.search(r'\bprompt\s*3\b', user_prompt, re.IGNORECASE))
+                if not (has_prompt1 and has_prompt2 and has_prompt3):
+                    missing_sections = True
+                    missing_sections_msg = (
+                        ' Note: this challenge requires at least 3 connected prompts (Prompt 1, Prompt 2, '
+                        'and Prompt 3). Please include all three clearly labelled prompts to pass.'
+                    )
 
         # Stream main Claude response
         ai_response_parts = []
@@ -506,39 +498,49 @@ def submit_challenge_stream(request, challenge_id):
             yield f'data: {json.dumps({"type": "done"})}\n\n'
             return
 
-        # Evaluation call — truncate ai_response to keep prompt small and fast
-        evaluation_prompt = f"""
-        Challenge: {challenge.title}
-        Instructions: {challenge.instructions}
-        User's Prompt: {user_prompt}
-        AI Response: {ai_response}
+        instr_snippet = challenge.instructions
+        prompt_snippet = user_prompt
+        response_snippet = ai_response
 
-        Evaluate this attempt on a scale of 0-100 based on:
-        1. Did the user craft an effective prompt?
-        2. Did the AI response meet the challenge requirements?
-        3. Quality and clarity of the result
-
-        Respond in JSON format:
-        {{
-            "score": <0-100>,
-            "feedback": "<specific feedback>",
-            "passed": <true/false (score >= 70)>
-        }}
-        """
+        evaluation_prompt = (
+            f"Challenge: {challenge.title}\n"
+            f"Instructions (summary): {instr_snippet}\n"
+            f"User's Prompt: {prompt_snippet}\n"
+            f"AI Response: {response_snippet}\n\n"
+            "Evaluate this attempt (0-100). Consider: quality of the prompt, whether the AI "
+            "response met the challenge requirements, and clarity of the result.\n\n"
+            "Reply with ONLY this JSON, no other text:\n"
+            '{"score": <0-100>, "feedback": "<2-3 sentence feedback>", "passed": <true or false>}'
+        )
 
         try:
             eval_message = client.messages.create(
                 model="claude-haiku-4-5-20251001",
-                max_tokens=500,
+                max_tokens=3072,
                 messages=[{"role": "user", "content": evaluation_prompt}]
             )
-            eval_text = eval_message.content[0].text
-            json_match = re.search(r'\{[\s\S]*?\}', eval_text)
-            evaluation = json.loads(json_match.group()) if json_match else {
-                'score': 50, 'feedback': 'Could not parse evaluation', 'passed': False
-            }
+            eval_text = eval_message.content[0].text.strip()
+            evaluation = None
+            try:
+                evaluation = json.loads(eval_text)
+            except json.JSONDecodeError:
+                matches = list(re.finditer(r'\{[^{}]*\}', eval_text))
+                for m in reversed(matches):
+                    try:
+                        evaluation = json.loads(m.group())
+                        break
+                    except json.JSONDecodeError:
+                        continue
+            if evaluation is None:
+                evaluation = {'score': 50, 'feedback': 'Could not parse evaluation', 'passed': False}
         except Exception as e:
             evaluation = {'score': 50, 'feedback': f'Evaluation error: {str(e)}', 'passed': False}
+
+        # If multi-part requirement wasn't met, force not-passing regardless of score
+        if missing_sections:
+            evaluation['passed'] = False
+            evaluation['score'] = min(evaluation.get('score', 0), 69)
+            evaluation['feedback'] = evaluation['feedback'] + missing_sections_msg
 
         # Save attempt
         attempt_count = ChallengeAttempt.objects.filter(
