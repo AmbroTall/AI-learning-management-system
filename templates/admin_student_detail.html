@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.get_full_name|default:student.username }} — Activity{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Back + Header -->
+    <div class="mb-8">
+        <a href="{% url 'admin_students' %}" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to students
+        </a>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-violet-500/30 border border-violet-400/50 flex items-center justify-center text-violet-300 font-bold text-xl flex-shrink-0">
+                {% if student.first_name and student.last_name %}
+                    {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                {% else %}
+                    {{ student.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="text-4xl font-bold text-gray-100">
+                    {% if student.get_full_name %}{{ student.get_full_name }}{% else %}{{ student.username }}{% endif %}
+                </h1>
+                <p class="text-gray-400 text-sm mt-0.5">@{{ student.username }}{% if student.email %} &middot; {{ student.email }}{% endif %} &middot; Joined {{ student.date_joined|date:"M d, Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div class="glass-effect rounded-xl p-5 text-center">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Points</p>
+            <p class="text-3xl font-bold text-cyan-400">{{ leaderboard_entry.total_points|default:"0" }}</p>
+        </div>
+        <div class="glass-effect rounded-xl p-5 text-center">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Passed</p>
+            <p class="text-3xl font-bold text-green-400">{{ passed_challenges }}</p>
+        </div>
+        <div class="glass-effect rounded-xl p-5 text-center">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Attempts</p>
+            <p class="text-3xl font-bold text-orange-400">{{ total_attempts }}</p>
+        </div>
+        <div class="glass-effect rounded-xl p-5 text-center">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Streak</p>
+            <p class="text-3xl font-bold text-pink-400">{{ leaderboard_entry.current_streak|default:"0" }}</p>
+        </div>
+    </div>
+
+    <!-- Module Progress -->
+    {% if progress_by_module %}
+    <div class="mb-10">
+        <h2 class="text-xl font-bold text-gray-200 mb-4">Module Progress</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for progress in progress_by_module %}
+            <div class="glass-effect rounded-xl p-5">
+                <p class="font-semibold text-gray-100 mb-1">{{ progress.module.title }}</p>
+                <p class="text-gray-400 text-sm mb-3">{{ progress.challenges_completed }} challenge{{ progress.challenges_completed|pluralize }} completed &middot; {{ progress.total_points }} pts</p>
+                <div class="w-full bg-white/10 rounded-full h-1.5">
+                    {% with total=progress.module.challenges.count %}
+                    {% if total > 0 %}
+                    <div class="bg-cyan-400 h-1.5 rounded-full transition-all"
+                         style="width: {% widthratio progress.challenges_completed total 100 %}%"></div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% if progress.completed %}
+                <span class="inline-block mt-2 text-xs text-green-400 font-semibold">Completed</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Achievements -->
+    {% if achievements %}
+    <div class="mb-10">
+        <h2 class="text-xl font-bold text-gray-200 mb-4">Achievements ({{ achievements|length }})</h2>
+        <div class="flex flex-wrap gap-3">
+            {% for ua in achievements %}
+            <div class="glass-effect rounded-xl px-4 py-3 flex items-center gap-3">
+                <span class="text-2xl">{{ ua.achievement.icon|default:"🏅" }}</span>
+                <div>
+                    <p class="text-sm font-semibold text-gray-100">{{ ua.achievement.name }}</p>
+                    <p class="text-xs text-gray-400">{{ ua.earned_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Challenge Attempts + Prompts -->
+    <div>
+        <h2 class="text-xl font-bold text-gray-200 mb-4">Activity Log ({{ total_attempts }} attempt{{ total_attempts|pluralize }})</h2>
+
+        {% if attempts %}
+        <div class="space-y-4">
+            {% for attempt in attempts %}
+            <details class="glass-effect rounded-xl overflow-hidden group">
+                <summary class="flex items-center justify-between px-6 py-4 cursor-pointer select-none list-none hover:bg-white/5 transition">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <!-- Pass/fail badge -->
+                        {% if attempt.passed %}
+                        <span class="flex-shrink-0 inline-flex items-center gap-1 text-xs bg-green-500/20 text-green-400 border border-green-500/30 px-2.5 py-1 rounded-full font-semibold">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Passed
+                        </span>
+                        {% else %}
+                        <span class="flex-shrink-0 inline-flex items-center gap-1 text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full font-semibold">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                            Failed
+                        </span>
+                        {% endif %}
+                        <div class="min-w-0">
+                            <p class="font-semibold text-gray-100 truncate">{{ attempt.challenge.title }}</p>
+                            <p class="text-xs text-gray-400">{{ attempt.challenge.module.title }} &middot; Attempt #{{ attempt.attempt_number }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 flex-shrink-0 ml-4">
+                        <span class="text-cyan-400 font-bold text-sm">{{ attempt.score }}/100</span>
+                        <span class="text-gray-500 text-xs hidden sm:block">{{ attempt.created_at|date:"M d, Y H:i" }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </summary>
+
+                <!-- Expanded content -->
+                <div class="border-t border-white/10 px-6 py-5 space-y-5">
+                    <!-- Student Prompt -->
+                    <div>
+                        <p class="text-xs font-semibold text-violet-400 uppercase tracking-wider mb-2">Student's Prompt</p>
+                        <div class="bg-black/30 border border-white/10 rounded-xl p-4">
+                            <pre class="text-gray-200 text-sm whitespace-pre-wrap font-sans">{{ attempt.user_prompt }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- AI Response -->
+                    {% if attempt.ai_response %}
+                    <div>
+                        <p class="text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-2">AI Response</p>
+                        <div class="bg-black/30 border border-cyan-500/20 rounded-xl p-4 max-h-64 overflow-y-auto">
+                            <pre class="text-gray-300 text-sm whitespace-pre-wrap font-sans">{{ attempt.ai_response }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Feedback -->
+                    {% if attempt.feedback %}
+                    <div>
+                        <p class="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">Evaluation Feedback</p>
+                        <div class="bg-black/20 border border-orange-500/20 rounded-xl p-4">
+                            <p class="text-gray-300 text-sm">{{ attempt.feedback }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Meta -->
+                    <div class="flex flex-wrap gap-4 text-xs text-gray-500">
+                        <span>Score: <strong class="text-cyan-400">{{ attempt.score }}/100</strong></span>
+                        {% if attempt.time_spent_seconds %}
+                        <span>Time: <strong class="text-gray-300">{{ attempt.time_spent_seconds }}s</strong></span>
+                        {% endif %}
+                        <span>Submitted: <strong class="text-gray-300">{{ attempt.created_at|date:"M d, Y H:i" }}</strong></span>
+                    </div>
+                </div>
+            </details>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-effect rounded-2xl p-10 text-center">
+            <p class="text-gray-400">No activity yet — this student hasn't attempted any challenges.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -16,4 +16,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/change-password/', views.change_password, name='change_password'),
     path('kill/', views.kill_switch, name='kill_switch'),
+    # Admin panel — superuser only
+    path('manage/students/', views.admin_students, name='admin_students'),
+    path('manage/students/create/', views.admin_create_student, name='admin_create_student'),
+    path('manage/students/<int:student_id>/', views.admin_student_detail, name='admin_student_detail'),
 ]

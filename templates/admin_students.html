@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Students — Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-4xl font-bold gradient-text">Student Management</h1>
+            <p class="text-gray-400 mt-1">{{ student_data|length }} registered student{{ student_data|length|pluralize }}</p>
+        </div>
+        <a href="{% url 'admin_create_student' %}"
+           class="inline-flex items-center gap-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-300 font-semibold px-5 py-2.5 rounded-xl transition-all hover-lift">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Student
+        </a>
+    </div>
+
+    {% if student_data %}
+    <!-- Student Table -->
+    <div class="glass-effect rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-white/10 text-gray-400 text-xs uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left">Student</th>
+                        <th class="px-6 py-4 text-left hidden sm:table-cell">Email</th>
+                        <th class="px-6 py-4 text-center">Points</th>
+                        <th class="px-6 py-4 text-center">Passed</th>
+                        <th class="px-6 py-4 text-center hidden md:table-cell">Attempts</th>
+                        <th class="px-6 py-4 text-left hidden lg:table-cell">Last Active</th>
+                        <th class="px-6 py-4 text-center">View</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for item in student_data %}
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <!-- Avatar + name -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-violet-500/30 border border-violet-400/50 flex items-center justify-center text-violet-300 font-bold text-sm flex-shrink-0">
+                                    {% if item.student.first_name and item.student.last_name %}
+                                        {{ item.student.first_name|first|upper }}{{ item.student.last_name|first|upper }}
+                                    {% else %}
+                                        {{ item.student.username|slice:":2"|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-100">
+                                        {% if item.student.get_full_name %}{{ item.student.get_full_name }}{% else %}{{ item.student.username }}{% endif %}
+                                    </p>
+                                    <p class="text-gray-500 text-xs">@{{ item.student.username }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Email -->
+                        <td class="px-6 py-4 text-gray-400 hidden sm:table-cell">
+                            {{ item.student.email|default:"—" }}
+                        </td>
+                        <!-- Points -->
+                        <td class="px-6 py-4 text-center">
+                            <span class="text-cyan-400 font-bold">{{ item.total_points }}</span>
+                        </td>
+                        <!-- Passed -->
+                        <td class="px-6 py-4 text-center">
+                            <span class="text-green-400 font-semibold">{{ item.passed_challenges }}</span>
+                        </td>
+                        <!-- Attempts -->
+                        <td class="px-6 py-4 text-center text-gray-400 hidden md:table-cell">
+                            {{ item.total_attempts }}
+                        </td>
+                        <!-- Last active -->
+                        <td class="px-6 py-4 text-gray-400 text-xs hidden lg:table-cell">
+                            {{ item.last_active|date:"M d, Y H:i" }}
+                        </td>
+                        <!-- Action -->
+                        <td class="px-6 py-4 text-center">
+                            <a href="{% url 'admin_student_detail' item.student.id %}"
+                               class="inline-flex items-center gap-1 text-xs bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 px-3 py-1.5 rounded-lg transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-effect rounded-2xl p-12 text-center">
+        <p class="text-gray-400 text-lg mb-4">No students registered yet.</p>
+        <a href="{% url 'admin_create_student' %}"
+           class="inline-flex items-center gap-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-300 font-semibold px-5 py-2.5 rounded-xl transition">
+            Create the first student account
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

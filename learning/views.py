@@ -39,6 +39,9 @@ def register(request):
 # Login function
 def login_view(request):
     """User login"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -773,3 +776,121 @@ def kill_switch(request):
 
     threading.Thread(target=teardown, daemon=True).start()
     return JsonResponse({'status': 'Initiated. Server will go down shortly.'})
+
+
+# ---------------------------------------------------------------------------
+# Admin Panel — superuser-only student management
+# ---------------------------------------------------------------------------
+
+def _require_superuser(request):
+    """Return an HttpResponse redirect if the user is not a superuser, else None."""
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not request.user.is_superuser:
+        messages.error(request, 'Access denied.')
+        return redirect('dashboard')
+    return None
+
+
+@login_required
+def admin_students(request):
+    """List all non-superuser students with basic stats."""
+    guard = _require_superuser(request)
+    if guard:
+        return guard
+
+    students = User.objects.filter(is_superuser=False).order_by('-date_joined')
+
+    student_data = []
+    for student in students:
+        total_attempts = ChallengeAttempt.objects.filter(user=student).count()
+        passed_count = ChallengeAttempt.objects.filter(user=student, passed=True).values('challenge').distinct().count()
+        leaderboard_entry = Leaderboard.objects.filter(user=student).first()
+        last_active = ChallengeAttempt.objects.filter(user=student).order_by('-created_at').first()
+
+        student_data.append({
+            'student': student,
+            'total_attempts': total_attempts,
+            'passed_challenges': passed_count,
+            'total_points': leaderboard_entry.total_points if leaderboard_entry else 0,
+            'last_active': last_active.created_at if last_active else student.date_joined,
+        })
+
+    context = {
+        'student_data': student_data,
+    }
+    return render(request, 'admin_students.html', context)
+
+
+@login_required
+def admin_create_student(request):
+    """Create a new student account."""
+    guard = _require_superuser(request)
+    if guard:
+        return guard
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        errors = []
+        if not username:
+            errors.append('Username is required.')
+        elif User.objects.filter(username=username).exists():
+            errors.append('Username already taken.')
+        if not password or len(password) < 6:
+            errors.append('Password must be at least 6 characters.')
+        if email and User.objects.filter(email=email).exists():
+            errors.append('An account with this email already exists.')
+
+        if errors:
+            for err in errors:
+                messages.error(request, err)
+            return render(request, 'admin_create_student.html', {
+                'form_data': request.POST,
+            })
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        Leaderboard.objects.get_or_create(user=user)
+        messages.success(request, f'Account created for {user.get_full_name() or user.username}.')
+        return redirect('admin_students')
+
+    return render(request, 'admin_create_student.html', {})
+
+
+@login_required
+def admin_student_detail(request, student_id):
+    """View a student's full activity — progress, attempts, and prompts."""
+    guard = _require_superuser(request)
+    if guard:
+        return guard
+
+    student = get_object_or_404(User, id=student_id, is_superuser=False)
+
+    attempts = ChallengeAttempt.objects.filter(user=student).select_related(
+        'challenge', 'challenge__module'
+    ).order_by('-created_at')
+
+    progress_by_module = UserProgress.objects.filter(user=student).select_related('module')
+    leaderboard_entry = Leaderboard.objects.filter(user=student).first()
+    achievements = UserAchievement.objects.filter(user=student).select_related('achievement').order_by('-earned_at')
+
+    context = {
+        'student': student,
+        'attempts': attempts,
+        'progress_by_module': progress_by_module,
+        'leaderboard_entry': leaderboard_entry,
+        'achievements': achievements,
+        'total_attempts': attempts.count(),
+        'passed_challenges': attempts.filter(passed=True).values('challenge').distinct().count(),
+    }
+    return render(request, 'admin_student_detail.html', context)
