@@ -18,6 +18,11 @@
 <div class="max-w-6xl mx-auto px-4 py-16">
 
     <div class="text-center mb-14">
+        <!-- Launch offer banner -->
+        <div class="inline-flex items-center gap-2 px-5 py-2.5 mb-6 rounded-full text-sm font-bold text-white" style="background:linear-gradient(90deg,#ef4444,#f97316);">
+            🔥 Launch Offer — 50% OFF · Ends in <span id="sub-countdown" class="ml-1 font-mono tabular-nums">--:--:--</span>
+        </div>
+
         <div class="inline-flex items-center gap-2 px-4 py-1.5 glass-effect rounded-full text-xs text-green-400 font-semibold mb-6">
             <span>🔒</span> One-time payment · No subscription · Yours forever
         </div>
@@ -52,7 +57,7 @@
 
     <!-- ── Bundle (featured) ──────────────────────────────────────────────── -->
     {% if bundle_item %}
-    <div class="plan-card glass-effect rounded-2xl p-8 border border-cyan-500/50 mb-10 relative">
+    <div class="plan-card glass-effect rounded-2xl p-8 border border-red-500/50 mb-10 relative">
         <div class="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
             <span class="px-5 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold shadow-lg">
                 ⭐ Limited-Time Launch Offer
@@ -175,6 +180,26 @@
 {% block extra_js %}
 <script src="https://js.paystack.co/v2/inline.js"></script>
 <script>
+    // Countdown to end of year
+    (function() {
+        function updateCountdown() {
+            const now = new Date();
+            const yearEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+            let diff = Math.floor((yearEnd - now) / 1000);
+            if (diff < 0) diff = 0;
+            const days = Math.floor(diff / 86400);
+            diff %= 86400;
+            const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+            diff %= 3600;
+            const m = String(Math.floor(diff / 60)).padStart(2, '0');
+            const s = String(diff % 60).padStart(2, '0');
+            const el = document.getElementById('sub-countdown');
+            if (el) el.textContent = `${days}d ${h}:${m}:${s}`;
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    })();
+
     async function subscribeWithPaystack(planId, subunitAmount, currency, btn) {
         const originalText = btn.textContent;
         btn.disabled = true;

@@ -508,11 +508,14 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
 
 <!-- ── Pricing ─────────────────────────────────────────────────────────── -->
 <div class="section max-w-5xl mx-auto" id="pricing">
-    <div class="text-center mb-12 reveal">
+    <div class="text-center mb-10 reveal">
         <div class="section-divider"></div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 glass-effect rounded-full text-xs text-green-400 font-semibold mb-4">
-            🔒 One-time fee · No subscriptions · Yours forever
+
+        <!-- Launch offer banner -->
+        <div class="inline-flex items-center gap-2 px-5 py-2 mb-5 rounded-full text-sm font-bold text-white animate-pulse" style="background:linear-gradient(90deg,#ef4444,#f97316);">
+            🔥 Launch Offer — 50% OFF · Ends in <span id="home-countdown" class="ml-1 font-mono tabular-nums">--:--:--</span>
         </div>
+
         <h2 class="text-3xl md:text-4xl font-bold mb-3">Simple, Transparent Pricing</h2>
         <p class="text-gray-400 max-w-xl mx-auto">
             One plan unlocks every module. Pay once — access forever.
@@ -543,7 +546,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Priority support</li>
             </ul>
             <a href="{% url 'subscription_plans' %}" class="block text-center py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold hover-lift neon-border">
-                Get Full Bundle
+                Claim Offer →
             </a>
         </div>
 
@@ -569,7 +572,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
     <!-- FOMO strip -->
     <div class="glass-effect rounded-xl p-5 flex flex-wrap justify-center gap-6 text-center reveal" style="transition-delay:0.2s">
         <div class="text-sm text-gray-400">
-            <span class="text-cyan-400 font-bold">27 people</span> viewed this page in the last hour
+            <span class="text-red-400 font-bold">⏰ Offer ends Dec 31</span> — price doubles Jan 1
         </div>
         <div class="text-sm text-gray-400">
             <span class="text-green-400 font-bold">Launch pricing</span> ends soon — lock in the discount now
@@ -642,6 +645,29 @@ const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.12 });
 revealEls.forEach(el => observer.observe(el));
+
+// Pricing countdown — counts down to end of year
+(function() {
+    function updateCountdown() {
+        const now = new Date();
+        const yearEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+        let diff = Math.floor((yearEnd - now) / 1000);
+        if (diff < 0) diff = 0;
+        const days = Math.floor(diff / 86400);
+        diff %= 86400;
+        const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+        diff %= 3600;
+        const m = String(Math.floor(diff / 60)).padStart(2, '0');
+        const s = String(diff % 60).padStart(2, '0');
+        const val = `${days}d ${h}:${m}:${s}`;
+        ['home-countdown', 'sub-countdown'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        });
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+})();
 
 // FOMO ticker rotation
 const fomoMessages = [

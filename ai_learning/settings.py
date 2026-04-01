@@ -19,7 +19,7 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['learnpulse.online', 'www.learnpulse.online', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['learnpulse.online', 'www.learnpulse.online', 'localhost', '127.0.0.1', '137.74.201.209']
 
 # Application definition
 INSTALLED_APPS = [
@@ -83,6 +83,9 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -148,6 +151,8 @@ SESSION_SAVE_EVERY_REQUEST = True
 CSRF_TRUSTED_ORIGINS = [
     "https://learnpulse.online",
     "https://www.learnpulse.online",
+    "http://137.74.201.209:8005",
+    "http://137.74.201.209",
 ]
 
 # Production security headers
