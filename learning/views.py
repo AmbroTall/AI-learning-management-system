@@ -799,7 +799,7 @@ def admin_students(request):
     if guard:
         return guard
 
-    students = User.objects.filter(is_superuser=False).order_by('-date_joined')
+    students = User.objects.all().order_by('-date_joined')
 
     student_data = []
     for student in students:
@@ -874,7 +874,7 @@ def admin_student_detail(request, student_id):
     if guard:
         return guard
 
-    student = get_object_or_404(User, id=student_id, is_superuser=False)
+    student = get_object_or_404(User, id=student_id)
 
     attempts = ChallengeAttempt.objects.filter(user=student).select_related(
         'challenge', 'challenge__module'

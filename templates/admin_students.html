@@ -50,8 +50,11 @@
                                     {% endif %}
                                 </div>
                                 <div>
-                                    <p class="font-semibold text-gray-100">
+                                    <p class="font-semibold text-gray-100 flex items-center gap-2">
                                         {% if item.student.get_full_name %}{{ item.student.get_full_name }}{% else %}{{ item.student.username }}{% endif %}
+                                        {% if item.student.is_superuser %}
+                                        <span class="text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full">Admin</span>
+                                        {% endif %}
                                     </p>
                                     <p class="text-gray-500 text-xs">@{{ item.student.username }}</p>
                                 </div>
