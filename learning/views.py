@@ -28,6 +28,31 @@ from .models import (
 )
 
 
+def _get_bundle_item(request):
+    """Localised pricing for the single all-courses bundle plan (bundle-only SaaS model)."""
+    from .utils.paystack import detect_currency, localize_price
+    currency, _ = detect_currency(request)
+    bundle_plan = SubscriptionPlan.objects.filter(is_active=True, plan_type='bundle').first()
+    if not bundle_plan:
+        return None
+    display_price, subunit = localize_price(bundle_plan.price, currency, base_currency=bundle_plan.currency)
+    original_display_price = None
+    savings_display = None
+    if bundle_plan.original_price:
+        original_display_price, _ = localize_price(
+            bundle_plan.original_price, currency, base_currency=bundle_plan.currency
+        )
+        savings_display = round(original_display_price - display_price, 2)
+    return {
+        'plan': bundle_plan,
+        'display_price': display_price,
+        'original_display_price': original_display_price,
+        'savings_display': savings_display,
+        'subunit_amount': subunit,
+        'currency': currency,
+    }
+
+
 # ── Access control helpers ─────────────────────────────────────────────────
 
 def has_platform_access(user):
@@ -157,10 +182,10 @@ def home(request):
     """Landing page with slides."""
     if request.user.is_authenticated:
         return redirect('dashboard')
-    plans = SubscriptionPlan.objects.filter(is_active=True)
+    bundle_item = _get_bundle_item(request)
     stat = PlatformStat.get()
     return render(request, 'home.html', {
-        'plans': plans,
+        'bundle_item': bundle_item,
         'stat_learners': stat.learner_count,
         'stat_hired': stat.graduates_hired,
         'stat_completion': stat.completion_rate,
@@ -214,56 +239,18 @@ def logout_view(request):
 
 @login_required
 def subscription_plans(request):
-    """Show available course plans with localised one-time pricing."""
-    from .utils.paystack import detect_currency, localize_price
-    currency, _ = detect_currency(request)
+    """Show the single all-courses bundle plan with localised one-time pricing."""
+    bundle_item = _get_bundle_item(request)
 
-    # Module plans (individual purchases)
-    module_plans = (
-        SubscriptionPlan.objects
-        .filter(is_active=True, plan_type='module')
-        .select_related('module')
-        .order_by('module__order')
-    )
-    # Bundle plan
-    bundle_plan = SubscriptionPlan.objects.filter(is_active=True, plan_type='bundle').first()
-
-    # User's already-purchased plan IDs
-    purchased_plan_ids = set(
-        Subscription.objects.filter(user=request.user, status='active')
-        .values_list('plan_id', flat=True)
-    )
-
-    module_items = []
-    individual_total_usd = 0
-    for plan in module_plans:
-        display_price, subunit = localize_price(plan.price, currency)
-        individual_total_usd += float(plan.price)
-        module_items.append({
-            'plan': plan,
-            'display_price': display_price,
-            'subunit_amount': subunit,
-            'currency': currency,
-            'already_purchased': plan.id in purchased_plan_ids,
-        })
-
-    bundle_item = None
-    if bundle_plan:
-        b_display, b_subunit = localize_price(bundle_plan.price, currency)
-        bundle_savings_usd = round(individual_total_usd - float(bundle_plan.price), 2)
-        bundle_item = {
-            'plan': bundle_plan,
-            'display_price': b_display,
-            'subunit_amount': b_subunit,
-            'currency': currency,
-            'savings_usd': bundle_savings_usd,
-            'already_purchased': bundle_plan.id in purchased_plan_ids,
-        }
+    if bundle_item:
+        already_purchased = Subscription.objects.filter(
+            user=request.user, status='active', plan_id=bundle_item['plan'].id,
+        ).exists()
+        bundle_item['already_purchased'] = already_purchased
 
     return render(request, 'subscription.html', {
-        'module_items': module_items,
         'bundle_item': bundle_item,
-        'currency': currency,
+        'currency': bundle_item['currency'] if bundle_item else 'KES',
         'paystack_public_key': settings.PAYSTACK_PUBLIC_KEY,
     })
 
@@ -290,7 +277,7 @@ def initiate_payment(request, plan_id):
 
     if subunit <= 0:
         from .utils.paystack import localize_price
-        _, subunit = localize_price(plan.price, currency)
+        _, subunit = localize_price(plan.price, currency, base_currency=plan.currency)
 
     subscription = Subscription.objects.create(
         user=request.user,
@@ -553,17 +540,8 @@ def dashboard(request):
     except OrganisationMembership.DoesNotExist:
         org_membership = None
 
-    # Jobs FOMO — how many open jobs & user certificates
-    open_jobs_count = JobPosting.objects.filter(is_active=True).count()
+    bundle_item = _get_bundle_item(request)
     user_certs = Certificate.objects.filter(user=request.user, is_valid=True).select_related('module')
-    certified_module_ids = set(user_certs.values_list('module_id', flat=True))
-
-    # Jobs the user qualifies for right now
-    qualified_jobs = 0
-    for job in JobPosting.objects.filter(is_active=True).prefetch_related('required_modules'):
-        req = list(job.required_modules.values_list('id', flat=True))
-        if not req or any(mid in certified_module_ids for mid in req):
-            qualified_jobs += 1
 
     context = {
         'modules': modules,
@@ -581,9 +559,8 @@ def dashboard(request):
         'active_purchases': active_purchases,
         'intro_module': intro_module,
         'org_membership': org_membership,
-        'open_jobs_count': open_jobs_count,
+        'bundle_item': bundle_item,
         'user_certs': user_certs,
-        'qualified_jobs': qualified_jobs,
     }
     return render(request, 'dashboard.html', context)
 
@@ -616,10 +593,12 @@ def module_detail(request, module_id):
 
     # FOMO data for the free intro module: show first paid module as the next step
     next_paid_module = None
+    bundle_item = None
     if module.is_free:
         next_paid_module = Module.objects.filter(
             is_active=True, is_free=False
         ).order_by('order').first()
+        bundle_item = _get_bundle_item(request)
 
     context = {
         'module': module,
@@ -627,6 +606,7 @@ def module_detail(request, module_id):
         'user_progress': user_progress,
         'user_attempts': user_attempts,
         'next_paid_module': next_paid_module,
+        'bundle_item': bundle_item,
     }
     return render(request, 'module_detail.html', context)
 
@@ -1200,17 +1180,8 @@ def my_certificates(request):
         is_read=False,
     ).update(is_read=True)
 
-    # Jobs the user qualifies for
-    certified_module_ids = set(certificates.values_list('module_id', flat=True))
-    qualified_jobs = []
-    for job in JobPosting.objects.filter(is_active=True).prefetch_related('required_modules'):
-        req = list(job.required_modules.values_list('id', flat=True))
-        if not req or any(mid in certified_module_ids for mid in req):
-            qualified_jobs.append(job)
-
     return render(request, 'my_certificates.html', {
         'certificates': certificates,
-        'qualified_jobs': qualified_jobs,
     })
 
 
@@ -1263,22 +1234,15 @@ _CHATBOT_SYSTEM_PROMPT = """You are the LearnPulse platform assistant. Help stud
 ## About LearnPulse
 LearnPulse (learnpulse.online) is an AI skills learning platform. Students learn through hands-on challenges evaluated in real time by Claude AI. Contact: hello@learnpulse.online
 
-## Modules & Pricing (one-time fees, no subscriptions, lifetime access)
+## Modules & Pricing (one-time fee, no subscription, lifetime access)
 - **Free Intro** — Introduction to AI: free for all registered users
-- **Module 1** — AI Prompt Engineering Foundation: $69 (30 challenges)
-- **Module 2** — AI Tools & Platform Features: $79 (24 challenges)
-- **Module 3** — AI Agents & Automation: $89 (22 challenges)
-- **Module 4A** — Capstone: Coding with AI: $99 (15 challenges)
-- **Module 4B** — Capstone: Cybersecurity with AI: $99 (15 challenges)
-- **Full Bundle** — All modules + future modules: $200 (saves $235)
+- **Full Bundle** — every module, one price: KES 9,999 (discounted from KES 15,000, limited-time offer)
+- Individual modules are not sold separately — the bundle is the only paid plan.
 
 Prices shown in local currency (auto-detected by IP). Pay once, access forever.
 
 ## Certificates
 Verified certificate issued on module completion (format: LP-YYYY-XXXXXXXX). Publicly verifiable at learnpulse.online/certificate/<number>/.
-
-## Jobs Board
-/jobs/ — paid remote AI roles. Students apply with their certificate number.
 
 ## Career Support
 Top-performing graduates receive career support from LearnPulse — included in the Full Bundle.

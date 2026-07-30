@@ -172,7 +172,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
         </div>
         <div class="inline-flex items-center gap-2 px-4 py-2 glass-effect rounded-full text-xs text-gray-300">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
-            5 AI jobs posted this week
+            9 challenges completed today
         </div>
         <div class="inline-flex items-center gap-2 px-4 py-2 glass-effect rounded-full text-xs text-gray-300">
             <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0"></span>
@@ -515,42 +515,29 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
         </div>
         <h2 class="text-3xl md:text-4xl font-bold mb-3">Simple, Transparent Pricing</h2>
         <p class="text-gray-400 max-w-xl mx-auto">
-            Buy individual modules or get the full bundle and save. Pay once — access forever.
+            One plan unlocks every module. Pay once — access forever.
         </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-6 mb-10 reveal" style="transition-delay:0.1s">
-        <!-- Module 1 -->
-        <div class="plan-card">
-            <div class="text-3xl mb-3">🎯</div>
-            <div class="text-sm text-gray-500 mb-1">Module 1</div>
-            <div class="text-xl font-bold mb-2">AI Prompt Engineering</div>
-            <div class="text-sm text-gray-400 mb-5">30 hands-on challenges. Master communicating with AI for real professional results.</div>
-            <div class="text-4xl font-bold gradient-text mb-1">$69</div>
-            <div class="text-xs text-gray-500 mb-6">one-time · lifetime access</div>
-            <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>30 AI-evaluated challenges</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Prompt Engineering certificate</li>
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>AI Jobs Board access</li>
-            </ul>
-            <a href="{% url 'subscription_plans' %}" class="block text-center py-3 glass-effect border border-white/20 rounded-xl font-semibold hover-lift">
-                Buy Module 1
-            </a>
-        </div>
-
+    <div class="grid md:grid-cols-2 gap-6 mb-10 reveal" style="transition-delay:0.1s">
         <!-- Bundle (featured) -->
         <div class="plan-card popular relative">
             <div class="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">⭐ Best Value — Save $77</span>
+                <span class="px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-xs font-bold">⭐ Limited-Time Launch Offer</span>
             </div>
             <div class="text-3xl mb-3">🏆</div>
             <div class="text-sm text-gray-500 mb-1">Full Bundle</div>
             <div class="text-xl font-bold mb-2">All Modules</div>
             <div class="text-sm text-gray-400 mb-5">Every current and future module included. The complete AI skills programme.</div>
-            <div class="text-4xl font-bold gradient-text mb-1">$200</div>
+            {% if bundle_item.original_display_price %}
+            <div class="text-lg text-gray-500 line-through mb-0.5">{{ bundle_item.currency }} {{ bundle_item.original_display_price|floatformat:0 }}</div>
+            {% endif %}
+            <div class="text-4xl font-bold gradient-text mb-1">
+                {% if bundle_item %}{{ bundle_item.currency }} {{ bundle_item.display_price|floatformat:0 }}{% else %}Coming Soon{% endif %}
+            </div>
             <div class="text-xs text-gray-500 mb-6">one-time · all future modules included</div>
             <ul class="space-y-2 mb-8 text-sm text-gray-300">
-                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All current modules (1–3)</li>
+                <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All current modules</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>All future modules included</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Every certificate included</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Priority support</li>
@@ -585,10 +572,7 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
             <span class="text-cyan-400 font-bold">27 people</span> viewed this page in the last hour
         </div>
         <div class="text-sm text-gray-400">
-            <span class="text-green-400 font-bold">Module 1</span> has only <span class="text-green-400 font-bold">limited spots</span> at this price
-        </div>
-        <div class="text-sm text-gray-400">
-            <span class="text-purple-400 font-bold">5 jobs</span> posted this week requiring Module 1 cert
+            <span class="text-green-400 font-bold">Launch pricing</span> ends soon — lock in the discount now
         </div>
     </div>
 </div>

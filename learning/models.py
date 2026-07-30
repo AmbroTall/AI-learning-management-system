@@ -299,6 +299,10 @@ class SubscriptionPlan(models.Model):
         help_text='The module this plan unlocks. Leave blank for full-bundle plans.',
     )
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    original_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+        help_text='Pre-discount price shown struck-through. Leave blank if not discounted.',
+    )
     currency = models.CharField(max_length=10, default='USD')
     description = models.TextField(blank=True)
     features = models.JSONField(default=list, help_text='List of feature bullet-point strings')

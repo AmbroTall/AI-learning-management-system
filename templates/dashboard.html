@@ -77,45 +77,6 @@
         </a>
     </div>
 
-    <!-- ── JOBS FOMO BANNER ───────────────────────────────────────── -->
-    {% if open_jobs_count > 0 %}
-    <div class="mb-10">
-        {% if qualified_jobs > 0 %}
-        <div class="rounded-2xl overflow-hidden border border-cyan-500/30">
-            <div class="bg-gradient-to-r from-cyan-900/40 to-blue-900/40 p-6 flex flex-col sm:flex-row items-center gap-5">
-                <div class="text-5xl">🎯</div>
-                <div class="flex-1 text-center sm:text-left">
-                    <h3 class="text-xl font-bold text-white mb-1">
-                        You qualify for {{ qualified_jobs }} AI job{% if qualified_jobs != 1 %}s{% endif %}!
-                    </h3>
-                    <p class="text-gray-300 text-sm">Your certificates unlock real paid opportunities on the LearnPulse Jobs board.</p>
-                </div>
-                <a href="{% url 'jobs' %}"
-                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border whitespace-nowrap">
-                    View Jobs →
-                </a>
-            </div>
-        </div>
-        {% else %}
-        <div class="rounded-2xl overflow-hidden border border-yellow-500/20">
-            <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-6 flex flex-col sm:flex-row items-center gap-5">
-                <div class="text-5xl">💼</div>
-                <div class="flex-1 text-center sm:text-left">
-                    <h3 class="text-xl font-bold text-white mb-1">
-                        {{ open_jobs_count }} AI job{% if open_jobs_count != 1 %}s{% endif %} waiting for certified graduates
-                    </h3>
-                    <p class="text-gray-300 text-sm">Complete your modules, earn your certificates, and unlock paid AI training roles — 100% remote.</p>
-                </div>
-                <a href="{% url 'jobs' %}"
-                   class="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl font-bold hover-lift whitespace-nowrap">
-                    See Opportunities →
-                </a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
-
     <!-- ── FREE INTRO MODULE ──────────────────────────────────────────────── -->
     {% if intro_module %}
     <div class="mb-12">
@@ -162,9 +123,10 @@
     <div class="mb-10 rounded-2xl overflow-hidden">
         <div class="bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/30 p-8 flex flex-col md:flex-row items-center gap-6">
             <div class="flex-1">
-                <h3 class="text-2xl font-bold mb-2">Unlock Your First Module</h3>
+                <h3 class="text-2xl font-bold mb-2">Unlock Every Module</h3>
                 <p class="text-gray-300 mb-1">
-                    Purchase any module individually or get the full bundle at $200.
+                    Get the full bundle for
+                    {% if bundle_item %}{{ bundle_item.currency }} {{ bundle_item.display_price|floatformat:0 }}{% if bundle_item.original_display_price %} <span class="line-through text-gray-500">{{ bundle_item.currency }} {{ bundle_item.original_display_price|floatformat:0 }}</span>{% endif %}{% endif %}.
                     One-time fee — yours forever.
                 </p>
                 <p class="text-sm text-gray-400">Already part of an organisation? Ask your admin to add you.</p>
@@ -219,7 +181,7 @@
                 {% if not item.is_purchased %}
                 <div class="mb-4 p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-lg">
                     <p class="text-sm text-indigo-400">
-                        💳 <a href="{% url 'subscription_plans' %}" class="underline hover:text-indigo-300">Purchase this module</a> or the <a href="{% url 'subscription_plans' %}" class="underline hover:text-indigo-300">full bundle</a> to get access.
+                        💳 <a href="{% url 'subscription_plans' %}" class="underline hover:text-indigo-300">Get the full bundle</a> to unlock this module.
                     </p>
                 </div>
                 {% endif %}

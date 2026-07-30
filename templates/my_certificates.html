@@ -7,16 +7,10 @@
 
     <!-- Header -->
     <div class="mb-10">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
-            <h1 class="text-4xl font-extrabold">
-                <span class="gradient-text">My Certificates</span>
-            </h1>
-            <a href="{% url 'jobs' %}"
-               class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-sm hover-lift neon-border">
-                💼 Browse Jobs →
-            </a>
-        </div>
-        <p class="text-gray-400">Earned certificates unlock real AI job opportunities on the LearnPulse Jobs board.</p>
+        <h1 class="text-4xl font-extrabold mb-2">
+            <span class="gradient-text">My Certificates</span>
+        </h1>
+        <p class="text-gray-400">Verified certificates you've earned by completing LearnPulse modules.</p>
     </div>
 
     {% if certificates %}
@@ -62,35 +56,6 @@
         {% endfor %}
     </div>
 
-    <!-- ── QUALIFIED JOBS ──────────────────────────────────────────── -->
-    {% if qualified_jobs %}
-    <div class="mb-14">
-        <div class="flex items-center gap-3 mb-6">
-            <h2 class="text-2xl font-bold">Jobs You Qualify For</h2>
-            <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold">
-                {{ qualified_jobs|length }} role{% if qualified_jobs|length != 1 %}s{% endif %}
-            </span>
-        </div>
-        <div class="space-y-3">
-            {% for job in qualified_jobs %}
-            <div class="glass-effect rounded-xl p-4 border border-white/8 hover:border-white/15 transition flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl">{{ job.icon_emoji }}</span>
-                    <div>
-                        <div class="font-semibold text-white">{{ job.title }}</div>
-                        <div class="text-xs text-gray-500">{{ job.organisation_name }} · {{ job.pay_range_display }}</div>
-                    </div>
-                </div>
-                <a href="{% url 'jobs' %}"
-                   class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-sm hover-lift whitespace-nowrap">
-                    Apply Now →
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
     {% else %}
     <!-- ── EMPTY STATE ────────────────────────────────────────────── -->
     <div class="glass-effect rounded-2xl p-14 text-center border border-white/8 mb-14">
@@ -98,33 +63,18 @@
         <h2 class="text-2xl font-bold text-white mb-3">No Certificates Yet</h2>
         <p class="text-gray-400 max-w-md mx-auto mb-8 leading-relaxed">
             Complete all challenges in a learning module to earn your LearnPulse certificate.
-            Certificates unlock paid AI job opportunities.
         </p>
         <a href="{% url 'dashboard' %}"
            class="px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover-lift neon-border inline-block">
             Start Learning →
         </a>
     </div>
-
-    <!-- Teaser: what's waiting -->
-    <div class="glass-effect rounded-2xl p-6 border border-yellow-500/15 mb-14">
-        <div class="flex flex-wrap items-center gap-4">
-            <div class="text-4xl">💼</div>
-            <div class="flex-1">
-                <h3 class="font-bold text-white mb-1">Jobs waiting for certified graduates</h3>
-                <p class="text-gray-400 text-sm">Data annotation, RLHF feedback, prompt engineering and more — 100% remote, flexible hours.</p>
-            </div>
-            <a href="{% url 'jobs' %}" class="flex-shrink-0 px-5 py-2.5 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded-xl font-semibold text-sm hover:bg-yellow-500/30 transition whitespace-nowrap">
-                See Jobs →
-            </a>
-        </div>
-    </div>
     {% endif %}
 
     <!-- How certs work -->
     <div class="glass-effect rounded-2xl p-6 border border-white/8">
         <h3 class="font-bold text-white mb-4">How Certificates Work</h3>
-        <div class="grid sm:grid-cols-3 gap-4 text-sm text-gray-400">
+        <div class="grid sm:grid-cols-2 gap-4 text-sm text-gray-400">
             <div class="flex gap-3">
                 <span class="text-2xl mt-0.5">✅</span>
                 <div>
@@ -137,13 +87,6 @@
                 <div>
                     <p class="text-white font-semibold mb-0.5">Verified</p>
                     <p>Each certificate has a unique number that can be publicly verified at <span class="text-cyan-400">/certificate/&lt;number&gt;/</span></p>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <span class="text-2xl mt-0.5">💼</span>
-                <div>
-                    <p class="text-white font-semibold mb-0.5">Job-ready</p>
-                    <p>Enter your certificate number when applying for jobs on the LearnPulse Jobs board.</p>
                 </div>
             </div>
         </div>

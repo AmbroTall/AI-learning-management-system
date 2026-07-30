@@ -103,9 +103,6 @@
         <div class="glass-effect rounded-2xl p-8">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold">🎓 My Certificates</h2>
-                <a href="{% url 'jobs' %}" class="text-sm text-cyan-400 hover:text-cyan-300 transition font-medium">
-                    Browse Jobs →
-                </a>
             </div>
             {% if certificates %}
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -119,10 +116,6 @@
                         <a href="{% url 'verify_certificate' cert.cert_number %}"
                            class="flex-1 text-center px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold rounded-lg hover:bg-cyan-500/20 transition">
                             View
-                        </a>
-                        <a href="{% url 'jobs' %}"
-                           class="flex-1 text-center px-3 py-1.5 bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-semibold rounded-lg hover:bg-green-500/20 transition">
-                            Apply
                         </a>
                     </div>
                 </div>

@@ -94,15 +94,20 @@ def get_exchange_rates():
         return FALLBACK_RATES
 
 
-def localize_price(base_price_usd, target_currency):
+def localize_price(base_price, target_currency, base_currency='USD'):
     """
-    Convert a USD plan price to the target currency.
+    Convert a plan price (denominated in base_currency) to the target currency.
     Returns (display_price: float, subunit_amount: int).
     Paystack always expects amounts in the smallest currency unit (× 100).
     """
+    if target_currency == base_currency:
+        converted = round(float(base_price), 2)
+        return converted, int(round(converted * 100))
+
     rates = get_exchange_rates()
-    rate = rates.get(target_currency, 1.0)
-    converted = round(float(base_price_usd) * float(rate), 2)
+    base_rate = rates.get(base_currency, 1.0)
+    target_rate = rates.get(target_currency, 1.0)
+    converted = round(float(base_price) * (target_rate / base_rate), 2)
     subunit = int(round(converted * 100))
     return converted, subunit
 

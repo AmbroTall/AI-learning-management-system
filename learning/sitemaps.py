@@ -9,7 +9,7 @@ class StaticSitemap(Sitemap):
 
     def items(self):
         return [
-            'home', 'jobs', 'subscription_plans', 'register', 'login',
+            'home', 'subscription_plans', 'register', 'login',
         ]
 
     def location(self, item):

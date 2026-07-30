@@ -8,8 +8,8 @@
     <title>{% block title %}LearnPulse — Master AI Skills & Get Certified{% endblock %}</title>
 
     <!-- ── SEO Core ── -->
-    <meta name="description" content="{% block meta_description %}LearnPulse is an AI learning platform with 100+ hands-on challenges, Claude AI feedback, module certificates, and real AI job opportunities. Start free today.{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}AI learning, prompt engineering, AI certification, machine learning course, AI jobs, LearnPulse{% endblock %}">
+    <meta name="description" content="{% block meta_description %}LearnPulse is an AI learning platform with 100+ hands-on challenges, Claude AI feedback, and module certificates. Start free today.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}AI learning, prompt engineering, AI certification, machine learning course, LearnPulse{% endblock %}">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <meta name="author" content="LearnPulse">
     <meta name="theme-color" content="#0F172A">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="LearnPulse">
     <meta property="og:title" content="{% block og_title %}{% block title_inner %}LearnPulse — Master AI Skills & Get Certified{% endblock %}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Learn AI through hands-on challenges, earn verified certificates, and unlock real AI job opportunities. 100% online.{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Learn AI through hands-on challenges, earn verified certificates. 100% online.{% endblock %}">
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-cover.png' %}{% endblock %}">
     <meta property="og:image:width" content="1200">
@@ -279,10 +279,6 @@
                        class="px-4 py-2 rounded-lg hover:bg-yellow-500/10 text-yellow-400 transition text-sm font-medium flex items-center gap-1.5">
                         <span>🏆</span> Leaderboard
                     </a>
-                    <a href="{% url 'jobs' %}"
-                       class="px-4 py-2 rounded-lg hover:bg-cyan-500/10 text-cyan-400 transition text-sm font-medium flex items-center gap-1.5">
-                        <span>💼</span> Jobs
-                    </a>
                     {% if user.managed_organisation %}
                     <a href="{% url 'org_dashboard' %}"
                        class="px-4 py-2 rounded-lg hover:bg-purple-500/20 text-purple-300 transition text-sm font-medium">
@@ -394,9 +390,6 @@
                         <a href="{% url 'my_certificates' %}">
                             <span>🎓</span> My Certificates
                         </a>
-                        <a href="{% url 'jobs' %}">
-                            <span>💼</span> Jobs Board
-                        </a>
                         {% if user.managed_organisation %}
                         <a href="{% url 'org_dashboard' %}">
                             <span>🏢</span> Organisation
@@ -439,7 +432,6 @@
         </a>
         <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
             <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
-            <a href="{% url 'jobs' %}" class="text-cyan-400 hover:text-cyan-300 transition font-medium">💼 Jobs</a>
             <a href="{% url 'home' %}#pricing"       class="hover:text-white transition">Pricing</a>
         </div>
         <div class="flex items-center gap-3">
@@ -747,11 +739,11 @@
     </div>
 
     <div id="chatbotMessages">
-        <div class="cb-msg bot">Hi {{ user.username|title }}! 👋 I know everything about LearnPulse — modules, pricing, certificates, jobs, and more. How can I help?</div>
+        <div class="cb-msg bot">Hi {{ user.username|title }}! 👋 I know everything about LearnPulse — modules, pricing, certificates, and more. How can I help?</div>
     </div>
 
     <form id="chatbotForm" onsubmit="sendChatbotMessage(event)">
-        <input id="chatbotInput" type="text" placeholder="Ask about modules, pricing, jobs…" maxlength="600" autocomplete="off" />
+        <input id="chatbotInput" type="text" placeholder="Ask about modules, pricing, certificates…" maxlength="600" autocomplete="off" />
         <button id="chatbotSend" type="submit" aria-label="Send">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>

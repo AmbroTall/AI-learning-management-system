@@ -29,9 +29,12 @@ urlpatterns = [
     path('profile/change-password/', views.change_password, name='change_password'),
     path('my-certificates/', views.my_certificates, name='my_certificates'),
 
-    # ── Jobs & Certifications (public) ────────────────────────────────────
-    path('jobs/', views.jobs_page, name='jobs'),
-    path('jobs/<int:job_id>/apply/', views.apply_job, name='apply_job'),
+    # ── Jobs board — hidden for SaaS pivot (learning-only platform) ────────
+    # Views/models kept intact for easy restore; routes disabled so /jobs/ 404s.
+    # path('jobs/', views.jobs_page, name='jobs'),
+    # path('jobs/<int:job_id>/apply/', views.apply_job, name='apply_job'),
+
+    # ── Certifications (public) ────────────────────────────────────────────
     path('certificate/<str:cert_number>/', views.verify_certificate, name='verify_certificate'),
 
     # ── Notifications (API) ────────────────────────────────────────────────

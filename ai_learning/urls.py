@@ -17,7 +17,7 @@ handler500 = learning_views.handler500
 sitemaps = {
     'static': StaticSitemap,
     'modules': ModuleSitemap,
-    'jobs': JobSitemap,
+    # 'jobs': JobSitemap,  # jobs board hidden for SaaS pivot — see learning/urls.py
     'certificates': CertificateSitemap,
 }
 
