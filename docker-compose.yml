@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:15
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -14,11 +15,12 @@ services:
 
   web:
     build: .
+    restart: unless-stopped
     command: gunicorn ai_learning.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
-      - "8005:8000"
+      - "8007:8000"
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-ai_user}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-ai_learning_db}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
