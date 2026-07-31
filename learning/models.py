@@ -308,6 +308,15 @@ class SubscriptionPlan(models.Model):
     features = models.JSONField(default=list, help_text='List of feature bullet-point strings')
     is_active = models.BooleanField(default=True)
     is_popular = models.BooleanField(default=False, help_text='Highlight as recommended')
+    # Billing cycle. Leave blank for a one-time, lifetime-access purchase.
+    duration_days = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text='Length of one billing cycle in days. Leave blank for lifetime (one-time) access.',
+    )
+    is_recurring = models.BooleanField(
+        default=False,
+        help_text='Whether this plan can auto-renew. Only meaningful when duration_days is set.',
+    )
 
     class Meta:
         ordering = ['price']
@@ -337,6 +346,9 @@ class Subscription(models.Model):
     # What Paystack actually charged (may differ from plan.price/currency due to localisation)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     currency_paid = models.CharField(max_length=10, blank=True)
+    # Recurring billing — reusable Paystack card authorization from the first successful charge
+    auto_renew = models.BooleanField(default=False)
+    paystack_authorization_code = models.CharField(max_length=100, blank=True)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -346,6 +358,12 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.plan} ({self.status})"
+
+    @staticmethod
+    def currently_active_q():
+        """Q filter for subscriptions that are status=active AND not past their end_date."""
+        from django.db.models import Q
+        return Q(status='active') & (Q(end_date__isnull=True) | Q(end_date__gt=timezone.now()))
 
     @property
     def is_currently_active(self):

@@ -144,6 +144,47 @@ def verify_payment(reference):
         return False, str(e)
 
 
+# ── Recurring billing ───────────────────────────────────────────────────────
+
+def charge_authorization(authorization_code, amount_subunit, currency, email, reference):
+    """
+    Charge a previously-authorized card for auto-renewal, without a checkout flow.
+    Returns (success: bool, data_or_message).
+    """
+    if not settings.PAYSTACK_SECRET_KEY:
+        return False, 'Paystack secret key not configured.'
+
+    url = 'https://api.paystack.co/transaction/charge_authorization'
+    payload = json.dumps({
+        'authorization_code': authorization_code,
+        'email': email,
+        'amount': amount_subunit,
+        'currency': currency,
+        'reference': reference,
+    }).encode('utf-8')
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        method='POST',
+        headers={
+            'Authorization': f'Bearer {settings.PAYSTACK_SECRET_KEY}',
+            'Content-Type': 'application/json',
+            'User-Agent': 'LearnPulse/1.0',
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read())
+        if data.get('status') and data.get('data', {}).get('status') == 'success':
+            return True, data['data']
+        return False, data.get('message', 'Charge not successful.')
+    except urllib.error.HTTPError as e:
+        body = e.read().decode('utf-8', errors='ignore')
+        return False, f'HTTP {e.code}: {body}'
+    except Exception as e:
+        return False, str(e)
+
+
 # ── Webhook signature ──────────────────────────────────────────────────────
 
 def verify_webhook_signature(payload_bytes, signature):

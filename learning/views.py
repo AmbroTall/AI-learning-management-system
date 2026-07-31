@@ -65,8 +65,8 @@ def has_platform_access(user):
     if OrganisationMembership.objects.filter(user=user, is_active=True).exists():
         return True
     return Subscription.objects.filter(
+        Subscription.currently_active_q(),
         user=user,
-        status='active',
         plan__plan_type='bundle',
     ).exists()
 
@@ -84,11 +84,13 @@ def has_module_access(user, module):
     if OrganisationMembership.objects.filter(user=user, is_active=True).exists():
         return True
     # Bundle purchase covers everything
-    if Subscription.objects.filter(user=user, status='active', plan__plan_type='bundle').exists():
+    if Subscription.objects.filter(
+        Subscription.currently_active_q(), user=user, plan__plan_type='bundle',
+    ).exists():
         return True
     # Individual module purchase
     return Subscription.objects.filter(
-        user=user, status='active', plan__plan_type='module', plan__module=module,
+        Subscription.currently_active_q(), user=user, plan__plan_type='module', plan__module=module,
     ).exists()
 
 
@@ -248,7 +250,7 @@ def subscription_plans(request):
 
     if bundle_item:
         already_purchased = Subscription.objects.filter(
-            user=request.user, status='active', plan_id=bundle_item['plan'].id,
+            Subscription.currently_active_q(), user=request.user, plan_id=bundle_item['plan'].id,
         ).exists()
         bundle_item['already_purchased'] = already_purchased
 
@@ -275,18 +277,24 @@ def initiate_payment(request, plan_id):
         currency = body.get('currency', 'KES').upper()
         localized_amount = float(body.get('localized_amount', 0) or 0)
         subunit = int(round(localized_amount * 100))
+        auto_renew = bool(body.get('auto_renew', False))
     except (json.JSONDecodeError, ValueError, TypeError):
         currency = 'KES'
         subunit = 0
+        auto_renew = False
 
     if subunit <= 0:
         from .utils.paystack import localize_price
         _, subunit = localize_price(plan.price, currency, base_currency=plan.currency)
 
+    # Auto-renewal only makes sense for plans with a billing cycle that support it
+    auto_renew = auto_renew and plan.is_recurring and plan.duration_days is not None
+
     subscription = Subscription.objects.create(
         user=request.user,
         plan=plan,
         status='pending',
+        auto_renew=auto_renew,
     )
 
     # Use company_ref (UUID without dashes) as the Paystack transaction reference
@@ -326,11 +334,19 @@ def payment_callback(request, company_ref):
     success, result = verify_payment(subscription.transaction_token)
 
     if success:
+        plan = subscription.plan
         subscription.status = 'active'
         subscription.start_date = timezone.now()
-        subscription.end_date = None  # one-time purchase = lifetime access
+        subscription.end_date = (
+            timezone.now() + timedelta(days=plan.duration_days)
+            if plan and plan.duration_days else None  # None = lifetime, one-time purchase
+        )
         subscription.amount_paid = result.get('amount', 0) / 100
         subscription.currency_paid = result.get('currency', '')
+        if subscription.auto_renew:
+            subscription.paystack_authorization_code = (
+                result.get('authorization', {}).get('authorization_code', '')
+            )
         subscription.save()
 
         from .utils.emails import send_payment_receipt_email
@@ -383,11 +399,19 @@ def paystack_webhook(request):
                 transaction_token=reference,
                 status='pending',
             )
+            plan = subscription.plan
             subscription.status = 'active'
             subscription.start_date = timezone.now()
-            subscription.end_date = None  # one-time purchase = lifetime access
+            subscription.end_date = (
+                timezone.now() + timedelta(days=plan.duration_days)
+                if plan and plan.duration_days else None  # None = lifetime, one-time purchase
+            )
             subscription.amount_paid = data.get('amount', 0) / 100
             subscription.currency_paid = data.get('currency', '')
+            if subscription.auto_renew:
+                subscription.paystack_authorization_code = (
+                    data.get('authorization', {}).get('authorization_code', '')
+                )
             subscription.save()
 
             # Notify user
@@ -397,7 +421,7 @@ def paystack_webhook(request):
                 defaults={
                     'message': (
                         f'✅ Payment confirmed! Your {subscription.plan.name} is now unlocked. '
-                        f'Lifetime access — enjoy!'
+                        f'Enjoy!'
                     ),
                     'link': '/dashboard/',
                 },
@@ -546,7 +570,7 @@ def dashboard(request):
 
     # Purchase info for banner
     active_purchases = Subscription.objects.filter(
-        user=request.user, status='active'
+        Subscription.currently_active_q(), user=request.user,
     ).select_related('plan')
 
     try:
@@ -812,8 +836,9 @@ def submit_challenge(request, challenge_id):
             content = user_prompt
 
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-5",
             max_tokens=1500,
+            thinking={"type": "disabled"},
             messages=[{"role": "user", "content": content}]
         )
         ai_response = message.content[0].text
@@ -834,26 +859,48 @@ def submit_challenge(request, challenge_id):
         3. Quality and clarity of the result
         {"4. Did they make good use of the attached file?" if file_data else ""}
 
+        You are writing feedback for a beginner who may be completely new to AI. The
+        "feedback" field is the ONLY explanation they will see, so it must teach, not
+        just judge. Write 2-4 sentences that:
+        - Say plainly what worked or didn't (the "why" behind the score, not just the score)
+        - Give one concrete, actionable thing to try next time — a specific rewording or
+          technique, not vague advice like "be more specific"
+        - Use encouraging, plain language with no jargon a beginner wouldn't know
+        - If they passed, briefly say what made it work so they can repeat it
+
         Respond in JSON format:
         {{
             "score": <0-100>,
-            "feedback": "<specific feedback>",
+            "feedback": "<2-4 sentences per the guidance above>",
             "passed": <true/false (score >= 70)>
         }}
         """
 
         eval_message = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=500,
+            model="claude-sonnet-5",
+            max_tokens=700,
+            thinking={"type": "disabled"},
             messages=[{"role": "user", "content": evaluation_prompt}]
         )
 
         eval_text = eval_message.content[0].text
         json_match = re.search(r'\{[\s\S]*?\}', eval_text)
-        if json_match:
-            evaluation = json.loads(json_match.group())
-        else:
-            evaluation = {'score': 50, 'feedback': 'Could not parse evaluation', 'passed': False}
+        try:
+            evaluation = json.loads(json_match.group()) if json_match else {}
+        except json.JSONDecodeError:
+            evaluation = {}
+
+        # Guard against the model omitting a field, or the regex grabbing a
+        # truncated object (e.g. feedback text containing a literal '}').
+        score = evaluation.get('score', 50)
+        evaluation = {
+            'score': score,
+            'feedback': evaluation.get('feedback') or (
+                "We hit a snag generating feedback for this attempt, but it's been saved. "
+                "This won't count against you — please try submitting again."
+            ),
+            'passed': evaluation.get('passed', score >= 70),
+        }
 
         attempt_count = ChallengeAttempt.objects.filter(
             user=request.user, challenge=challenge
