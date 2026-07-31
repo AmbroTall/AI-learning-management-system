@@ -54,3 +54,21 @@ def send_payment_receipt_email(subscription):
         context={'subscription': subscription, 'user': subscription.user, 'plan': subscription.plan},
         to_email=subscription.user.email,
     )
+
+
+def send_student_credentials_email(user, password, organisation):
+    _send(
+        subject=f'Your LearnPulse account — {organisation.name}',
+        template_name='student_credentials',
+        context={'user': user, 'password': password, 'organisation': organisation},
+        to_email=user.email,
+    )
+
+
+def send_password_changed_email(user):
+    _send(
+        subject='Your LearnPulse password was changed',
+        template_name='password_changed',
+        context={'user': user},
+        to_email=user.email,
+    )

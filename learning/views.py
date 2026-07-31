@@ -503,6 +503,9 @@ def org_add_student(request):
             added_by=request.user,
         )
 
+        from .utils.emails import send_student_credentials_email
+        send_student_credentials_email(user, password, org)
+
         messages.success(
             request,
             f'Student "{username}" added successfully. '
@@ -1008,6 +1011,10 @@ def change_password(request):
             request.user.set_password(new_password)
             request.user.save()
             update_session_auth_hash(request, request.user)
+
+            from .utils.emails import send_password_changed_email
+            send_password_changed_email(request.user)
+
             messages.success(request, 'Password changed successfully!')
             return redirect('profile')
 
