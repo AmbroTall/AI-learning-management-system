@@ -210,6 +210,10 @@ def register(request):
 
         user = User.objects.create_user(username=username, email=email, password=password)
         Leaderboard.objects.create(user=user)
+
+        from .utils.emails import send_welcome_email
+        send_welcome_email(user)
+
         login(request, user)
         messages.success(request, 'Welcome! Start with the free Introduction to AI module below.')
         return redirect('dashboard')
@@ -325,7 +329,12 @@ def payment_callback(request, company_ref):
         subscription.status = 'active'
         subscription.start_date = timezone.now()
         subscription.end_date = None  # one-time purchase = lifetime access
+        subscription.amount_paid = result.get('amount', 0) / 100
+        subscription.currency_paid = result.get('currency', '')
         subscription.save()
+
+        from .utils.emails import send_payment_receipt_email
+        send_payment_receipt_email(subscription)
 
         messages.success(
             request,
@@ -377,6 +386,8 @@ def paystack_webhook(request):
             subscription.status = 'active'
             subscription.start_date = timezone.now()
             subscription.end_date = None  # one-time purchase = lifetime access
+            subscription.amount_paid = data.get('amount', 0) / 100
+            subscription.currency_paid = data.get('currency', '')
             subscription.save()
 
             # Notify user
@@ -391,6 +402,9 @@ def paystack_webhook(request):
                     'link': '/dashboard/',
                 },
             )
+
+            from .utils.emails import send_payment_receipt_email
+            send_payment_receipt_email(subscription)
         except Subscription.DoesNotExist:
             pass  # Already activated or unknown reference
 

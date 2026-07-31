@@ -1,0 +1,17 @@
+Payment confirmed — LearnPulse
+
+Thanks, {{ user.username }}. Here's your receipt.
+
+Plan: {{ plan.name }}
+Amount charged: {% if subscription.currency_paid %}{{ subscription.currency_paid }} {{ subscription.amount_paid|floatformat:0 }}{% else %}{{ plan.currency }} {{ plan.price|floatformat:0 }}{% endif %}
+Reference: {{ subscription.company_ref }}
+Date: {{ subscription.start_date|date:"j F Y" }}
+
+Access is unlocked immediately — lifetime, one-time payment, no renewals.
+
+Start learning: {{ site_url }}/dashboard/
+
+Billing question? Reply to this email or contact billing@learnpulse.online.
+
+— The LearnPulse team
+learnpulse.online

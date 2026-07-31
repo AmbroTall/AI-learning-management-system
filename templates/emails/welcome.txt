@@ -1,0 +1,11 @@
+Welcome to LearnPulse, {{ user.username }}!
+
+Your account is ready. Start with the free intro module on your dashboard —
+no purchase needed — then unlock the full course bundle whenever you're ready.
+
+Go to your dashboard: {{ site_url }}/dashboard/
+
+Questions? Just reply to this email — we read every message.
+
+— The LearnPulse team
+learnpulse.online

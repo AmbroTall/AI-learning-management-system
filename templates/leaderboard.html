@@ -43,7 +43,7 @@
                 <div class="text-3xl font-bold gradient-text">#{{ user_rank }}</div>
                 <div class="text-sm text-gray-400 mt-1">{{ user.username }}</div>
             </div>
-            <div class="grid grid-cols-3 gap-6 text-center">
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 text-center">
                 <div>
                     <div class="text-2xl font-bold text-cyan-400">{{ user_leaderboard.total_points }}</div>
                     <div class="text-xs text-gray-500">Points</div>
@@ -75,38 +75,38 @@
 
     <!-- Top 3 Podium -->
     {% if top_users|length >= 3 %}
-    <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
         <!-- 2nd place -->
         {% with top_users.1 as p %}
-        <div class="glass-effect rounded-2xl p-5 text-center border border-white/10 mt-6">
-            <div class="text-3xl mb-2">🥈</div>
-            <div class="avatar-circle medal-2 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
-            <div class="font-bold text-sm truncate">{{ p.user.username }}</div>
-            <div class="text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
-            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+        <div class="glass-effect rounded-xl sm:rounded-2xl p-2.5 sm:p-5 text-center border border-white/10 mt-6">
+            <div class="text-xl sm:text-3xl mb-1 sm:mb-2">🥈</div>
+            <div class="avatar-circle medal-2 mx-auto mb-1.5 sm:mb-2" style="width:30px;height:30px;font-size:0.75rem;">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold text-xs sm:text-sm truncate">{{ p.user.username }}</div>
+            <div class="text-base sm:text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-[10px] sm:text-xs text-gray-500 truncate">{{ p.challenges_completed }} challenges</div>
         </div>
         {% endwith %}
         <!-- 1st place -->
         {% with top_users.0 as p %}
-        <div class="glass-effect rounded-2xl p-5 text-center border border-yellow-500/30 relative">
+        <div class="glass-effect rounded-xl sm:rounded-2xl p-2.5 sm:p-5 text-center border border-yellow-500/30 relative">
             <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span class="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full text-xs font-bold text-black whitespace-nowrap">👑 #1</span>
+                <span class="px-2 sm:px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full text-[10px] sm:text-xs font-bold text-black whitespace-nowrap">👑 #1</span>
             </div>
-            <div class="text-3xl mb-2 mt-2">🥇</div>
-            <div class="avatar-circle medal-1 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
-            <div class="font-bold truncate">{{ p.user.username }}</div>
-            <div class="text-2xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
-            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+            <div class="text-xl sm:text-3xl mb-1 sm:mb-2 mt-2">🥇</div>
+            <div class="avatar-circle medal-1 mx-auto mb-1.5 sm:mb-2" style="width:34px;height:34px;font-size:0.8rem;">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold text-xs sm:text-base truncate">{{ p.user.username }}</div>
+            <div class="text-lg sm:text-2xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-[10px] sm:text-xs text-gray-500 truncate">{{ p.challenges_completed }} challenges</div>
         </div>
         {% endwith %}
         <!-- 3rd place -->
         {% with top_users.2 as p %}
-        <div class="glass-effect rounded-2xl p-5 text-center border border-white/10 mt-6">
-            <div class="text-3xl mb-2">🥉</div>
-            <div class="avatar-circle medal-3 mx-auto mb-2">{{ p.user.username|slice:":1"|upper }}</div>
-            <div class="font-bold text-sm truncate">{{ p.user.username }}</div>
-            <div class="text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
-            <div class="text-xs text-gray-500">{{ p.challenges_completed }} challenges</div>
+        <div class="glass-effect rounded-xl sm:rounded-2xl p-2.5 sm:p-5 text-center border border-white/10 mt-6">
+            <div class="text-xl sm:text-3xl mb-1 sm:mb-2">🥉</div>
+            <div class="avatar-circle medal-3 mx-auto mb-1.5 sm:mb-2" style="width:30px;height:30px;font-size:0.75rem;">{{ p.user.username|slice:":1"|upper }}</div>
+            <div class="font-bold text-xs sm:text-sm truncate">{{ p.user.username }}</div>
+            <div class="text-base sm:text-xl font-bold gradient-text mt-1">{{ p.total_points }}</div>
+            <div class="text-[10px] sm:text-xs text-gray-500 truncate">{{ p.challenges_completed }} challenges</div>
         </div>
         {% endwith %}
     </div>

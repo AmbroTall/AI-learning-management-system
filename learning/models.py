@@ -334,6 +334,9 @@ class Subscription(models.Model):
     company_ref = models.UUIDField(default=uuid.uuid4, unique=True)
     # TransToken returned by Network Global after createToken
     transaction_token = models.CharField(max_length=500, blank=True)
+    # What Paystack actually charged (may differ from plan.price/currency due to localisation)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    currency_paid = models.CharField(max_length=10, blank=True)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
