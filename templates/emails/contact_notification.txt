@@ -1,0 +1,8 @@
+New contact message — LearnPulse
+
+From: {{ contact_message.name }} <{{ contact_message.email }}>
+Subject: {{ contact_message.subject }}
+
+{{ contact_message.message }}
+
+(Reply to this email to respond directly to {{ contact_message.name }}.)

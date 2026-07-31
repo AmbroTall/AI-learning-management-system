@@ -25,6 +25,7 @@ from .models import (
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
+    ContactMessage,
 )
 
 
@@ -192,6 +193,41 @@ def home(request):
         'stat_hired': stat.graduates_hired,
         'stat_completion': stat.completion_rate,
     })
+
+
+def contact_page(request):
+    """Public contact form — saves the message and emails a notification."""
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if not name or not email or not subject or not message:
+            messages.error(request, 'Please fill in every field.')
+            return render(request, 'contact.html', {
+                'name': name, 'email': email, 'subject': subject, 'message': message,
+            })
+
+        try:
+            validate_email(email)
+        except DjangoValidationError:
+            messages.error(request, 'Please enter a valid email address.')
+            return render(request, 'contact.html', {
+                'name': name, 'email': email, 'subject': subject, 'message': message,
+            })
+
+        contact_message = ContactMessage.objects.create(
+            name=name, email=email, subject=subject, message=message,
+        )
+
+        from .utils.emails import send_contact_notification_email
+        send_contact_notification_email(contact_message)
+
+        messages.success(request, "Thanks — we've got your message and will reply soon.")
+        return redirect('contact')
+
+    return render(request, 'contact.html')
 
 
 def register(request):

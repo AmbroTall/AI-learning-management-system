@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 logger = logging.getLogger(__name__)
 
 
-def _send(subject, template_name, context, to_email):
+def _send(subject, template_name, context, to_email, reply_to=None):
     """Render templates/emails/<template_name>.html, send HTML + plain-text fallback.
 
     Never raises — a broken email send should not break registration or payment
@@ -31,6 +31,7 @@ def _send(subject, template_name, context, to_email):
             body=text_body,
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[to_email],
+            reply_to=[reply_to] if reply_to else None,
         )
         msg.attach_alternative(html_body, 'text/html')
         msg.send(fail_silently=False)
@@ -71,4 +72,14 @@ def send_password_changed_email(user):
         template_name='password_changed',
         context={'user': user},
         to_email=user.email,
+    )
+
+
+def send_contact_notification_email(contact_message):
+    _send(
+        subject=f'New contact message: {contact_message.subject}',
+        template_name='contact_notification',
+        context={'contact_message': contact_message},
+        to_email='hello@learnpulse.online',
+        reply_to=contact_message.email,
     )

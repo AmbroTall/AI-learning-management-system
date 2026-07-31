@@ -7,6 +7,7 @@ from .models import (
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
+    ContactMessage,
 )
 
 
@@ -360,6 +361,19 @@ class ErrorLogAdmin(admin.ModelAdmin):
         return False
 
     def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'subject', 'is_read', 'created_at']
+    list_filter = ['is_read']
+    search_fields = ['name', 'email', 'subject', 'message']
+    readonly_fields = ['name', 'email', 'subject', 'message', 'created_at']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+
+    def has_add_permission(self, request):
         return False
 
 

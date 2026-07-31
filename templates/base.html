@@ -488,14 +488,14 @@
         <div class="flex flex-wrap justify-center gap-6 text-sm">
             <a href="{% url 'dashboard' %}"      class="hover:text-white transition">Dashboard</a>
             <a href="{% url 'profile' %}"        class="hover:text-white transition">Profile</a>
-            <a href="mailto:hello@learnpulse.online" class="hover:text-white transition">Support</a>
+            <a href="{% url 'contact' %}" class="hover:text-white transition">Support</a>
         </div>
         {% else %}
         <div class="flex flex-wrap justify-center gap-6 text-sm">
             <a href="{% url 'home' %}#learning-path" class="hover:text-white transition">Programme</a>
             <a href="{% url 'home' %}#pricing"       class="hover:text-white transition">Pricing</a>
             <a href="{% url 'home' %}#faq"           class="hover:text-white transition">FAQ</a>
-            <a href="mailto:hello@learnpulse.online"     class="hover:text-white transition">Contact</a>
+            <a href="{% url 'contact' %}"     class="hover:text-white transition">Contact</a>
         </div>
         {% endif %}
 
