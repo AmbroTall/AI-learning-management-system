@@ -104,5 +104,27 @@ def is_temporarily_blocked(user, endpoint, flag_threshold=3, block_window_hours=
     return flagged_count >= flag_threshold
 
 
+# ── Lifetime cap ────────────────────────────────────────────────────────────
+# One-time purchase, unlimited-duration access means the hourly/daily caps
+# above bound the *rate* of spend but not the total — a user active every day
+# for years would still cost more in API fees than the one-time fee covers.
+# This caps total lifetime calls per endpoint, independent of how spread out
+# they are.
+
+def check_lifetime_limit(user, endpoint, lifetime_limit):
+    """
+    Returns (allowed: bool, message: str|None). Counts ALL calls ever made by
+    this user to `endpoint`, with no time window.
+    """
+    total_count = ApiUsageLog.objects.filter(user=user, endpoint=endpoint).count()
+    if total_count >= lifetime_limit:
+        return False, (
+            "You've reached the lifetime usage limit for this feature on your account. "
+            "This protects the platform from unsustainable AI costs on a one-time purchase. "
+            "Contact hello@learnpulse.online if you need additional access."
+        )
+    return True, None
+
+
 def record_usage(user, endpoint, flagged=False):
     ApiUsageLog.objects.create(user=user, endpoint=endpoint, flagged=flagged)

@@ -5,9 +5,9 @@ from django.utils.html import format_html
 from .models import (
     Module, Challenge, UserProgress, ChallengeAttempt,
     Achievement, UserAchievement, Leaderboard,
-    Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
+    Organisation, OrganisationMembership, OrgPricingTier, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
-    ContactMessage, ApiUsageLog,
+    ContactMessage, ApiUsageLog, PromptResponseCache,
 )
 
 
@@ -198,6 +198,13 @@ class OrganisationMembershipAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
+@admin.register(OrgPricingTier)
+class OrgPricingTierAdmin(admin.ModelAdmin):
+    list_display = ['seat_range_display', 'price_per_seat', 'currency', 'label', 'is_active']
+    list_filter = ['is_active', 'currency']
+    ordering = ['min_seats']
+
+
 @admin.register(SubscriptionPlan)
 class SubscriptionPlanAdmin(admin.ModelAdmin):
     list_display = ['name', 'plan_type', 'module', 'price', 'currency', 'is_popular', 'is_active']
@@ -378,6 +385,23 @@ class ApiUsageLogAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+@admin.register(PromptResponseCache)
+class PromptResponseCacheAdmin(admin.ModelAdmin):
+    list_display = ['challenge', 'prompt_hash', 'has_evaluation', 'hit_count', 'updated_at']
+    list_filter = ['challenge__module']
+    search_fields = ['challenge__title', 'prompt_hash', 'ai_response']
+    readonly_fields = ['challenge', 'prompt_hash', 'ai_response', 'evaluation', 'hit_count', 'created_at', 'updated_at']
+    date_hierarchy = 'updated_at'
+    ordering = ['-hit_count']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_evaluation(self, obj):
+        return obj.evaluation is not None
+    has_evaluation.boolean = True
 
 
 @admin.register(ContactMessage)

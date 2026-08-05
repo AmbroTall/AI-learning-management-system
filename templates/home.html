@@ -556,14 +556,19 @@ details[open] summary .faq-arrow { transform: rotate(180deg); }
             <div class="text-sm text-gray-500 mb-1">Teams &amp; Schools</div>
             <div class="text-xl font-bold mb-2">Organisation</div>
             <div class="text-sm text-gray-400 mb-5">Bulk access for schools, companies, and training providers with admin controls.</div>
+            {% if org_pricing_tiers %}
+            <div class="text-4xl font-bold gradient-text mb-1">From {{ org_pricing_tiers.last.currency }} {{ org_pricing_tiers.last.price_per_seat|floatformat:0 }}</div>
+            <div class="text-xs text-gray-500 mb-6">per seat · volume pricing</div>
+            {% else %}
             <div class="text-4xl font-bold gradient-text mb-1">Custom</div>
             <div class="text-xs text-gray-500 mb-6">bulk pricing · dedicated support</div>
+            {% endif %}
             <ul class="space-y-2 mb-8 text-sm text-gray-300">
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Managed student enrolment</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Admin dashboard</li>
                 <li class="flex items-start gap-2"><span class="text-green-400">✓</span>Volume discounts</li>
             </ul>
-            <a href="mailto:hello@learnpulse.online" class="block text-center py-3 glass-effect border border-white/20 rounded-xl font-semibold hover-lift">
+            <a href="{% url 'contact' %}?subject=Organisation%20Pricing" class="block text-center py-3 glass-effect border border-white/20 rounded-xl font-semibold hover-lift">
                 Contact Us →
             </a>
         </div>

@@ -148,6 +148,33 @@ class ChallengeAttempt(models.Model):
         return f"{self.user.username} - {self.challenge.title} - Attempt {self.attempt_number}"
 
 
+class PromptResponseCache(models.Model):
+    """
+    Shared cache of (challenge, exact prompt text) -> Claude output, so an
+    identical submission from any user reuses a prior response/evaluation
+    instead of triggering a new API call. `evaluation` is null until a
+    'submit' request populates it — a 'help' request on the same prompt only
+    ever needs `ai_response`.
+    """
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='cached_responses')
+    prompt_hash = models.CharField(max_length=64, db_index=True, help_text='SHA-256 of the stripped prompt text')
+    ai_response = models.TextField()
+    evaluation = models.JSONField(
+        null=True, blank=True,
+        help_text='{"score", "feedback", "passed"} once a submit has evaluated this prompt',
+    )
+    hit_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = [('challenge', 'prompt_hash')]
+        indexes = [models.Index(fields=['challenge', 'prompt_hash'])]
+
+    def __str__(self):
+        return f"{self.challenge.title} — {self.prompt_hash[:10]} ({self.hit_count} hits)"
+
+
 class Achievement(models.Model):
     """Badges and achievements"""
     ACHIEVEMENT_TYPES = [
@@ -263,6 +290,34 @@ class Organisation(models.Model):
     @property
     def can_add_members(self):
         return self.current_member_count < self.max_members
+
+
+class OrgPricingTier(models.Model):
+    """
+    Published per-seat pricing tiers shown on the org card — the starting
+    point for a sales conversation, not a self-serve checkout. Final
+    licenses are still negotiated and invoiced manually (see Organisation).
+    """
+    min_seats = models.PositiveIntegerField()
+    max_seats = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text='Leave blank for an open-ended top tier (e.g. "150+ seats")',
+    )
+    price_per_seat = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default='USD')
+    label = models.CharField(max_length=100, blank=True, help_text='e.g. "Small teams", "Enterprise"')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['min_seats']
+
+    def __str__(self):
+        seat_range = f"{self.min_seats}–{self.max_seats}" if self.max_seats else f"{self.min_seats}+"
+        return f"{seat_range} seats — {self.currency} {self.price_per_seat}/seat"
+
+    @property
+    def seat_range_display(self):
+        return f"{self.min_seats}–{self.max_seats}" if self.max_seats else f"{self.min_seats}+"
 
 
 class OrganisationMembership(models.Model):
