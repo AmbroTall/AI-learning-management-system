@@ -547,6 +547,37 @@ class ErrorLog(models.Model):
         return f"[{self.status_code}] {self.url[:80]} — {who} — {self.created_at:%Y-%m-%d %H:%M}"
 
 
+class ApiUsageLog(models.Model):
+    """
+    One row per Claude API call made through a student-facing endpoint.
+    Used to enforce a global (cross-challenge) rate limit and to track
+    prompts flagged as off-topic/adversarial, independent of the
+    per-challenge cooldown already enforced in submit_challenge.
+    """
+    ENDPOINT_CHOICES = [
+        ('challenge', 'Challenge Submission'),
+        ('chatbot', 'Platform Chatbot'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='api_usage_logs')
+    endpoint = models.CharField(max_length=20, choices=ENDPOINT_CHOICES, db_index=True)
+    flagged = models.BooleanField(
+        default=False,
+        help_text='True if the prompt was blocked as suspicious/off-topic before hitting the Claude API.',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'endpoint', 'created_at']),
+        ]
+
+    def __str__(self):
+        flag = ' [FLAGGED]' if self.flagged else ''
+        return f"{self.user.username} — {self.endpoint}{flag} — {self.created_at:%Y-%m-%d %H:%M}"
+
+
 class ContactMessage(models.Model):
     """A message submitted through the public contact form."""
     name = models.CharField(max_length=100)

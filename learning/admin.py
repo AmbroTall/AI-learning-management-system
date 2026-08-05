@@ -7,7 +7,7 @@ from .models import (
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
-    ContactMessage,
+    ContactMessage, ApiUsageLog,
 )
 
 
@@ -356,6 +356,22 @@ class ErrorLogAdmin(admin.ModelAdmin):
     def short_url(self, obj):
         return obj.url[:80]
     short_url.short_description = 'URL'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ApiUsageLog)
+class ApiUsageLogAdmin(admin.ModelAdmin):
+    list_display = ['user', 'endpoint', 'flagged', 'created_at']
+    list_filter = ['endpoint', 'flagged']
+    search_fields = ['user__username', 'user__email']
+    readonly_fields = ['user', 'endpoint', 'flagged', 'created_at']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
 
     def has_add_permission(self, request):
         return False

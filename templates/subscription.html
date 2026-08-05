@@ -35,9 +35,15 @@
             Signed in as <span class="text-cyan-400">{{ user.username }}</span>
         </p>
         {% endif %}
-        <div class="inline-flex items-center gap-2 mt-4 px-3 py-1.5 glass-effect rounded-full text-xs text-gray-400">
-            <span>🌍</span> Prices shown in <span class="text-cyan-400 font-semibold ml-1">{{ currency }}</span>
-            <span class="text-gray-600">· based on your location</span>
+        <div class="inline-flex items-center gap-1 mt-4 p-1 glass-effect rounded-full text-xs">
+            <span class="px-3 text-gray-500">🌍 Pay in</span>
+            {% for code in currency_choices %}
+            <a href="?currency={{ code }}"
+               class="px-4 py-1.5 rounded-full font-semibold transition-colors
+                   {% if currency == code %}bg-gradient-to-r from-cyan-500 to-blue-500 text-white{% else %}text-gray-400 hover:text-gray-200{% endif %}">
+                {{ code }}
+            </a>
+            {% endfor %}
         </div>
     </div>
 

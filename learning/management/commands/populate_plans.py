@@ -4,8 +4,9 @@ Seed SubscriptionPlan records for the one-time purchase model.
 Usage:
     DATABASE_URL="" python manage.py populate_plans
 
-Pricing (KES) — bundle-only SaaS model:
-    Full Bundle (all modules)   KES 9,999 (discounted from KES 15,000)
+Pricing (USD) — bundle-only SaaS model:
+    Full Bundle (all modules)   $100 (discounted from $150)
+    Also payable in KES at the live exchange rate (see subscription page currency toggle).
 
 Individual module plans are deactivated (is_active=False), not deleted —
 the platform now sells a single all-courses bundle.
@@ -90,8 +91,8 @@ MODULE_PLANS = [
 
 BUNDLE_PLAN = {
     'name': 'Full Course Bundle',
-    'price': 9999,
-    'original_price': 15000,
+    'price': 100,
+    'original_price': 150,
     'description': 'Unlock every module on the platform — one price, lifetime access.',
     'features': [
         'All current modules (1–4B)',
@@ -133,7 +134,7 @@ class Command(BaseCommand):
                 'name': BUNDLE_PLAN['name'],
                 'price': BUNDLE_PLAN['price'],
                 'original_price': BUNDLE_PLAN['original_price'],
-                'currency': 'KES',
+                'currency': 'USD',
                 'description': BUNDLE_PLAN['description'],
                 'features': BUNDLE_PLAN['features'],
                 'is_popular': BUNDLE_PLAN['is_popular'],
