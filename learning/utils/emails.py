@@ -1,6 +1,6 @@
 """
 Transactional email sending.
-Covers: welcome email (on registration), payment receipt (on purchase activation).
+Covers: email verification (on registration), payment receipt (on purchase activation).
 Password reset emails are handled separately by Django's built-in auth views
 (see templates/emails/password_reset_email.html and learning/urls.py).
 """
@@ -39,11 +39,11 @@ def _send(subject, template_name, context, to_email, reply_to=None):
         logger.exception('Failed to send "%s" email to %s', template_name, to_email)
 
 
-def send_welcome_email(user):
+def send_verification_email(user, verify_url):
     _send(
-        subject='Welcome to LearnPulse 🎓',
+        subject='Verify your email — LearnPulse',
         template_name='welcome',
-        context={'user': user},
+        context={'user': user, 'verify_url': verify_url},
         to_email=user.email,
     )
 

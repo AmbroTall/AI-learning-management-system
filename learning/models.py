@@ -647,3 +647,43 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} <{self.email}> — {self.subject[:60]}"
+
+
+class ReferralSource(models.Model):
+    """
+    A trackable marketing channel/marketer. Share links with `?ref=<code>`
+    (e.g. learnpulse.online/?ref=jane10) — the code is captured on landing
+    and attributed to the account if the visitor registers.
+    """
+    code = models.SlugField(max_length=50, unique=True, help_text='URL-safe code used in ?ref= links')
+    label = models.CharField(max_length=200, help_text='Marketer/channel name, e.g. "Jane — Instagram"')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['label']
+
+    def __str__(self):
+        return f"{self.label} ({self.code})"
+
+    @property
+    def signup_count(self):
+        return self.signups.count()
+
+    @property
+    def converted_count(self):
+        return self.signups.filter(
+            user__subscriptions__in=Subscription.objects.filter(
+                Subscription.currently_active_q(), plan__plan_type='bundle',
+            )
+        ).distinct().count()
+
+
+class ReferralSignup(models.Model):
+    """Records which referral code (if any) a user registered through — first-touch attribution."""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='referral_signup')
+    source = models.ForeignKey(ReferralSource, on_delete=models.CASCADE, related_name='signups')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} via {self.source.code}"

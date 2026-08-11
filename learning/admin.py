@@ -7,7 +7,7 @@ from .models import (
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, OrgPricingTier, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
-    ContactMessage, ApiUsageLog, PromptResponseCache,
+    ContactMessage, ApiUsageLog, PromptResponseCache, ReferralSource, ReferralSignup,
 )
 
 
@@ -410,6 +410,33 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ['is_read']
     search_fields = ['name', 'email', 'subject', 'message']
     readonly_fields = ['name', 'email', 'subject', 'message', 'created_at']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(ReferralSource)
+class ReferralSourceAdmin(admin.ModelAdmin):
+    list_display = ['label', 'code', 'is_active', 'signup_count', 'converted_count', 'created_at']
+    list_filter = ['is_active']
+    search_fields = ['label', 'code']
+    ordering = ['label']
+
+    def signup_count(self, obj):
+        return obj.signup_count
+
+    def converted_count(self, obj):
+        return obj.converted_count
+
+
+@admin.register(ReferralSignup)
+class ReferralSignupAdmin(admin.ModelAdmin):
+    list_display = ['user', 'source', 'created_at']
+    list_filter = ['source']
+    search_fields = ['user__username', 'user__email', 'source__code', 'source__label']
+    readonly_fields = ['user', 'source', 'created_at']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
 

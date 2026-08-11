@@ -1,9 +1,13 @@
-Welcome to LearnPulse, {{ user.username }}!
+Verify your email, {{ user.username }}!
 
-Your account is ready. Start with the free intro module on your dashboard —
-no purchase needed — then unlock the full course bundle whenever you're ready.
+One more step — confirm your email to activate your LearnPulse account.
+Once verified, you can start with the free intro module right away —
+no purchase needed.
 
-Go to your dashboard: {{ site_url }}/dashboard/
+Verify your email: {{ verify_url }}
+
+This link expires in 3 days. If you didn't create this account, you can
+ignore this email.
 
 Questions? Just reply to this email — we read every message.
 

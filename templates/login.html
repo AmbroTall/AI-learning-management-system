@@ -36,8 +36,12 @@
             </form>
             
             <p class="text-center mt-6 text-gray-400">
-                Don't have an account? 
+                Don't have an account?
                 <a href="{% url 'register' %}" class="text-cyan-400 hover:text-cyan-300">Register now</a>
+            </p>
+            <p class="text-center mt-2 text-gray-500 text-sm">
+                Didn't get a verification email?
+                <a href="{% url 'resend_verification' %}" class="text-cyan-400 hover:text-cyan-300">Resend it</a>
             </p>
         </div>
     </div>

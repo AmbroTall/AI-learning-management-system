@@ -9,7 +9,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.db.models import Sum, Count
 import anthropic
 from django.conf import settings
@@ -25,7 +28,7 @@ from .models import (
     Achievement, UserAchievement, Leaderboard,
     Organisation, OrganisationMembership, OrgPricingTier, SubscriptionPlan, Subscription,
     Certificate, JobPosting, JobApplication, Notification, ErrorLog, PlatformStat,
-    ContactMessage,
+    ContactMessage, ReferralSource, ReferralSignup,
 )
 
 
@@ -72,6 +75,17 @@ def _get_bundle_item(request, currency=None):
 def _get_org_pricing_tiers():
     """Published per-seat starting prices for the organisation card (sales-assisted, not self-serve checkout)."""
     return OrgPricingTier.objects.filter(is_active=True).order_by('min_seats')
+
+
+def _capture_referral(request):
+    """
+    Reads `?ref=<code>` off the query string and remembers it in the session
+    (first-touch attribution) so a later registration can be credited to it,
+    even if the visitor lands on the home page first and registers afterward.
+    """
+    ref = request.GET.get('ref', '').strip()
+    if ref and ReferralSource.objects.filter(code=ref, is_active=True).exists():
+        request.session['referral_code'] = ref
 
 
 # ── Access control helpers ─────────────────────────────────────────────────
@@ -203,6 +217,7 @@ def handler500(request):
 
 def home(request):
     """Landing page with slides."""
+    _capture_referral(request)
     if request.user.is_authenticated:
         return redirect('dashboard')
     bundle_item = _get_bundle_item(request)
@@ -251,8 +266,20 @@ def contact_page(request):
     return render(request, 'contact.html', {'subject': request.GET.get('subject', '')})
 
 
+def _send_verification_email(request, user):
+    from .utils.tokens import email_verification_token
+    from .utils.emails import send_verification_email
+
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = email_verification_token.make_token(user)
+    verify_url = request.build_absolute_uri(reverse('verify_email', args=[uid, token]))
+    send_verification_email(user, verify_url)
+
+
 def register(request):
-    """User registration — redirects to subscription unless org member."""
+    """User registration — account starts inactive until the emailed link is clicked."""
+    _capture_referral(request)
+
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -267,17 +294,69 @@ def register(request):
             messages.error(request, 'Username already exists')
             return render(request, 'register.html')
 
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User.objects.create_user(
+            username=username, email=email, password=password, is_active=False,
+        )
         Leaderboard.objects.create(user=user)
 
-        from .utils.emails import send_welcome_email
-        send_welcome_email(user)
+        ref_code = request.session.pop('referral_code', None)
+        if ref_code:
+            source = ReferralSource.objects.filter(code=ref_code, is_active=True).first()
+            if source:
+                ReferralSignup.objects.create(user=user, source=source)
 
-        login(request, user)
-        messages.success(request, 'Welcome! Start with the free Introduction to AI module below.')
-        return redirect('dashboard')
+        _send_verification_email(request, user)
+
+        messages.success(
+            request,
+            "Almost there — we've emailed you a verification link. "
+            "Click it to activate your account and start learning."
+        )
+        return redirect('login')
 
     return render(request, 'register.html')
+
+
+def verify_email(request, uidb64, token):
+    """Activates the account when the emailed verification link is clicked."""
+    from .utils.tokens import email_verification_token
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and email_verification_token.check_token(user, token):
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+        login(request, user)
+        messages.success(request, 'Email verified — welcome to LearnPulse! Start with the free intro module below.')
+        return redirect('dashboard')
+
+    messages.error(
+        request,
+        'This verification link is invalid or has expired. Request a new one below.'
+    )
+    return redirect('resend_verification')
+
+
+def resend_verification(request):
+    """Lets a user with an unverified account request a fresh verification link."""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        user = User.objects.filter(email=email, is_active=False).first()
+        if user:
+            _send_verification_email(request, user)
+        # Same message whether or not the account exists, so this can't be used
+        # to probe which emails are registered.
+        messages.success(
+            request,
+            "If that email has an unverified account, we've sent a new verification link."
+        )
+        return redirect('login')
+
+    return render(request, 'resend_verification.html')
 
 
 def login_view(request):
@@ -288,6 +367,12 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect('dashboard')
+        elif User.objects.filter(username=username, is_active=False).exists():
+            messages.error(
+                request,
+                'Please verify your email before signing in — check your inbox, '
+                'or request a new verification link.'
+            )
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
