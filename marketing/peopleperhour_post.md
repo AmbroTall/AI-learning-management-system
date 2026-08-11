@@ -18,7 +18,7 @@ I need a freelancer who can find organisations that need AI training and bring t
 
 **Payment terms**
 
-- **10% commission on every license you close.** Deals typically run **KES 210,000–900,000+** depending on seat count, so a single closed deal is worth roughly **KES 21,000–90,000** to you (average first deal ≈ KES 36,000 commission).
+- **10% commission on every license you close.** Deals typically run **$1,625–$7,000+** depending on seat count, so a single closed deal is worth roughly **$160–$700** to you (average first deal ≈ $375 commission).
 - Paid on receipt of the client's payment, per deal.
 - **After 3 months of consistent activity, strong performers move to a basic monthly retainer plus retained commission** — this is meant to become an ongoing engagement, not a one-off gig.
 - Full product training, sales materials (one-pager + call scripts), and live demo access provided before you make your first approach.
@@ -43,5 +43,5 @@ Applications missing any of those three won't be reviewed.
 ### Note on posting this to PeoplePerHour
 PPH is built around discrete freelance projects/hourlies rather than open-ended commission roles, and its terms restrict using it as a straight recruitment/job board. Two ways to make this fit cleanly:
 - Post it as a **fixed-price project** ("Find and close 1 AI-training license deal") with the fee set per deal at your commission amount, and re-post/renew for the next deal — keeps you compliant and still lets you build a repeat relationship with someone who does well.
-- Or post as a **short discovery task** ("Source and qualify 10 target organisations for an AI training platform, KES X flat fee") to find people worth trialling on the full commission arrangement off-platform.
+- Or post as a **short discovery task** ("Source and qualify 10 target organisations for an AI training platform, $X flat fee") to find people worth trialling on the full commission arrangement off-platform.
 I'd recommend the first option since it keeps the commission structure intact and PPH-compliant.

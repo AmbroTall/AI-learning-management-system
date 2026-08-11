@@ -1,6 +1,7 @@
 """
 Paystack payment gateway utilities.
-Covers: currency detection, price conversion, payment verification, webhook validation.
+Covers: price conversion (USD-primary, with explicit KES toggle), payment
+verification, webhook validation.
 """
 
 import hashlib
@@ -16,63 +17,11 @@ from django.core.cache import cache
 # Currencies Paystack accepts
 PAYSTACK_SUPPORTED = {'NGN', 'GHS', 'ZAR', 'USD', 'KES', 'EGP', 'GBP'}
 
-# ISO country → currency
-COUNTRY_CURRENCY = {
-    'KE': 'KES', 'NG': 'NGN', 'GH': 'GHS', 'ZA': 'ZAR',
-    'US': 'USD', 'GB': 'GBP', 'EG': 'EGP',
-    # Rest of East Africa → USD (Paystack doesn't yet support TZS/UGX/RWF)
-    'TZ': 'USD', 'UG': 'USD', 'RW': 'USD', 'ET': 'USD',
-}
-
 # Fallback exchange rates (USD base) — updated periodically
 FALLBACK_RATES = {
     'KES': 130.0, 'NGN': 1600.0, 'GHS': 15.0, 'ZAR': 19.0,
     'USD': 1.0,   'GBP': 0.79,  'EGP': 50.0,
 }
-
-
-# ── Currency detection ─────────────────────────────────────────────────────
-
-def detect_currency(request):
-    """
-    Returns (currency_code, country_code) for the current visitor.
-    Result is cached in the session so the geolocation API is only called once.
-    Default is KES (Kenya).
-    """
-    if 'detected_currency' in request.session:
-        return request.session['detected_currency'], request.session.get('detected_country', 'KE')
-
-    ip = (
-        request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
-        or request.META.get('REMOTE_ADDR', '')
-    )
-
-    private_prefixes = (
-        '127.', '::1', '192.168.', '10.',
-        '172.16.', '172.17.', '172.18.', '172.19.', '172.20.',
-        '172.21.', '172.22.', '172.23.', '172.24.', '172.25.',
-        '172.26.', '172.27.', '172.28.', '172.29.', '172.30.', '172.31.',
-    )
-    is_private = not ip or any(ip.startswith(p) for p in private_prefixes)
-
-    country = 'KE'
-    if not is_private:
-        try:
-            url = f'https://ip-api.com/json/{ip}?fields=countryCode'
-            req_geo = urllib.request.Request(url, headers={'User-Agent': 'LearnPulse/1.0'})
-            with urllib.request.urlopen(req_geo, timeout=2) as resp:
-                data = json.loads(resp.read())
-                country = data.get('countryCode', 'KE')
-        except Exception:
-            pass
-
-    currency = COUNTRY_CURRENCY.get(country, 'USD')
-    if currency not in PAYSTACK_SUPPORTED:
-        currency = 'USD'
-
-    request.session['detected_currency'] = currency
-    request.session['detected_country'] = country
-    return currency, country
 
 
 # ── Exchange rates ─────────────────────────────────────────────────────────

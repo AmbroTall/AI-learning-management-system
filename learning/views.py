@@ -1605,9 +1605,6 @@ USD is the primary payment currency; students can switch to pay in KES (Kenyan S
 ## Certificates
 Verified certificate issued on module completion (format: LP-YYYY-XXXXXXXX). Publicly verifiable at learnpulse.online/certificate/<number>/.
 
-## Career Support
-Top-performing graduates receive career support from LearnPulse — included in the Full Bundle.
-
 ## How challenges work
 Submit a prompt or task → Claude AI scores it 0–100 → pass threshold unlocks next challenge. Points go to the leaderboard; streaks and badges are awarded automatically.
 

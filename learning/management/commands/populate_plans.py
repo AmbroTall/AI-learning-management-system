@@ -100,7 +100,6 @@ BUNDLE_PLAN = {
         'Every certificate included',
         'Priority support',
         'Leaderboard & achievement badges',
-        'Career support for top graduates',
     ],
     'is_popular': True,
 }
