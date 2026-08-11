@@ -21,6 +21,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['learnpulse.online', 'www.learnpulse.online', 'localhost', '127.0.0.1', '137.74.201.209']
 
+# Trust the X-Forwarded-Proto header set by the nginx reverse proxy so
+# request.is_secure() works correctly (required for SECURE_SSL_REDIRECT below).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
