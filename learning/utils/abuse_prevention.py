@@ -12,6 +12,7 @@ Two layers, both cheap (no extra Claude call):
 import re
 from datetime import timedelta
 
+from django.core.cache import cache
 from django.utils import timezone
 
 from ..models import ApiUsageLog
@@ -128,3 +129,36 @@ def check_lifetime_limit(user, endpoint, lifetime_limit):
 
 def record_usage(user, endpoint, flagged=False):
     ApiUsageLog.objects.create(user=user, endpoint=endpoint, flagged=flagged)
+
+
+# ── Anonymous / pre-auth rate limiting ─────────────────────────────────────
+# Contact form, registration and verification-resend have no user yet, so
+# they're keyed by IP via the cache rather than ApiUsageLog above (which
+# requires an authenticated user) — no DB write, cheap on every public POST.
+
+def check_ip_rate_limit(scope, ip, limit, window_seconds):
+    """
+    Returns (allowed: bool, message: str|None). At most `limit` actions per
+    `ip` in this `scope` within `window_seconds`.
+    """
+    if not ip:
+        return True, None
+    key = f'ratelimit:{scope}:{ip}'
+    count = cache.get(key)
+    if count is None:
+        cache.set(key, 1, timeout=window_seconds)
+        return True, None
+    if count >= limit:
+        return False, "Too many requests from this connection recently — please try again later."
+    cache.incr(key)
+    return True, None
+
+
+def is_honeypot_filled(request, field_name='website'):
+    """
+    True if a hidden decoy field was filled in. Real visitors never see or
+    fill it — CSS-positioned off-screen rather than display:none, since some
+    scripted bots skip fields hidden that way but still fill this one — but
+    naive bots that auto-fill every form field on the page do.
+    """
+    return bool(request.POST.get(field_name, '').strip())

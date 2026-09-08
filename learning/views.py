@@ -234,10 +234,24 @@ def home(request):
 def contact_page(request):
     """Public contact form — saves the message and emails a notification."""
     if request.method == 'POST':
+        from .utils.abuse_prevention import check_ip_rate_limit, is_honeypot_filled
+
+        if is_honeypot_filled(request):
+            # Bot tripped the decoy field — pretend success, don't save or email.
+            messages.success(request, "Thanks — we've got your message and will reply soon.")
+            return redirect('contact')
+
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         subject = request.POST.get('subject', '').strip()
         message = request.POST.get('message', '').strip()
+
+        allowed, rate_msg = check_ip_rate_limit('contact', _get_client_ip(request), limit=3, window_seconds=3600)
+        if not allowed:
+            messages.error(request, rate_msg)
+            return render(request, 'contact.html', {
+                'name': name, 'email': email, 'subject': subject, 'message': message,
+            })
 
         if not name or not email or not subject or not message:
             messages.error(request, 'Please fill in every field.')
@@ -281,6 +295,23 @@ def register(request):
     _capture_referral(request)
 
     if request.method == 'POST':
+        from .utils.abuse_prevention import check_ip_rate_limit, is_honeypot_filled
+
+        if is_honeypot_filled(request):
+            # Bot tripped the decoy field — don't create an account or send mail,
+            # but don't tip it off either.
+            messages.success(
+                request,
+                "Almost there — we've emailed you a verification link. "
+                "Click it to activate your account and start learning."
+            )
+            return redirect('login')
+
+        allowed, rate_msg = check_ip_rate_limit('register', _get_client_ip(request), limit=5, window_seconds=3600)
+        if not allowed:
+            messages.error(request, rate_msg)
+            return render(request, 'register.html')
+
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -344,7 +375,23 @@ def verify_email(request, uidb64, token):
 def resend_verification(request):
     """Lets a user with an unverified account request a fresh verification link."""
     if request.method == 'POST':
+        from .utils.abuse_prevention import check_ip_rate_limit
+
         email = request.POST.get('email', '').strip()
+
+        # Keyed on the target email too, not just IP — otherwise a rotating-IP
+        # bot could still email-bomb one victim's inbox with repeated resends.
+        ip_allowed, _ = check_ip_rate_limit('resend_verification_ip', _get_client_ip(request), limit=5, window_seconds=3600)
+        email_allowed, _ = check_ip_rate_limit('resend_verification_email', email.lower(), limit=3, window_seconds=3600)
+        if not (ip_allowed and email_allowed):
+            # Same generic message as success below — don't reveal rate-limit
+            # state, which would itself leak whether the email is registered.
+            messages.success(
+                request,
+                "If that email has an unverified account, we've sent a new verification link."
+            )
+            return redirect('login')
+
         user = User.objects.filter(email=email, is_active=False).first()
         if user:
             _send_verification_email(request, user)
